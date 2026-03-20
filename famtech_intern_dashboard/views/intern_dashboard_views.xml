@@ -1,0 +1,102 @@
+<odoo>
+    <!-- Menu + Action -->
+    <record id="action_intern_dashboard" model="ir.actions.act_window">
+        <field name="name">Intern Dashboard</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_id" ref="view_intern_dashboard_kanban"/>
+        <field name="domain">[('is_intern','=',True)]</field>
+    </record>
+
+    <menuitem id="menu_intern_dashboard_root"
+              name="Intern Dashboard"
+              parent="hr.menu_hr_root"
+              action="action_intern_dashboard"/>
+
+    <!-- Kanban view for Intern Dashboard -->
+    <record id="view_intern_dashboard_kanban" model="ir.ui.view">
+        <field name="name">intern.dashboard.kanban</field>
+        <field name="model">hr.employee</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_dashboard">
+                <field name="name"/>
+                <field name="hours_rendered"/>
+                <field name="contracted_hours"/>
+                <field name="average_score"/>
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_card p-3">
+
+                            <!-- Header -->
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong class="text-truncate">
+                                    <field name="name"/>
+                                </strong>
+                            </div>
+
+                            <!-- Hours Section -->
+                            <div class="mb-2">
+                                <small class="text-muted">Hours Rendered</small>
+                                <div class="fw-bold">
+                                    <field name="hours_rendered"/> /
+                                    <field name="contracted_hours"/>
+                                </div>
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div class="progress mb-3" style="height: 8px;">
+                                <div class="progress-bar"
+                                    role="progressbar"
+                                    t-att-style="'width: ' + (
+                                        record.contracted_hours.value 
+                                        ? (record.hours_rendered.value / record.contracted_hours.value * 100) 
+                                        : 0
+                                    ) + '%'">
+                                </div>
+                            </div>
+
+                            <!-- Average Score -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Average Score</small>
+                                <span class="fw-bold">
+                                    <field name="average_score"/>
+                                </span>
+                            </div>
+
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Form view extension: Intern Details tab -->
+   <record id="view_employee_form_intern" model="ir.ui.view">
+    <field name="name">hr.employee.form.intern</field>
+    <field name="model">hr.employee</field>
+    <field name="inherit_id" ref="hr.view_employee_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet" position="inside">
+        <group string="Intern Details">
+          <field name="is_intern"/>
+          <field name="contracted_hours"/>
+          <field name="hours_rendered"/>
+          <field name="average_score"/>
+          <field name="onboarding_checklist" widget="html"/>
+        </group>
+
+        <group string="Performance Metrics">
+          <field name="timeliness_score"/>
+          <field name="responsiveness_score"/>
+          <field name="punctuality_score"/>
+          <field name="quantity_score"/>
+          <field name="quality_score"/>
+          <field name="effectiveness_score"/>
+          <field name="efficiency_score"/>
+          <field name="financial_accuracy_score"/>
+        </group>
+      </xpath>
+    </field>
+  </record>
+</odoo>
