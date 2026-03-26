@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_employee_intern,HR Employee Intern,hr.model_hr_employee,hr.group_hr_user,1,1,1,0
+access_hr_employee_intern_portal,HR Employee Intern Portal,hr.model_hr_employee,base.group_portal,1,0,0,0
+access_res_users_portal,res.users portal access,base.model_res_users,base.group_portal,1,0,0,0
+access_meeting_attendance_user,famtech.meeting.attendance.user,model_famtech_meeting_attendance,base.group_user,1,1,1,1
+access_meeting_attendance_portal,famtech.meeting.attendance.portal,model_famtech_meeting_attendance,base.group_portal,1,0,0,0

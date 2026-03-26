@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Add QA Score field to tasks, editable only when task is completed -->
+        <record id="view_task_form_inherit_qa_score" model="ir.ui.view">
+            <field name="name">project.task.form.qa.score</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='user_ids']" position="after">
+                    <field name="qa_score" readonly="state != '1_done'"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Remove domain restriction on user_ids field -->
+        <record id="view_task_form_inherit_portal_users" model="ir.ui.view">
+            <field name="name">project.task.form.portal.users</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='user_ids']" position="attributes">
+                    <attribute name="domain">[]</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
