@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend calendar event form to show attendance -->
+    <record id="view_calendar_event_form_inherit_attendance" model="ir.ui.view">
+        <field name="name">calendar.event.form.inherit.attendance</field>
+        <field name="model">calendar.event</field>
+        <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
+        <field name="arch" type="xml">
+            <!-- Add Attendance tab -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Attendance" name="attendance_tab">
+                    <field name="attendance_ids" mode="list,form">
+                        <list editable="bottom" delete="true">
+                            <field name="employee_id"/>
+                            <field name="join_time" readonly="1"/>
+                            <field name="minutes_late" readonly="1"/>
+                            <field name="attendance_status" widget="badge" readonly="1"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
