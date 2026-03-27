@@ -137,7 +137,7 @@ class InternPortal(CustomerPortal):
             employee.sudo().write({'handbook_reviewed': True})
 
         # Redirect to the actual file
-        return request.redirect('/web/content/intern_handbook.pdf')
+        return request.redirect('https://famtech-innovative-it-solutions2.odoo.com/knowledge/article/78', local=False)
     
     @http.route(['/my/intern/calendar'], type='http', auth='user', website=True)
     def portal_intern_calendar(self, **kw):

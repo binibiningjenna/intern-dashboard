@@ -51,6 +51,20 @@
             </kanban>
         </field>
     </record>
+    
+    <record id="action_intern_dashboard" model="ir.actions.act_window">
+        <field name="name">Intern Dashboard</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_id" ref="view_intern_dashboard_kanban"/>
+        <field name="domain">[('is_intern','=',True)]</field>
+    </record>
+
+    <menuitem id="menu_intern_dashboard_root"
+              name="Intern Dashboard"
+              parent="hr.menu_hr_root"
+              action="action_intern_dashboard"/>
+
 
     <record id="view_employee_form_intern" model="ir.ui.view">
         <field name="name">hr.employee.form.intern</field>
@@ -110,17 +124,4 @@
 
         </field>
     </record>
-
-    <record id="action_intern_dashboard" model="ir.actions.act_window">
-        <field name="name">Intern Dashboard</field>
-        <field name="res_model">hr.employee</field>
-        <field name="view_mode">kanban,form</field>
-        <field name="view_id" ref="view_intern_dashboard_kanban"/>
-        <field name="domain">[('is_intern','=',True)]</field>
-    </record>
-
-    <menuitem id="menu_intern_dashboard_root"
-              name="Intern Dashboard"
-              parent="hr.menu_hr_root"
-              action="action_intern_dashboard"/>
 </odoo>
