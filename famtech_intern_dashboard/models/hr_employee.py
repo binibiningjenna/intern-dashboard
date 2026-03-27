@@ -7,7 +7,7 @@ class HREmployee(models.Model):
     # Timesheets
     timesheet_ids = fields.One2many(
         'account.analytic.line',
-        'user_id',  
+        'user_id',
         string="Timesheets",
         compute="_compute_timesheet_ids",
         store=False
@@ -15,10 +15,18 @@ class HREmployee(models.Model):
 
     # Intern Fields
     is_intern = fields.Boolean("Is Intern", default=False)
-    task_target_monthly = fields.Integer(string="Task Target (Monthly)",required=True)
+    task_target_monthly = fields.Integer(string="Task Target (Monthly)", required=True)
     contracted_hours = fields.Float("Contracted Hours", help="Total hours per contract")
     hours_rendered = fields.Float("Hours Rendered", compute="_compute_hours_rendered", store=True)
-    onboarding_checklist = fields.Text("Onboarding Checklist")
+
+    # Onboarding step flags (used by portal onboarding page)
+    handbook_reviewed = fields.Boolean("Handbook Reviewed", default=False)
+    orientation_completed = fields.Boolean("Orientation Completed", default=False)
+    odoo_access_granted = fields.Boolean("Odoo Access Granted", default=False)
+    first_task_assigned = fields.Boolean("First Task Assigned", default=False)
+    internship_start_date = fields.Date("Internship Start Date")
+    internship_end_date = fields.Date("Internship End Date")
+    supervisor_id = fields.Many2one('hr.employee', string="Supervisor")
 
     # Performance Scores
     timeliness_score = fields.Float("Timeliness Score", readonly=True)
@@ -35,7 +43,11 @@ class HREmployee(models.Model):
     responsiveness_google_chat = fields.Float("Google Chat Response", default=5.0, help="Rate responsiveness on Google Chat (1-5)")
     responsiveness_gmail = fields.Float("Gmail Response", default=5.0, help="Rate responsiveness on Google Gmail (1-5)")
     responsiveness_zoho_email = fields.Float("Zoho Email Response", default=5.0, help="Rate responsiveness on Zoho Email (1-5)")
-    responsiveness_score = fields.Float("Responsiveness Score", compute="_compute_responsiveness_score", store=True, readonly=True,
+    responsiveness_score = fields.Float(
+        "Responsiveness Score",
+        compute="_compute_responsiveness_score",
+        store=True,
+        readonly=True,
         help="Average of Viber, Google Chat, Gmail, and Zoho Email responsiveness scores"
     )
 
@@ -79,7 +91,6 @@ class HREmployee(models.Model):
     def _compute_timesheet_ids(self):
         """Fetch timesheet entries for the employee"""
         Analytic = self.env['account.analytic.line']
-
         for emp in self:
             if emp.user_id:
                 domain = [('user_id', '=', emp.user_id.id)]
@@ -88,7 +99,6 @@ class HREmployee(models.Model):
                     domain = [('employee_id', '=', emp.id)]
                 else:
                     domain = []
-
             emp.timesheet_ids = Analytic.search(domain) if domain else Analytic.browse()
 
     @api.depends('attendance_ids.check_in', 'attendance_ids.check_out', 'attendance_ids.overtime_status', 'timesheet_ids.unit_amount')
@@ -96,16 +106,12 @@ class HREmployee(models.Model):
         """Calculate total hours from APPROVED attendance and timesheets"""
         for emp in self:
             total = 0.0
-
             for att in emp.attendance_ids:
                 is_approved = att.overtime_status == 'approved'
-                
                 if is_approved and att.check_in and att.check_out:
                     delta = att.check_out - att.check_in
                     total += delta.total_seconds() / 3600.0
-
             total += sum(emp.timesheet_ids.mapped('unit_amount'))
-
             emp.hours_rendered = total
 
     @api.depends(
@@ -126,7 +132,6 @@ class HREmployee(models.Model):
                 rec.efficiency_score or 0,
                 rec.accuracy_score or 0,
             ]
-
             rec.average_score = sum(scores) / len(scores) if scores else 0
 
     @api.depends()
@@ -136,11 +141,8 @@ class HREmployee(models.Model):
             tasks = self.env['project.task'].search([
                 ('user_ids.employee_id', '=', emp.id)
             ])
-
             completed_tasks = tasks.filtered(lambda t: t.stage_id.fold)
-
             emp.tasks_completed = len(completed_tasks)
-
             emp.tasks_on_time = len(
                 completed_tasks.filtered(
                     lambda t: t.date_deadline and t.date_end and t.date_end <= t.date_deadline
@@ -151,31 +153,24 @@ class HREmployee(models.Model):
     def _compute_response_time(self):
         """Calculate average response time to messages"""
         for emp in self:
-
             if not emp.user_id:
                 emp.messages_response_time = 0
                 continue
-
             partner = emp.user_id.partner_id
-
             msgs = self.env['mail.message'].search([
                 ('author_id', '=', partner.id)
             ], order='create_date asc', limit=200)
-
             total_delays = 0.0
             count = 0
-
             for m in msgs:
                 replies = self.env['mail.message'].search([
                     ('parent_id', '=', m.id),
                     ('author_id', '!=', partner.id)
                 ], limit=1, order='create_date asc')
-
                 if replies:
                     delta = replies.create_date - m.create_date
                     total_delays += delta.total_seconds() / 3600.0
                     count += 1
-
             emp.messages_response_time = total_delays / count if count else 0
 
     @api.depends()
@@ -199,3 +194,30 @@ class HREmployee(models.Model):
             ])
             emp.total_meetings = len(attendances)
             emp.total_lates = len(attendances.filtered(lambda a: a.attendance_status in ['late', 'very_late']))
+
+    # PORTAL ACCESS
+    def _get_public_fields(self):
+        """Extend the list of fields accessible to portal/public users"""
+        public_fields = super()._get_public_fields()
+        return public_fields | {
+            'is_intern',
+            'contracted_hours',
+            'hours_rendered',
+            'onboarding_checklist',
+            'handbook_reviewed',
+            'orientation_completed',
+            'odoo_access_granted',
+            'first_task_assigned',
+            'internship_start_date',
+            'internship_end_date',
+            'supervisor_id',
+            'timeliness_score',
+            'responsiveness_score',
+            'punctuality_score',
+            'quantity_score',
+            'quality_score',
+            'effectiveness_score',
+            'efficiency_score',
+            'accuracy_score',
+            'average_score',
+        }

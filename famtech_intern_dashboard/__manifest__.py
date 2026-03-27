@@ -22,7 +22,7 @@
         'views/project_task_view.xml',
         'views/crm_lead_view.xml',
         'data/cron_compute_intern_metrics.xml',
-        # 'views/portal_intern_onboarding.xml', 
+        'views/portal_intern_onboarding.xml',
         # 'views/res_config_settings_views.xml', 
         # 'data/cron_intern_hours_alert.xml',  
         # 'data/mail_template_intern_hours.xml', 

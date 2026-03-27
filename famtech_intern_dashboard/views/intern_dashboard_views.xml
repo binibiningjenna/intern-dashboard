@@ -52,19 +52,6 @@
         </field>
     </record>
 
-    <record id="action_intern_dashboard" model="ir.actions.act_window">
-        <field name="name">Intern Dashboard</field>
-        <field name="res_model">hr.employee</field>
-        <field name="view_mode">kanban,form</field>
-        <field name="view_id" ref="view_intern_dashboard_kanban"/>
-        <field name="domain">[('is_intern','=',True)]</field>
-    </record>
-
-    <menuitem id="menu_intern_dashboard_root"
-              name="Intern Dashboard"
-              parent="hr.menu_hr_root"
-              action="action_intern_dashboard"/>
-
     <record id="view_employee_form_intern" model="ir.ui.view">
         <field name="name">hr.employee.form.intern</field>
         <field name="model">hr.employee</field>
@@ -80,7 +67,14 @@
                     <field name="hours_rendered"/>
                     <field name="task_target_monthly" placeholder="e.g. 10" help="Enter the number of tasks expected per month (numeric value only)."/>
                     <field name="average_score"/>
-                    <field name="onboarding_checklist" widget="html"/>
+                </group>
+
+                <!-- Onboarding Checklist Details -->
+                <group string="Onboarding Checklist">
+                    <field name="handbook_reviewed"/>
+                    <field name="orientation_completed"/>
+                    <field name="odoo_access_granted"/>
+                    <field name="first_task_assigned"/>
                 </group>
 
                 <!-- Performance Metrics -->
@@ -116,4 +110,17 @@
 
         </field>
     </record>
+
+    <record id="action_intern_dashboard" model="ir.actions.act_window">
+        <field name="name">Intern Dashboard</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_id" ref="view_intern_dashboard_kanban"/>
+        <field name="domain">[('is_intern','=',True)]</field>
+    </record>
+
+    <menuitem id="menu_intern_dashboard_root"
+              name="Intern Dashboard"
+              parent="hr.menu_hr_root"
+              action="action_intern_dashboard"/>
 </odoo>
