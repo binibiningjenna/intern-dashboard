@@ -92,7 +92,8 @@
                               </t>
                             </span>
                           </div>
-                          <a href="/web#action=calendar.action_calendar_event" class="btn btn-sm btn-outline-primary">View Calendar</a>
+                          <!-- portal_intern_onboarding.xml — Step 2 button -->
+                          <a href="/my/intern/calendar" class="btn btn-sm btn-outline-primary">View Calendar</a>
                         </li>
 
                         <!-- Step 3 -->
@@ -276,6 +277,92 @@
         </section>
 
       </t>
+    </t>
+  </template>
+
+  <!-- ============================================================
+      TEMPLATE 3: Portal calendar page at /my/intern/calendar
+      ============================================================ -->
+  <template id="portal_intern_calendar_page" name="Intern Calendar">
+    <t t-call="portal.portal_layout">
+      <div class="container mt-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2>My Orientation &amp; Meetings</h2>
+          <a href="/my/intern/onboarding" class="btn btn-sm btn-outline-secondary">
+            ← Back to Onboarding
+          </a>
+        </div>
+
+        <t t-if="events">
+          <div class="list-group">
+            <t t-foreach="events" t-as="event">
+              <div class="list-group-item list-group-item-action mb-2 rounded border">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div class="w-100">
+
+                    <!-- Event title -->
+                    <h6 class="mb-1 fw-bold">
+                      <t t-out="event.name"/>
+                    </h6>
+
+                    <!-- Start & End -->
+                    <p class="mb-1 text-muted small">
+                      <strong>Start:</strong>
+                      <t t-out="event.start.strftime('%B %d, %Y %I:%M %p')"/>
+                    </p>
+                    <p class="mb-1 text-muted small">
+                      <strong>End:</strong>
+                      <t t-out="event.stop.strftime('%B %d, %Y %I:%M %p')"/>
+                    </p>
+
+                    <!-- Location (if set) -->
+                    <t t-if="event.location">
+                      <p class="mb-1 text-muted small">
+                        <strong>Location:</strong> <t t-out="event.location"/>
+                      </p>
+                    </t>
+
+                    <!-- Video Call URL -->
+                    <t t-if="event.videocall_location">
+                      <p class="mb-1 small">
+                        <strong>Video Call:</strong>
+                        <a t-att-href="event.videocall_location"
+                          target="_blank"
+                          class="btn btn-sm btn-success ms-2">
+                          🎥 Join Video Call
+                        </a>
+                      </p>
+                    </t>
+
+                    <!-- Description (if set) -->
+                    <t t-if="event.description">
+                      <p class="mb-0 text-muted small mt-1">
+                        <t t-out="event.description"/>
+                      </p>
+                    </t>
+
+                  </div>
+
+                  <!-- Date badge -->
+                  <span class="badge bg-primary ms-3 text-nowrap align-self-start">
+                    <t t-out="event.start.strftime('%b %d')"/>
+                  </span>
+
+                </div>
+              </div>
+            </t>
+          </div>
+        </t>
+
+        <t t-else="">
+          <div class="alert alert-info">
+            No upcoming orientation or meeting events found for your account.
+            Please contact HR if you believe this is an error.
+          </div>
+        </t>
+
+      </div>
     </t>
   </template>
 

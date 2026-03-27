@@ -4,3 +4,4 @@ access_hr_employee_intern_portal,HR Employee Intern Portal,hr.model_hr_employee,
 access_res_users_portal,res.users portal access,base.model_res_users,base.group_portal,1,0,0,0
 access_meeting_attendance_user,famtech.meeting.attendance.user,model_famtech_meeting_attendance,base.group_user,1,1,1,1
 access_meeting_attendance_portal,famtech.meeting.attendance.portal,model_famtech_meeting_attendance,base.group_portal,1,0,0,0
+access_calendar_event_portal,calendar.event portal,calendar.model_calendar_event,base.group_portal,1,0,0,0

@@ -138,3 +138,31 @@ class InternPortal(CustomerPortal):
 
         # Redirect to the actual file
         return request.redirect('/web/content/intern_handbook.pdf')
+    
+    @http.route(['/my/intern/calendar'], type='http', auth='user', website=True)
+    def portal_intern_calendar(self, **kw):
+        user = request.env.user
+        employee = request.env['hr.employee'].sudo().search([
+            ('user_id', '=', user.id),
+            ('is_intern', '=', True)
+        ], limit=1)
+
+        if not employee:
+            return request.redirect('/my/home')
+
+        partner = employee.user_id.partner_id
+        from datetime import datetime
+        now = datetime.now()
+
+        # Fetch upcoming events where the intern is an attendee
+        events = request.env['calendar.event'].sudo().search([
+            ('stop', '>=', now),
+            ('partner_ids', 'in', partner.ids),
+        ], order='start asc', limit=50)
+
+        values = {
+            'employee': employee,
+            'events': events,
+            'page_name': 'intern_calendar',
+        }
+        return request.render('famtech_intern_dashboard.portal_intern_calendar_page', values)
