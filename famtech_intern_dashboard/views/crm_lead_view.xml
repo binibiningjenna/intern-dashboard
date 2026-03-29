@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+         <!-- Remove domain restriction on user_id field in CRM leads -->
+       <record id="crm_lead_form_inherit_portal_users" model="ir.ui.view">
+            <field name="name">crm.lead.form.portal.users</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='user_id']" position="attributes">
+                    <attribute name="domain">[]</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

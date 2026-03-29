@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="famtech_intern_dashboard.GraphViewButtonsHideMeasures"
+       t-inherit="web.GraphView.Buttons"
+       t-inherit-mode="extension">
+        <xpath expr="//div[@aria-label='Main actions']" position="replace">
+            <div t-if="!model.metaData.context || !model.metaData.context.hide_graph_measures"
+                 class="btn-group"
+                 role="toolbar"
+                 aria-label="Main actions">
+                <ReportViewMeasures
+                    measures="model.metaData.measures"
+                    activeMeasures="[model.metaData.measure]"
+                    onMeasureSelected.bind="this.onMeasureSelected"
+                />
+            </div>
+        </xpath>
+    </t>
+</templates>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_intern_dashboard_kanban" model="ir.ui.view">
+        <field name="name">intern.dashboard.kanban</field>
+        <field name="model">hr.employee</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_dashboard">
+                <field name="name"/>
+                <field name="hours_rendered"/>
+                <field name="contracted_hours"/>
+                <field name="average_score"/>
+                <field name="punctuality_score"/>
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_card p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong class="text-truncate">
+                                    <field name="name"/>
+                                </strong>
+                            </div>
+
+                            <div class="mb-2">
+                                <small class="text-muted">Hours Rendered</small>
+                                <div class="fw-bold">
+                                    <field name="hours_rendered"/> /
+                                    <field name="contracted_hours"/>
+                                </div>
+                            </div>
+
+                            <div class="progress mb-3" style="height: 8px;">
+                                <div class="progress-bar"
+                                    role="progressbar"
+                                    t-att-style="'width: ' + (
+                                        record.contracted_hours.value 
+                                        ? (record.hours_rendered.value / record.contracted_hours.value * 100) 
+                                        : 0
+                                    ) + '%'">
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Average Score</small>
+                                <span class="fw-bold">
+                                    <field name="average_score"/>
+                                </span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="action_intern_dashboard" model="ir.actions.act_window">
+        <field name="name">Intern Dashboard</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_id" ref="view_intern_dashboard_kanban"/>
+        <field name="domain">[('is_intern','=',True)]</field>
+    </record>
+
+    <menuitem id="menu_intern_dashboard_root"
+              name="Intern Dashboard"
+              parent="hr.menu_hr_root"
+              action="action_intern_dashboard"/>
+
+    <record id="view_employee_form_intern" model="ir.ui.view">
+        <field name="name">hr.employee.form.intern</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//notebook/page[1]" position="inside">
+                
+                <!-- Intern Details -->
+                <group string="Intern Details">
+                    <field name="is_intern"/>
+                    <field name="contracted_hours"/>
+                    <field name="hours_rendered"/>
+                    <field name="task_target_monthly" placeholder="e.g. 10" help="Enter the number of tasks expected per month (numeric value only)."/>
+                    <field name="average_score"/>
+                    <field name="onboarding_checklist" widget="html"/>
+                </group>
+
+                <!-- Performance Metrics -->
+                <group string="Performance Metrics">
+                    <group>
+                        <field name="timeliness_score" readonly="1"/>
+                        <field name="punctuality_score" readonly="1"/>
+                        <field name="quantity_score" readonly="1"/>
+                        <field name="quality_score" readonly="1"/>
+                        <field name="effectiveness_score" readonly="1"/>
+                        <field name="efficiency_score" readonly="1"/>
+                        <field name="accuracy_score" readonly="1"/>
+                    </group>
+
+                    <group string="Responsiveness" col="4">
+                        <field name="responsiveness_viber" widget="float" string="Viber"/>
+                        <field name="responsiveness_google_chat" widget="float" string="Google Chat"/>
+                        <field name="responsiveness_gmail" widget="float" string="Gmail"/>
+                        <field name="responsiveness_zoho_email" widget="float" string="Zoho"/>
+                        <newline colspan="4"/>
+                        <div class="o_row" colspan="4" style="margin-top: -5px; border-top: 1px solid #e0e0e0; padding-top: 5px;">
+                            <strong>Responsiveness Score:</strong>
+                            <field name="responsiveness_score" readonly="1" nolabel="1"/>
+                        </div>
+                    </group>
+                </group>
+
+                <group string="Goals / Targets" col="1">
+                    <div style="max-width: 620px;">
+                    <div class="o_row" style="font-weight: 600; margin-bottom: 8px; padding: 0 0 8px 0; border-bottom: 1px solid #e0e0e0;">
+                        <div style="width: 180px;">Category</div>
+                        <div style="width: 150px;">Goal / Target</div>
+                        <div style="width: 120px; text-align: center;">Results</div>
+                    </div>
+
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px; margin-bottom: 2px;">
+                        <div style="width: 180px; font-weight: 600;">Timeliness</div>
+                        <div style="width: 150px;">
+                            <field name="timeliness_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="timeliness_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="timeliness_target_result == 'success'" decoration-danger="timeliness_target_result == 'failed'"/>
+                        </div>
+                    </div>
+
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px; margin-bottom: 2px;">
+                        <div style="width: 180px; font-weight: 600;">Punctuality</div>
+                        <div style="width: 150px;">
+                            <field name="punctuality_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="punctuality_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="punctuality_target_result == 'success'" decoration-danger="punctuality_target_result == 'failed'"/>
+                        </div>
+                    </div>
+
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px; margin-bottom: 2px;">
+                        <div style="width: 180px; font-weight: 600;">Quantity</div>
+                        <div style="width: 150px;">
+                            <field name="quantity_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="quantity_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="quantity_target_result == 'success'" decoration-danger="quantity_target_result == 'failed'"/>
+                        </div>
+                    </div>
+
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px; margin-bottom: 2px;">
+                        <div style="width: 180px; font-weight: 600;">Quality</div>
+                        <div style="width: 150px;">
+                            <field name="quality_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="quality_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="quality_target_result == 'success'" decoration-danger="quality_target_result == 'failed'"/>
+                        </div>
+                    </div>
+
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px; margin-bottom: 2px;">
+                        <div style="width: 180px; font-weight: 600;">Effectiveness</div>
+                        <div style="width: 150px;">
+                            <field name="effectiveness_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="effectiveness_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="effectiveness_target_result == 'success'" decoration-danger="effectiveness_target_result == 'failed'"/>
+                        </div>
+                    </div>
+
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px; margin-bottom: 2px;">
+                        <div style="width: 180px; font-weight: 600;">Efficiency</div>
+                        <div style="width: 150px;">
+                            <field name="efficiency_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="efficiency_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="efficiency_target_result == 'success'" decoration-danger="efficiency_target_result == 'failed'"/>
+                        </div>
+                    </div>
+
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px; margin-bottom: 2px;">
+                        <div style="width: 180px; font-weight: 600;">Accuracy</div>
+                        <div style="width: 150px;">
+                            <field name="accuracy_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="accuracy_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="accuracy_target_result == 'success'" decoration-danger="accuracy_target_result == 'failed'"/>
+                        </div>
+                    </div>
+
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px;">
+                        <div style="width: 180px; font-weight: 600;">Responsiveness</div>
+                        <div style="width: 150px;">
+                            <field name="responsiveness_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="responsiveness_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="responsiveness_target_result == 'success'" decoration-danger="responsiveness_target_result == 'failed'"/>
+                        </div>
+                    </div>
+                    </div>
+                </group>
+
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

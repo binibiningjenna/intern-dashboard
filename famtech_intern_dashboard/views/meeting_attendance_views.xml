@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List view for meeting attendance -->
+    <record id="view_meeting_attendance_list" model="ir.ui.view">
+        <field name="name">famtech.meeting.attendance.list</field>
+        <field name="model">famtech.meeting.attendance</field>
+        <field name="arch" type="xml">
+            <list string="Meeting Attendance" default_order="join_time desc" delete="true">
+                <field name="employee_id"/>
+                <field name="join_time" readonly="1"/>
+                <field name="meeting_scheduled_start"/>
+                <field name="minutes_late" readonly="1"/>
+                <field name="attendance_status" widget="badge" readonly="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form view for meeting attendance -->
+    <record id="view_meeting_attendance_form" model="ir.ui.view">
+        <field name="name">famtech.meeting.attendance.form</field>
+        <field name="model">famtech.meeting.attendance</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="calendar_event_id"/>
+                        </group>
+                        <group>
+                            <field name="join_time" readonly="1"/>
+                            <field name="meeting_scheduled_start" readonly="1"/>
+                            <field name="minutes_late" readonly="1"/>
+                            <field name="attendance_status" widget="badge" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for meeting attendance -->
+    <record id="action_meeting_attendance" model="ir.actions.act_window">
+        <field name="name">Meeting Attendance Logs</field>
+        <field name="res_model">famtech.meeting.attendance</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_meeting_attendance_list"/>
+    </record>
+</odoo>

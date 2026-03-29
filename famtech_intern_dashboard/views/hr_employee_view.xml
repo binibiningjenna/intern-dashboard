@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_employee_form_remove_share_domain" model="ir.ui.view">
+            <field name="name">hr.employee.form.remove.share.domain</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="priority" eval="999"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[field[@name='user_id']]" position="replace">
+                    <div class="o_row">
+                        <field name="user_id"
+                               string="Related User"
+                               domain="[('company_ids', 'in', company_id)]"
+                               context="{'default_create_employee_id': id}"
+                               widget="many2one_avatar_user"/>
+                        <button string="Create User"
+                                class="btn btn-link"
+                                type="object"
+                                name="action_create_user"
+                                invisible="user_id"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
