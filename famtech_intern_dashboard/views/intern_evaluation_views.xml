@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_intern_evaluation_form" model="ir.ui.view">
+            <field name="name">intern.evaluation.form</field>
+            <field name="model">intern.evaluation</field>
+            <field name="arch" type="xml">
+                <form string="Intern Evaluation">
+                    <sheet>
+                        <h1>
+                            <field name="employee_id"/>
+                        </h1>
+                        <group>
+                            <group>
+                                <field name="eval_date"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Performance Scores">
+                                <group>
+                                    <group string="KPI Targets">
+                                        <field name="timeliness_target_percentage" readonly="1"/>
+                                        <field name="responsiveness_target_percentage" readonly="1"/>
+                                        <field name="punctuality_target_percentage" readonly="1"/>
+                                        <field name="quantity_target_percentage" readonly="1"/>
+                                        <field name="quality_target_percentage" readonly="1"/>
+                                        <field name="effectiveness_target_percentage" readonly="1"/>
+                                        <field name="efficiency_target_percentage" readonly="1"/>
+                                        <field name="accuracy_target_percentage" readonly="1"/>
+                                    </group>
+                                    <group string="Competency Scores (1-5)">
+                                        <field name="technical_score"/>
+                                        <field name="communication_score"/>
+                                        <field name="collaboration_score"/>
+                                        <field name="timeliness_score"/>
+                                        <field name="responsiveness_score"/>
+                                    </group>
+                                    <group string="Behavioral/Operational Scores (1-5)">
+                                        <field name="punctuality_score"/>
+                                        <field name="quantity_score"/>
+                                        <field name="quality_score"/>
+                                        <field name="effectiveness_score"/>
+                                        <field name="efficiency_score"/>
+                                        <field name="financial_accuracy_score"/>
+                                    </group>
+                                    <group string="Summary">
+                                        <field name="avg_score" readonly="1"/>
+                                    </group>
+                                </group>
+                                <group string="Target Validation">
+                                    <group>
+                                        <field name="timeliness_target_score" readonly="1"/>
+                                        <field name="timeliness_target_result" widget="badge" readonly="1" decoration-success="timeliness_target_result == 'success'" decoration-danger="timeliness_target_result == 'failed'"/>
+                                        <field name="responsiveness_target_score" readonly="1"/>
+                                        <field name="responsiveness_target_result" widget="badge" readonly="1" decoration-success="responsiveness_target_result == 'success'" decoration-danger="responsiveness_target_result == 'failed'"/>
+                                        <field name="punctuality_target_score" readonly="1"/>
+                                        <field name="punctuality_target_result" widget="badge" readonly="1" decoration-success="punctuality_target_result == 'success'" decoration-danger="punctuality_target_result == 'failed'"/>
+                                        <field name="quantity_target_score" readonly="1"/>
+                                        <field name="quantity_target_result" widget="badge" readonly="1" decoration-success="quantity_target_result == 'success'" decoration-danger="quantity_target_result == 'failed'"/>
+                                    </group>
+                                    <group>
+                                        <field name="quality_target_score" readonly="1"/>
+                                        <field name="quality_target_result" widget="badge" readonly="1" decoration-success="quality_target_result == 'success'" decoration-danger="quality_target_result == 'failed'"/>
+                                        <field name="effectiveness_target_score" readonly="1"/>
+                                        <field name="effectiveness_target_result" widget="badge" readonly="1" decoration-success="effectiveness_target_result == 'success'" decoration-danger="effectiveness_target_result == 'failed'"/>
+                                        <field name="efficiency_target_score" readonly="1"/>
+                                        <field name="efficiency_target_result" widget="badge" readonly="1" decoration-success="efficiency_target_result == 'success'" decoration-danger="efficiency_target_result == 'failed'"/>
+                                        <field name="accuracy_target_score" readonly="1"/>
+                                        <field name="accuracy_target_result" widget="badge" readonly="1" decoration-success="accuracy_target_result == 'success'" decoration-danger="accuracy_target_result == 'failed'"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Task Metrics">
+                                <group>
+                                    <group string="Task Completion">
+                                        <field name="tasks_completed"/>
+                                        <field name="tasks_on_time"/>
+                                        <field name="timeliness_percentage" readonly="1"/>
+                                    </group>
+                                    <group string="Hours Tracking">
+                                        <field name="contract_hours"/>
+                                        <field name="actual_hours"/>
+                                        <field name="hours_variance" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Comments">
+                                <field name="comments"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_intern_evaluation_list" model="ir.ui.view">
+            <field name="name">intern.evaluation.list</field>
+            <field name="model">intern.evaluation</field>
+            <field name="arch" type="xml">
+                <list string="Intern Evaluations" multi_edit="1" class="intern_evaluation_balanced_list">
+                    <field name="employee_id"/>
+                    <field name="eval_date"/>
+                    <field name="avg_score"/>
+                    <field name="timeliness_target_percentage"/>
+                    <field name="timeliness_target_result" widget="badge" decoration-success="timeliness_target_result == 'success'" decoration-danger="timeliness_target_result == 'failed'"/>
+                    <field name="contract_hours"/>
+                    <field name="actual_hours"/>
+                    <field name="timeliness_percentage"/>
+                    <field name="responsiveness_score"/>
+                    <field name="tasks_completed"/>
+                    <field name="tasks_on_time"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_intern_evaluation_search" model="ir.ui.view">
+            <field name="name">intern.evaluation.search</field>
+            <field name="model">intern.evaluation</field>
+            <field name="arch" type="xml">
+                <search string="Intern Evaluations">
+                    <field name="employee_id"/>
+                    <field name="eval_date"/>
+                    <filter string="Current Month" name="current_month"
+                        domain="[('eval_date', '&gt;=', context_today().replace(day=1)), ('eval_date', '&lt;=', context_today().replace(day=28) + relativedelta(months=1, day=1) - relativedelta(days=1))]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_by_date" string="Evaluation Date" context="{'group_by': 'eval_date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_intern_evaluation" model="ir.actions.act_window">
+            <field name="name">Intern Evaluations</field>
+            <field name="res_model">intern.evaluation</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

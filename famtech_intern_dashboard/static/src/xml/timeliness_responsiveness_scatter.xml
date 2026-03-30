@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="famtech_intern_dashboard.TimelinessResponsivenessScatter">
+        <div class="o_action h-100">
+            <div class="p-4 h-100 d-flex flex-column gap-3">
+                <div>
+                    <h2 class="mb-1">Timeliness vs Responsiveness</h2>
+                </div>
+                <t t-if="state.loaded and !state.points.length">
+                    <div class="alert alert-info mb-0">No data available yet for Timeliness vs Responsiveness.</div>
+                </t>
+                <t t-else="">
+                    <div class="bg-white border rounded p-3 flex-grow-1" style="min-height: 520px;">
+                        <canvas t-ref="canvas" style="width: 100%; height: 100%;"></canvas>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </t>
+</templates>

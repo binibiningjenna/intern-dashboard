@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_intern_contract_hours_form" model="ir.ui.view">
+            <field name="name">intern.contract.hours.form</field>
+            <field name="model">intern.contract.hours</field>
+            <field name="arch" type="xml">
+                <form string="Intern Contract Hours">
+                    <sheet>
+                        <h1>
+                            <field name="employee_id"/>
+                        </h1>
+                        <group>
+                            <group>
+                                <field name="month"/>
+                                <field name="year"/>
+                            </group>
+                            <group>
+                                <field name="contract_hours"/>
+                                <field name="actual_hours"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Calculated Metrics">
+                                <field name="hours_variance" readonly="1"/>
+                                <field name="attendance_rate" readonly="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_intern_contract_hours_list" model="ir.ui.view">
+            <field name="name">intern.contract.hours.list</field>
+            <field name="model">intern.contract.hours</field>
+            <field name="arch" type="xml">
+                <list string="Contract Hours" multi_edit="1">
+                    <field name="employee_id"/>
+                    <field name="month"/>
+                    <field name="year"/>
+                    <field name="contract_hours"/>
+                    <field name="actual_hours"/>
+                    <field name="hours_variance"/>
+                    <field name="attendance_rate"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_intern_contract_hours_search" model="ir.ui.view">
+            <field name="name">intern.contract.hours.search</field>
+            <field name="model">intern.contract.hours</field>
+            <field name="arch" type="xml">
+                <search string="Contract Hours">
+                    <field name="employee_id"/>
+                    <field name="month"/>
+                    <field name="year"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                        <filter name="group_by_month" string="Month" context="{'group_by': 'month'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_intern_contract_hours" model="ir.actions.act_window">
+            <field name="name">Intern Contract Hours</field>
+            <field name="res_model">intern.contract.hours</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

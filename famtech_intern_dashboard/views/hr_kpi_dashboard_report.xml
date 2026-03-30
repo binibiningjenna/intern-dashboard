@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="paperformat_hr_kpi_insights" model="report.paperformat">
+            <field name="name">Intern KPI Insights Paper Format</field>
+            <field name="default" eval="False"/>
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">8</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">3</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <record id="action_report_hr_kpi_insights" model="ir.actions.report">
+            <field name="name">Intern KPI Insights Report</field>
+            <field name="model">hr.kpi.dashboard</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">famtech_intern_dashboard.report_hr_kpi_insights</field>
+            <field name="report_file">famtech_intern_dashboard.report_hr_kpi_insights</field>
+            <field name="print_report_name">'Intern KPI Insights - %s' % (object.date_to or 'Report')</field>
+            <field name="paperformat_id" ref="famtech_intern_dashboard.paperformat_hr_kpi_insights"/>
+        </record>
+
+        <template id="report_hr_kpi_insights">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="wizard">
+                    <t t-set="payload" t-value="wizard.get_report_payload()"/>
+                    <t t-call="web.basic_layout">
+                        <div class="page">
+                            <style>
+                                .page {
+                                    font-family: Calibri, Arial, sans-serif;
+                                    font-size: 18px;
+                                }
+                                .kpi-header {
+                                    border-bottom: 2px solid #1d4f6d;
+                                    padding-bottom: 10px;
+                                    margin-bottom: 14px;
+                                }
+                                .kpi-company {
+                                    font-size: 18px;
+                                    font-weight: 700;
+                                    color: #0f172a;
+                                    letter-spacing: normal;
+                                }
+                                .kpi-report-title {
+                                    margin: 6px 0 2px 0;
+                                    color: #0f2d40;
+                                    font-size: 30px;
+                                    font-weight: 700;
+                                }
+                                .kpi-subtitle,
+                                .kpi-meta-text,
+                                .kpi-body-text,
+                                .kpi-small {
+                                    color: #475467;
+                                }
+                                .kpi-subtitle {
+                                    margin: 0;
+                                    font-size: 18px;
+                                }
+                                .kpi-meta-table td {
+                                    padding: 5px 8px;
+                                    border: 1px solid #d7dde4;
+                                    font-size: 18px;
+                                }
+                                .kpi-meta-label {
+                                    width: 22%;
+                                    background: #f4f7fa;
+                                    font-weight: 700;
+                                    color: #344054;
+                                }
+                                .kpi-section-title {
+                                    margin: 18px 0 10px 0;
+                                    font-size: 23px;
+                                    font-weight: 700;
+                                    color: #16324f;
+                                }
+                                .kpi-card-grid {
+                                    width: 100%;
+                                    border-collapse: separate;
+                                    border-spacing: 8px;
+                                    margin: 0 0 6px 0;
+                                }
+                                .kpi-card {
+                                    border: 1px solid #d7dde4;
+                                    border-radius: 10px;
+                                    background: #f8fafc;
+                                    padding: 10px 12px;
+                                }
+                                .kpi-card-title {
+                                    display: block;
+                                    font-size: 17px;
+                                    font-weight: 700;
+                                    text-transform: uppercase;
+                                    color: #475467;
+                                    margin-bottom: 4px;
+                                }
+                                .kpi-card-value {
+                                    font-size: 28px;
+                                    font-weight: 700;
+                                    color: #101828;
+                                }
+                                .kpi-insight-box {
+                                    border: 1px solid #d7dde4;
+                                    border-left: 5px solid #1d4f6d;
+                                    background: #fbfcfd;
+                                    border-radius: 8px;
+                                    padding: 12px 14px;
+                                    margin-bottom: 10px;
+                                }
+                                .kpi-chip {
+                                    display: inline-block;
+                                    padding: 4px 10px;
+                                    border-radius: 999px;
+                                    font-size: 16px;
+                                    font-weight: 700;
+                                    color: #fff;
+                                }
+                                .kpi-chip-success {
+                                    background: #2f855a;
+                                }
+                                .kpi-chip-danger {
+                                    background: #c2410c;
+                                }
+                                .kpi-chip-neutral {
+                                    background: #1d4f6d;
+                                }
+                                .kpi-recommendation-list,
+                                .kpi-lines {
+                                    margin: 0;
+                                    padding-left: 16px;
+                                }
+                                .kpi-recommendation-list li,
+                                .kpi-lines li {
+                                    margin-bottom: 5px;
+                                }
+                                .kpi-summary-table,
+                                .kpi-metric-table {
+                                    width: 100%;
+                                    border-collapse: collapse;
+                                }
+                                .kpi-summary-table th,
+                                .kpi-summary-table td,
+                                .kpi-metric-table th,
+                                .kpi-metric-table td {
+                                    border: 1px solid #d7dde4;
+                                    padding: 8px 9px;
+                                    vertical-align: top;
+                                    font-size: 18px;
+                                }
+                                .kpi-summary-table thead th,
+                                .kpi-metric-table thead th {
+                                    background: #eef4f8;
+                                    color: #16324f;
+                                    font-weight: 700;
+                                }
+                                .kpi-row-title {
+                                    font-weight: 700;
+                                    color: #101828;
+                                }
+                                .kpi-status-cell {
+                                    text-align: center;
+                                    vertical-align: top !important;
+                                }
+                                .kpi-status-cell .kpi-chip {
+                                    margin: 0 auto;
+                                    display: inline-block;
+                                }
+                                .kpi-progress {
+                                    margin-top: 6px;
+                                    width: 100%;
+                                    height: 8px;
+                                    background: #e5edf3;
+                                    border-radius: 999px;
+                                    overflow: hidden;
+                                }
+                                .kpi-progress-bar {
+                                    height: 8px;
+                                    background: #1d4f6d;
+                                    border-radius: 999px;
+                                }
+                                .kpi-progress-bar-danger {
+                                    background: #c2410c;
+                                }
+                                .kpi-progress-bar-success {
+                                    background: #2f855a;
+                                }
+                                .kpi-page-break {
+                                    page-break-before: always;
+                                }
+                            </style>
+
+                            <div class="kpi-header">
+                                <div class="kpi-company">FAMTECH Innovative IT Solutions</div>
+                                <h2 class="kpi-report-title">Intern KPI Insights and Target Analysis</h2>
+                            </div>
+
+                            <table class="kpi-meta-table" style="width: 100%; border-collapse: collapse; margin-bottom: 14px;">
+                                <tbody>
+                                    <tr>
+                                        <td class="kpi-meta-label">Coverage Period</td>
+                                        <td><span t-esc="payload['date_from']"/> to <span t-esc="payload['date_to']"/></td>
+                                        <td class="kpi-meta-label">Employee Scope</td>
+                                        <td><span t-esc="payload['employee_name']"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="kpi-meta-label">Intern Count</td>
+                                        <td><span t-esc="payload['intern_count']"/></td>
+                                        <td class="kpi-meta-label">Evaluation Count</td>
+                                        <td><span t-esc="payload['total_evaluations']"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h3 class="kpi-section-title">Executive Summary</h3>
+                            <table class="kpi-card-grid">
+                                <tr>
+                                    <td class="kpi-card">
+                                        <span class="kpi-card-title">Average Score</span>
+                                        <span class="kpi-card-value"><span t-esc="payload['avg_score']"/></span>
+                                    </td>
+                                    <td class="kpi-card">
+                                        <span class="kpi-card-title">Average Timeliness %</span>
+                                        <span class="kpi-card-value"><span t-esc="payload['avg_timeliness']"/></span>
+                                    </td>
+                                    <td class="kpi-card">
+                                        <span class="kpi-card-title">Average Responsiveness</span>
+                                        <span class="kpi-card-value"><span t-esc="payload['avg_responsiveness']"/></span>
+                                    </td>
+                                    <td class="kpi-card">
+                                        <span class="kpi-card-title">Average Attendance %</span>
+                                        <span class="kpi-card-value"><span t-esc="payload['avg_attendance_rate']"/></span>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="kpi-insight-box">
+                                <span class="kpi-chip kpi-chip-neutral">HR Summary</span>
+                                <ul class="kpi-recommendation-list" style="margin-top: 8px;">
+                                    <li t-foreach="payload['group_insights']" t-as="insight">
+                                        <span t-esc="insight"/>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <t t-if="payload['recommended_target_lines']">
+                                <h3 class="kpi-section-title">Recommended Targets</h3>
+                                <div class="kpi-insight-box">
+                                    <ul class="kpi-recommendation-list">
+                                        <li t-foreach="payload['recommended_target_lines']" t-as="line">
+                                            <span t-esc="line"/>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </t>
+
+                            <h3 class="kpi-section-title">Intern Performance Overview</h3>
+                            <table class="kpi-summary-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 18%;">Intern</th>
+                                        <th style="width: 15%;">Overall Status</th>
+                                        <th style="width: 17%;">Average Score</th>
+                                        <th style="width: 20%;">Primary Focus Areas</th>
+                                        <th>HR Insight</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="payload['summary_rows']" t-as="row">
+                                        <td class="kpi-row-title"><span t-esc="row['employee'].name"/></td>
+                                        <td class="kpi-status-cell">
+                                            <span t-if="row['overall_target_status'] == 'On Track'" class="kpi-chip kpi-chip-success">On Track</span>
+                                            <span t-else="" class="kpi-chip kpi-chip-danger">Needs Attention</span>
+                                        </td>
+                                        <td><span t-esc="row['avg_score']"/></td>
+                                        <td>
+                                            <ul class="kpi-lines">
+                                                <li t-foreach="row['attention_metrics']" t-as="metric">
+                                                    <strong><span t-esc="metric['label']"/></strong>:
+                                                    <span t-esc="metric['gap_text']"/>
+                                                </li>
+                                            </ul>
+                                            <span t-if="not row['attention_metrics']" class="kpi-small">
+                                                All tracked metrics are meeting target.
+                                            </span>
+                                        </td>
+                                        <td><span t-esc="row['overall_insight']"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="kpi-page-break"/>
+
+                            <h3 class="kpi-section-title">Detailed KPI Assessment</h3>
+                            <t t-foreach="payload['summary_rows']" t-as="row">
+                                <div class="kpi-insight-box" style="margin-bottom: 14px;">
+                                    <div style="margin-bottom: 8px;">
+                                        <strong style="font-size: 21px; color: #101828;"><span t-esc="row['employee'].name"/></strong>
+                                        <span t-if="row['overall_target_status'] == 'On Track'" class="kpi-chip kpi-chip-success" style="margin-left: 8px;">On Track</span>
+                                        <span t-else="" class="kpi-chip kpi-chip-danger" style="margin-left: 8px;">Needs Attention</span>
+                                    </div>
+                                    <p class="kpi-body-text" style="margin: 0;">
+                                        <span t-esc="row['overall_insight']"/>
+                                    </p>
+                                </div>
+
+                                <table class="kpi-metric-table" style="margin-bottom: 18px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 13%;">Metric</th>
+                                            <th style="width: 12%;">Actual Score</th>
+                                            <th style="width: 12%;">Goal / Target</th>
+                                            <th style="width: 12%;">Status</th>
+                                            <th style="width: 23%;">Interpretation</th>
+                                            <th>Recommended Target Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="row['metric_analysis']" t-as="metric">
+                                            <td class="kpi-row-title"><span t-esc="metric['label']"/></td>
+                                            <td>
+                                                <div><strong><span t-esc="metric['score']"/></strong> / 5.00</div>
+                                                <div class="kpi-progress">
+                                                    <div t-attf-class="kpi-progress-bar #{'kpi-progress-bar-success' if metric['result'] == 'success' else 'kpi-progress-bar-danger'}"
+                                                         t-attf-style="width: #{metric['progress_width']}%;"/>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div><strong><span t-esc="metric['target_score']"/></strong> / 5.00</div>
+                                                <div class="kpi-small"><span t-esc="metric['target_percentage']"/>%</div>
+                                            </td>
+                                            <td class="kpi-status-cell">
+                                                <span t-if="metric['result'] == 'success'" class="kpi-chip kpi-chip-success">Meeting Target</span>
+                                                <span t-else="" class="kpi-chip kpi-chip-danger">Below Target</span>
+                                            </td>
+                                            <td><span t-esc="metric['description']"/></td>
+                                            <td><span t-esc="metric['recommended_target']"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </t>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

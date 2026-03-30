@@ -14,13 +14,17 @@
         'portal'
     ],
     'data': [
-        'security/ir.model.access.csv',       
-        'views/meeting_attendance_views.xml',           
-        'views/calendar_event_views.xml',              
-        'views/intern_dashboard_views.xml',            
+        'security/ir.model.access.csv',
+        'views/meeting_attendance_views.xml',
+        'views/calendar_event_views.xml',
+        'views/intern_dashboard_views.xml',
         'views/hr_employee_view.xml',
         'views/project_task_view.xml',
         'views/crm_lead_view.xml',
+        'views/intern_evaluation_views.xml',
+        'views/intern_contract_hours_views.xml',
+        'views/hr_kpi_dashboard_views.xml',
+        'views/hr_kpi_dashboard_report.xml',
         'data/cron_compute_intern_metrics.xml',
         'views/portal_intern_onboarding.xml',
         # 'views/res_config_settings_views.xml', 
@@ -29,5 +33,15 @@
         # 'data/mail_template_performance_alert.xml',
         # 'data/gamification_badges.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'famtech_intern_dashboard/static/src/js/timeliness_responsiveness_scatter.js',
+            'famtech_intern_dashboard/static/src/xml/timeliness_responsiveness_scatter.xml',
+            'famtech_intern_dashboard/static/src/js/contract_vs_rendered_hours_chart.js',
+            'famtech_intern_dashboard/static/src/xml/contract_vs_rendered_hours_chart.xml',
+            'famtech_intern_dashboard/static/src/xml/graph_measure_override.xml',
+            'famtech_intern_dashboard/static/src/scss/intern_evaluation_list.scss',
+        ],
+    },
     'installable': True,
 }

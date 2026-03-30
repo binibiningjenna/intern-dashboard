@@ -117,7 +117,90 @@
                             <field name="responsiveness_score" readonly="1" nolabel="1"/>
                         </div>
                     </group>
+                </group>
+                
+                <group string="Goals / Targets" col="1">
+                    <div style="max-width: 620px;">
+                    <div class="o_row" style="font-weight: 600; margin-bottom: 8px; padding: 0 0 8px 0; border-bottom: 1px solid #e0e0e0;">
+                        <div style="width: 180px;">Category</div>
+                        <div style="width: 150px;">Goal / Target</div>
+                        <div style="width: 120px; text-align: center;">Results</div>
                     
+                    </div>
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px; margin-bottom: 2px;">
+                        <div style="width: 180px; font-weight: 600;">Timeliness</div>
+                        <div style="width: 150px;">
+                            <field name="timeliness_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="timeliness_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="timeliness_target_result == 'success'" decoration-danger="timeliness_target_result == 'failed'"/>
+                        </div>
+                    </div>
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px; margin-bottom: 2px;">
+                        <div style="width: 180px; font-weight: 600;">Punctuality</div>
+                        <div style="width: 150px;">
+                            <field name="punctuality_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="punctuality_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="punctuality_target_result == 'success'" decoration-danger="punctuality_target_result == 'failed'"/>
+                        </div>
+                    </div>
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px; margin-bottom: 2px;">
+                        <div style="width: 180px; font-weight: 600;">Quantity</div>
+                        <div style="width: 150px;">
+                            <field name="quantity_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="quantity_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="quantity_target_result == 'success'" decoration-danger="quantity_target_result == 'failed'"/>
+                        </div>
+                    </div>
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px; margin-bottom: 2px;">
+                        <div style="width: 180px; font-weight: 600;">Quality</div>
+                        <div style="width: 150px;">
+                            <field name="quality_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="quality_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="quality_target_result == 'success'" decoration-danger="quality_target_result == 'failed'"/>
+                        </div>
+                    </div>
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px; margin-bottom: 2px;">
+                        <div style="width: 180px; font-weight: 600;">Effectiveness</div>
+                        <div style="width: 150px;">
+                            <field name="effectiveness_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="effectiveness_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="effectiveness_target_result == 'success'" decoration-danger="effectiveness_target_result == 'failed'"/>
+                        </div>
+                    </div>
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px; margin-bottom: 2px;">
+                        <div style="width: 180px; font-weight: 600;">Efficiency</div>
+                        <div style="width: 150px;">
+                            <field name="efficiency_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="efficiency_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="efficiency_target_result == 'success'" decoration-danger="efficiency_target_result == 'failed'"/>
+                        </div>
+                    </div>
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px; margin-bottom: 2px;">
+                        <div style="width: 180px; font-weight: 600;">Accuracy</div>
+                        <div style="width: 150px;">
+                            <field name="accuracy_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="accuracy_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="accuracy_target_result == 'success'" decoration-danger="accuracy_target_result == 'failed'"/>
+                        </div>
+                    </div>
+                    <div class="o_row" style="display: flex; align-items: center; min-height: 34px;">
+                        <div style="width: 180px; font-weight: 600;">Responsiveness</div>
+                        <div style="width: 150px;">
+                            <field name="responsiveness_target_percentage" nolabel="1" class="oe_inline"/>
+                        </div>
+                        <div style="width: 120px; text-align: center;">
+                            <field name="responsiveness_target_result" widget="badge" readonly="1" nolabel="1" class="oe_inline" decoration-success="responsiveness_target_result == 'success'" decoration-danger="responsiveness_target_result == 'failed'"/>
+                        </div>
+                    </div>
+                    </div>
+
                 </group>
 
             </xpath>
