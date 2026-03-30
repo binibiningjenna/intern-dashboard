@@ -37,13 +37,10 @@ class InternPortal(CustomerPortal):
         # exists and the intern (via their partner) was an attendee.
         # ------------------------------------------------------------------
         if not employee.orientation_completed:
-            partner = employee.user_id.partner_id
-            now = datetime.now()
-            orientation_event = request.env['calendar.event'].sudo().search([
-                ('stop', '<=', now),
-                ('partner_ids', 'in', partner.ids),
+            attendance_record = request.env['famtech.meeting.attendance'].sudo().search([
+                ('employee_id', '=', employee.id),
             ], limit=1)
-            if orientation_event:
+            if attendance_record:
                 updates['orientation_completed'] = True
 
         # ------------------------------------------------------------------
