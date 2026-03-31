@@ -280,7 +280,9 @@ class HREmployee(models.Model):
             {
                 'employee_name': employee.name,
                 'contract_hours': round(employee.contracted_hours or 0.0, 2),
+                'contract_days': round((employee.contracted_hours or 0.0) / 8.0, 2),
                 'rendered_hours': round(employee.hours_rendered or 0.0, 2),
+                'rendered_days': round((employee.hours_rendered or 0.0) / 8.0, 2),
             }
             for employee in employees
         ]

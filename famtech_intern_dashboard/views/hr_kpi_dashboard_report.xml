@@ -21,7 +21,7 @@
             <field name="report_type">qweb-pdf</field>
             <field name="report_name">famtech_intern_dashboard.report_hr_kpi_insights</field>
             <field name="report_file">famtech_intern_dashboard.report_hr_kpi_insights</field>
-            <field name="print_report_name">'Intern KPI Insights - %s' % (object.date_to or 'Report')</field>
+            <field name="print_report_name">object._get_insight_report_filename().replace('.pdf', '')</field>
             <field name="paperformat_id" ref="famtech_intern_dashboard.paperformat_hr_kpi_insights"/>
         </record>
 
@@ -163,13 +163,31 @@
                                     font-weight: 700;
                                     color: #101828;
                                 }
+                                .kpi-align-center {
+                                    text-align: center;
+                                    vertical-align: middle !important;
+                                }
+                                .kpi-align-justify {
+                                    text-align: justify;
+                                }
                                 .kpi-status-cell {
                                     text-align: center;
-                                    vertical-align: top !important;
+                                    vertical-align: middle !important;
                                 }
                                 .kpi-status-cell .kpi-chip {
                                     margin: 0 auto;
                                     display: inline-block;
+                                }
+                                .kpi-status-text {
+                                    font-weight: 700;
+                                    display: inline-block;
+                                    text-align: center;
+                                }
+                                .kpi-status-text-success {
+                                    color: #2f855a;
+                                }
+                                .kpi-status-text-danger {
+                                    color: #c2410c;
                                 }
                                 .kpi-progress {
                                     margin-top: 6px;
@@ -193,6 +211,66 @@
                                 .kpi-page-break {
                                     page-break-before: always;
                                 }
+                                .kpi-keep-together {
+                                    page-break-inside: avoid;
+                                }
+                                .kpi-ranking-card {
+                                    border: 1px solid #d7dde4;
+                                    border-radius: 10px;
+                                    background: #fbfcfd;
+                                    padding: 12px 14px;
+                                    margin-bottom: 14px;
+                                    page-break-inside: avoid;
+                                }
+                                .kpi-ranking-header {
+                                    display: table;
+                                    width: 100%;
+                                    margin-bottom: 8px;
+                                }
+                                .kpi-ranking-header > div {
+                                    display: table-cell;
+                                    vertical-align: middle;
+                                }
+                                .kpi-ranking-metric {
+                                    font-size: 22px;
+                                    font-weight: 700;
+                                    color: #16324f;
+                                }
+                                .kpi-ranking-meta {
+                                    text-align: right;
+                                    font-size: 16px;
+                                    color: #475467;
+                                }
+                                .kpi-ranking-row {
+                                    margin-bottom: 8px;
+                                }
+                                .kpi-ranking-row-labels {
+                                    display: table;
+                                    width: 100%;
+                                    margin-bottom: 3px;
+                                }
+                                .kpi-ranking-row-labels > span {
+                                    display: table-cell;
+                                    font-size: 16px;
+                                    color: #344054;
+                                }
+                                .kpi-ranking-row-labels > span:last-child {
+                                    text-align: right;
+                                    font-weight: 700;
+                                    color: #101828;
+                                }
+                                .kpi-ranking-bar-track {
+                                    width: 100%;
+                                    height: 18px;
+                                    background: #e8eef4;
+                                    border-radius: 999px;
+                                    overflow: hidden;
+                                }
+                                .kpi-ranking-bar-fill {
+                                    height: 18px;
+                                    background: linear-gradient(90deg, #1d4f6d 0%, #3b82a0 100%);
+                                    border-radius: 999px;
+                                }
                             </style>
 
                             <div class="kpi-header">
@@ -207,12 +285,6 @@
                                         <td><span t-esc="payload['date_from']"/> to <span t-esc="payload['date_to']"/></td>
                                         <td class="kpi-meta-label">Employee Scope</td>
                                         <td><span t-esc="payload['employee_name']"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="kpi-meta-label">Intern Count</td>
-                                        <td><span t-esc="payload['intern_count']"/></td>
-                                        <td class="kpi-meta-label">Evaluation Count</td>
-                                        <td><span t-esc="payload['total_evaluations']"/></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -259,90 +331,143 @@
                                 </div>
                             </t>
 
-                            <h3 class="kpi-section-title">Intern Performance Overview</h3>
-                            <table class="kpi-summary-table">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 18%;">Intern</th>
-                                        <th style="width: 15%;">Overall Status</th>
-                                        <th style="width: 17%;">Average Score</th>
-                                        <th style="width: 20%;">Primary Focus Areas</th>
-                                        <th>HR Insight</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr t-foreach="payload['summary_rows']" t-as="row">
-                                        <td class="kpi-row-title"><span t-esc="row['employee'].name"/></td>
-                                        <td class="kpi-status-cell">
-                                            <span t-if="row['overall_target_status'] == 'On Track'" class="kpi-chip kpi-chip-success">On Track</span>
-                                            <span t-else="" class="kpi-chip kpi-chip-danger">Needs Attention</span>
-                                        </td>
-                                        <td><span t-esc="row['avg_score']"/></td>
-                                        <td>
-                                            <ul class="kpi-lines">
-                                                <li t-foreach="row['attention_metrics']" t-as="metric">
-                                                    <strong><span t-esc="metric['label']"/></strong>:
-                                                    <span t-esc="metric['gap_text']"/>
-                                                </li>
-                                            </ul>
-                                            <span t-if="not row['attention_metrics']" class="kpi-small">
-                                                All tracked metrics are meeting target.
-                                            </span>
-                                        </td>
-                                        <td><span t-esc="row['overall_insight']"/></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <div class="kpi-page-break"/>
-
-                            <h3 class="kpi-section-title">Detailed KPI Assessment</h3>
-                            <t t-foreach="payload['summary_rows']" t-as="row">
-                                <div class="kpi-insight-box" style="margin-bottom: 14px;">
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="font-size: 21px; color: #101828;"><span t-esc="row['employee'].name"/></strong>
-                                        <span t-if="row['overall_target_status'] == 'On Track'" class="kpi-chip kpi-chip-success" style="margin-left: 8px;">On Track</span>
-                                        <span t-else="" class="kpi-chip kpi-chip-danger" style="margin-left: 8px;">Needs Attention</span>
-                                    </div>
-                                    <p class="kpi-body-text" style="margin: 0;">
-                                        <span t-esc="row['overall_insight']"/>
-                                    </p>
+                            <t t-if="not payload['is_single_employee'] and payload['group_metric_rankings']">
+                                <h3 class="kpi-section-title">Group Insights by Metric Category</h3>
+                                <div class="kpi-body-text" style="margin-bottom: 10px;">
+                                    Each metric below ranks the interns from highest to lowest score for the selected period.
                                 </div>
+                                <div t-foreach="payload['group_metric_rankings']" t-as="metric_group" class="kpi-ranking-card">
+                                    <div class="kpi-ranking-header">
+                                        <div class="kpi-ranking-metric">
+                                            <span t-esc="metric_group['label']"/>
+                                        </div>
+                                    </div>
 
-                                <table class="kpi-metric-table" style="margin-bottom: 18px;">
+                                    <div t-foreach="metric_group['entries']" t-as="entry" class="kpi-ranking-row">
+                                        <div class="kpi-ranking-row-labels">
+                                            <span>
+                                                #<span t-esc="entry['rank']"/> -
+                                                <span t-esc="entry['employee_label']"/>
+                                            </span>
+                                            <span><span t-esc="entry['score']"/> / 5.00</span>
+                                        </div>
+                                        <div class="kpi-ranking-bar-track">
+                                            <div class="kpi-ranking-bar-fill" t-attf-style="width: #{entry['bar_width']}%;"/>
+                                        </div>
+                                    </div>
+
+                                    <table class="kpi-metric-table" style="margin-top: 10px;">
+                                        <thead>
+                                            <tr>
+                                                <th class="kpi-align-center" style="width: 16%;">Group Average</th>
+                                                <th class="kpi-align-center" style="width: 16%;">Goal / Target</th>
+                                                <th class="kpi-align-center" style="width: 34%;">Interpretation</th>
+                                                <th class="kpi-align-center">Recommended Target Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="kpi-align-center"><strong><span t-esc="metric_group['avg_score']"/></strong> / 5.00</td>
+                                                <td class="kpi-align-center">
+                                                    <div><strong><span t-esc="metric_group['target_score']"/></strong> / 5.00</div>
+                                                    <div class="kpi-small"><span t-esc="metric_group['target_percentage']"/>%</div>
+                                                </td>
+                                                <td class="kpi-align-justify"><span t-esc="metric_group['interpretation']"/></td>
+                                                <td class="kpi-align-justify"><span t-esc="metric_group['recommended_target']"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </t>
+
+                            <div class="kpi-keep-together">
+                                <h3 class="kpi-section-title">Intern Performance Overview</h3>
+                                <table class="kpi-summary-table">
                                     <thead>
                                         <tr>
-                                            <th style="width: 13%;">Metric</th>
-                                            <th style="width: 12%;">Actual Score</th>
-                                            <th style="width: 12%;">Goal / Target</th>
-                                            <th style="width: 12%;">Status</th>
-                                            <th style="width: 23%;">Interpretation</th>
-                                            <th>Recommended Target Action</th>
+                                            <th class="kpi-align-center" style="width: 18%;">Intern</th>
+                                            <th class="kpi-align-center" style="width: 15%;">Overall Status</th>
+                                            <th class="kpi-align-center" style="width: 17%;">Average Score</th>
+                                            <th class="kpi-align-center" style="width: 20%;">Primary Focus Areas</th>
+                                            <th class="kpi-align-center">HR Insight</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr t-foreach="row['metric_analysis']" t-as="metric">
-                                            <td class="kpi-row-title"><span t-esc="metric['label']"/></td>
-                                            <td>
-                                                <div><strong><span t-esc="metric['score']"/></strong> / 5.00</div>
-                                                <div class="kpi-progress">
-                                                    <div t-attf-class="kpi-progress-bar #{'kpi-progress-bar-success' if metric['result'] == 'success' else 'kpi-progress-bar-danger'}"
-                                                         t-attf-style="width: #{metric['progress_width']}%;"/>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div><strong><span t-esc="metric['target_score']"/></strong> / 5.00</div>
-                                                <div class="kpi-small"><span t-esc="metric['target_percentage']"/>%</div>
-                                            </td>
+                                        <tr t-foreach="payload['summary_rows']" t-as="row">
+                                            <td class="kpi-row-title kpi-align-center"><span t-esc="row['employee'].name"/></td>
                                             <td class="kpi-status-cell">
-                                                <span t-if="metric['result'] == 'success'" class="kpi-chip kpi-chip-success">Meeting Target</span>
-                                                <span t-else="" class="kpi-chip kpi-chip-danger">Below Target</span>
+                                                <span t-if="row['overall_target_status'] == 'On Track'" class="kpi-status-text kpi-status-text-success">Good Performance</span>
+                                                <span t-else="" class="kpi-status-text kpi-status-text-danger">Needs Improvement</span>
                                             </td>
-                                            <td><span t-esc="metric['description']"/></td>
-                                            <td><span t-esc="metric['recommended_target']"/></td>
+                                            <td class="kpi-align-center"><span t-esc="row['avg_score']"/></td>
+                                            <td class="kpi-align-justify">
+                                                <ul class="kpi-lines">
+                                                    <li t-foreach="row['attention_metrics']" t-as="metric">
+                                                        <strong><span t-esc="metric['label']"/></strong>:
+                                                        <span t-esc="metric['gap_text']"/>
+                                                    </li>
+                                                </ul>
+                                                <span t-if="not row['attention_metrics']" class="kpi-small">
+                                                    All tracked metrics are meeting target.
+                                                </span>
+                                            </td>
+                                            <td class="kpi-align-justify"><span t-esc="row['overall_insight']"/></td>
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+
+                            <t t-if="payload['is_single_employee']">
+                                <div class="kpi-page-break"/>
+
+                                <h3 class="kpi-section-title">Detailed KPI Assessment</h3>
+                                <t t-foreach="payload['summary_rows']" t-as="row">
+                                    <div class="kpi-insight-box" style="margin-bottom: 14px;">
+                                        <div style="margin-bottom: 8px;">
+                                            <strong style="font-size: 21px; color: #101828;"><span t-esc="row['employee'].name"/></strong>
+                                            <span t-if="row['overall_target_status'] == 'On Track'" class="kpi-status-text kpi-status-text-success" style="margin-left: 8px;">Good Performance</span>
+                                            <span t-else="" class="kpi-status-text kpi-status-text-danger" style="margin-left: 8px;">Needs Improvement</span>
+                                        </div>
+                                        <p class="kpi-body-text" style="margin: 0;">
+                                            <span t-esc="row['overall_insight']"/>
+                                        </p>
+                                    </div>
+
+                                    <table class="kpi-metric-table" style="margin-bottom: 18px;">
+                                        <thead>
+                                            <tr>
+                                                <th class="kpi-align-center" style="width: 13%;">Metric</th>
+                                                <th class="kpi-align-center" style="width: 12%;">Actual Score</th>
+                                                <th class="kpi-align-center" style="width: 12%;">Goal / Target</th>
+                                                <th class="kpi-align-center" style="width: 12%;">Status</th>
+                                                <th class="kpi-align-center" style="width: 23%;">Interpretation</th>
+                                                <th class="kpi-align-center">Recommended Target Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="row['metric_analysis']" t-as="metric">
+                                                <td class="kpi-row-title kpi-align-center"><span t-esc="metric['label']"/></td>
+                                                <td class="kpi-align-center">
+                                                    <div><strong><span t-esc="metric['score']"/></strong> / 5.00</div>
+                                                    <div class="kpi-progress">
+                                                        <div t-attf-class="kpi-progress-bar #{'kpi-progress-bar-success' if metric['result'] == 'success' else 'kpi-progress-bar-danger'}"
+                                                             t-attf-style="width: #{metric['progress_width']}%;"/>
+                                                    </div>
+                                                </td>
+                                                <td class="kpi-align-center">
+                                                    <div><strong><span t-esc="metric['target_score']"/></strong> / 5.00</div>
+                                                    <div class="kpi-small"><span t-esc="metric['target_percentage']"/>%</div>
+                                                </td>
+                                                <td class="kpi-status-cell">
+                                                    <span t-if="metric['result'] == 'success'" class="kpi-status-text kpi-status-text-success">Achieved</span>
+                                                    <span t-else="" class="kpi-status-text kpi-status-text-danger">Needs Improvement</span>
+                                                </td>
+                                                <td class="kpi-align-justify"><span t-esc="metric['description']"/></td>
+                                                <td class="kpi-align-justify"><span t-esc="metric['recommended_target']"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </t>
                             </t>
                         </div>
                     </t>

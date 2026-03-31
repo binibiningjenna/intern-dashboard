@@ -173,6 +173,25 @@ class HRKPIDashboard(models.TransientModel):
             "target": "self",
         }
 
+    def _get_report_employee_names(self):
+        self.ensure_one()
+        employees = self._get_intern_employees()
+        names = [employee.name for employee in employees if employee.name]
+        return ", ".join(names) if names else "No Employee"
+
+    def _get_report_date_label(self):
+        self.ensure_one()
+        report_date = self.date_to or self.date_from or fields.Date.today()
+        return str(report_date)
+
+    def _get_metrics_csv_filename(self):
+        self.ensure_one()
+        return f"{self._get_report_employee_names()} - Metrics and KPI Results ({self._get_report_date_label()}).csv"
+
+    def _get_insight_report_filename(self):
+        self.ensure_one()
+        return f"{self._get_report_employee_names()} - Insight Report ({self._get_report_date_label()}).pdf"
+
     def _get_metric_target_map(self, employee):
         return [
             {
@@ -331,6 +350,20 @@ class HRKPIDashboard(models.TransientModel):
         if not summary_rows:
             return []
 
+        if len(summary_rows) == 1:
+            row = summary_rows[0]
+            insights = [row["overall_insight"]]
+            if row["attention_metrics"]:
+                focus_labels = ", ".join(metric["label"] for metric in row["attention_metrics"][:3])
+                insights.append(
+                    f"Priority KPI focus areas for this reporting period are {focus_labels}."
+                )
+            else:
+                insights.append(
+                    "All tracked KPI categories are currently meeting the configured target."
+                )
+            return insights
+
         total = len(summary_rows)
         on_track = [row for row in summary_rows if row["overall_target_status"] == "On Track"]
         needs_attention = [row for row in summary_rows if row["overall_target_status"] != "On Track"]
@@ -365,6 +398,125 @@ class HRKPIDashboard(models.TransientModel):
                 + "."
             )
         return insights
+
+    def _build_group_metric_rankings(self, summary_rows):
+        if not summary_rows:
+            return []
+
+        rankings = []
+        metric_sequence = [
+            "Timeliness",
+            "Responsiveness",
+            "Punctuality",
+            "Quantity",
+            "Quality",
+            "Effectiveness",
+            "Efficiency",
+            "Accuracy",
+        ]
+
+        guidance_map = {
+            "Timeliness": "tighten deadline planning, milestone tracking, and earlier progress follow-ups",
+            "Responsiveness": "improve turnaround discipline in chats, email, and internal updates",
+            "Punctuality": "reinforce attendance consistency and on-time meeting readiness",
+            "Quantity": "increase sustainable output volume against assigned workload targets",
+            "Quality": "reduce avoidable revisions through stronger quality checks before submission",
+            "Effectiveness": "align outputs more closely with the intended business outcome and brief",
+            "Efficiency": "shorten turnaround time by removing avoidable process delays",
+            "Accuracy": "strengthen detail validation to reduce submission errors",
+        }
+
+        metric_map = {}
+        for row in summary_rows:
+            for metric in row["metric_analysis"]:
+                metric_map.setdefault(metric["label"], []).append(
+                    {
+                        "employee_name": row["employee"].name,
+                        "score": metric["score"],
+                        "target_score": metric["target_score"],
+                        "target_percentage": metric["target_percentage"],
+                        "result": metric["result"],
+                    }
+                )
+
+        for label in metric_sequence:
+            entries = metric_map.get(label, [])
+            if not entries:
+                continue
+
+            ordered_entries = sorted(
+                entries,
+                key=lambda item: (-item["score"], item["employee_name"].lower()),
+            )
+            target_score = ordered_entries[0]["target_score"] if ordered_entries else 0.0
+            target_percentage = ordered_entries[0]["target_percentage"] if ordered_entries else 0
+            avg_score = round(
+                sum(item["score"] for item in ordered_entries) / len(ordered_entries), 2
+            ) if ordered_entries else 0.0
+            below_target = [item for item in ordered_entries if item["result"] != "success"]
+            leader = ordered_entries[0]
+            trailer = ordered_entries[-1]
+            top_score = leader["score"] if ordered_entries else 0.0
+            leaders = [item for item in ordered_entries if item["score"] == top_score]
+            leader_names = ", ".join(item["employee_name"] for item in leaders)
+
+            grouped_entries = []
+            current_group = None
+            rank_counter = 0
+            for item in ordered_entries:
+                if not current_group or item["score"] != current_group["score"]:
+                    rank_counter += 1
+                    bar_ratio = (item["score"] / 5.0) if 5.0 else 0.0
+                    current_group = {
+                        "rank": rank_counter,
+                        "score": item["score"],
+                        "employee_names": [item["employee_name"]],
+                        "bar_width": max(min(bar_ratio * 100, 100), 0),
+                        "gap": round((target_score or 0.0) - (item["score"] or 0.0), 2),
+                    }
+                    grouped_entries.append(current_group)
+                else:
+                    current_group["employee_names"].append(item["employee_name"])
+
+            for group in grouped_entries:
+                group["employee_label"] = ", ".join(group["employee_names"])
+
+            if below_target:
+                interpretation = (
+                    f"{label} currently averages {avg_score:.2f}/5.00 across the group versus a target of "
+                    f"{target_score:.2f}/5.00 ({target_percentage}%). {leader_names} {'are' if len(leaders) > 1 else 'is'} leading this metric at "
+                    f"{leader['score']:.2f}, while {len(below_target)} out of {len(ordered_entries)} interns are still below target. "
+                    f"The widest support need is with {trailer['employee_name']} at {trailer['score']:.2f}/5.00."
+                )
+                recommended_target = (
+                    f"Lift all interns to at least {target_score:.2f}/5.00 ({target_percentage}%) in {label}. "
+                    f"Prioritize coaching for the lower-ranked interns and help the team {guidance_map.get(label, 'improve performance in this area')}."
+                )
+            else:
+                interpretation = (
+                    f"{label} currently averages {avg_score:.2f}/5.00 across the group, which is at or above the "
+                    f"target of {target_score:.2f}/5.00 ({target_percentage}%). {leader_names} {'are' if len(leaders) > 1 else 'is'} leading at "
+                    f"{leader['score']:.2f}, and all ranked interns are meeting the expected standard in this category."
+                )
+                recommended_target = (
+                    f"Maintain {label} at or above {target_score:.2f}/5.00 ({target_percentage}%) for all interns "
+                    "through regular monitoring and replication of the current best practices."
+                )
+
+            rankings.append(
+                {
+                    "label": label,
+                    "entries": grouped_entries,
+                    "avg_score": avg_score,
+                    "target_score": target_score,
+                    "target_percentage": target_percentage,
+                    "below_target_count": len(below_target),
+                    "interpretation": interpretation,
+                    "recommended_target": recommended_target,
+                }
+            )
+
+        return rankings
 
     def _get_summary_rows(self, evaluations=None):
         evaluations = evaluations or self._get_evaluations()
@@ -510,7 +662,7 @@ class HRKPIDashboard(models.TransientModel):
             for row in summary_rows:
                 writer.writerow([getter(False, row) for _label, getter in selected_columns])
 
-        filename = f"intern_evaluations_{self.date_from or 'start'}_{self.date_to or 'end'}.csv"
+        filename = self._get_metrics_csv_filename()
         return self._build_csv_download(output.getvalue(), filename)
 
     def action_generate_summary_report(self):
@@ -550,7 +702,7 @@ class HRKPIDashboard(models.TransientModel):
         for row in summary_rows:
             writer.writerow([getter(False, row) for _label, getter in selected_columns])
 
-        filename = f"intern_kpi_summary_{self.date_from or 'start'}_{self.date_to or 'end'}.csv"
+        filename = self._get_metrics_csv_filename()
         return self._build_csv_download(output.getvalue(), filename)
 
     def action_generate_pdf_report(self):
@@ -608,6 +760,7 @@ class HRKPIDashboard(models.TransientModel):
         ]
         recommended_targets = summary_rows[0]["metric_analysis"] if len(summary_rows) == 1 else []
         is_single_employee = self.employee_scope == "single" and bool(self.employee_id)
+        group_metric_rankings = self._build_group_metric_rankings(summary_rows) if not is_single_employee else []
         return {
             "date_from": self.date_from,
             "date_to": self.date_to,
@@ -628,5 +781,6 @@ class HRKPIDashboard(models.TransientModel):
             "recommended_targets": recommended_targets,
             "recommended_target_lines": summary_rows[0]["recommended_target_lines"] if len(summary_rows) == 1 else [],
             "group_insights": self._build_group_insights(summary_rows),
+            "group_metric_rankings": group_metric_rankings,
             "is_single_employee": is_single_employee,
         }
