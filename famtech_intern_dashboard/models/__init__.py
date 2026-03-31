@@ -4,3 +4,5 @@ from . import social_connectors
 from . import project_task
 from . import meeting_attendance  
 from . import calendar_event    
+from . import intern_evaluation
+from . import hr_kpi_dashboard

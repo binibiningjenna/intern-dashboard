@@ -4,6 +4,15 @@ from odoo.exceptions import ValidationError
 class HREmployee(models.Model):
     _inherit = 'hr.employee'
 
+
+    KPI_TARGET_SELECTION = [
+        ('0', '0%'),
+        ('25', '25%'),
+        ('50', '50%'),
+        ('75', '75%'),
+        ('100', '100%'),
+    ]
+
     # Timesheets
     timesheet_ids = fields.One2many(
         'account.analytic.line',
@@ -38,18 +47,40 @@ class HREmployee(models.Model):
     accuracy_score = fields.Float("Accuracy Score", readonly=True)
     average_score = fields.Float("Average Score", compute="_compute_average_score", store=True, readonly=True)
 
+    # KPI Targets
+    timeliness_target_percentage = fields.Selection(KPI_TARGET_SELECTION, string="Timeliness Target", default='0')
+    responsiveness_target_percentage = fields.Selection(KPI_TARGET_SELECTION, string="Responsiveness Target", default='0')
+    punctuality_target_percentage = fields.Selection(KPI_TARGET_SELECTION, string="Punctuality Target", default='0')
+    quantity_target_percentage = fields.Selection(KPI_TARGET_SELECTION, string="Quantity Target", default='0')
+    quality_target_percentage = fields.Selection(KPI_TARGET_SELECTION, string="Quality Target", default='0')
+    effectiveness_target_percentage = fields.Selection(KPI_TARGET_SELECTION, string="Effectiveness Target", default='0')
+    efficiency_target_percentage = fields.Selection(KPI_TARGET_SELECTION, string="Efficiency Target", default='0')
+    accuracy_target_percentage = fields.Selection(KPI_TARGET_SELECTION, string="Accuracy Target", default='0')
+
+    timeliness_target_score = fields.Float("Timeliness Target Score", compute="_compute_kpi_target_scores", store=True, readonly=True)
+    responsiveness_target_score = fields.Float("Responsiveness Target Score", compute="_compute_kpi_target_scores", store=True, readonly=True)
+    punctuality_target_score = fields.Float("Punctuality Target Score", compute="_compute_kpi_target_scores", store=True, readonly=True)
+    quantity_target_score = fields.Float("Quantity Target Score", compute="_compute_kpi_target_scores", store=True, readonly=True)
+    quality_target_score = fields.Float("Quality Target Score", compute="_compute_kpi_target_scores", store=True, readonly=True)
+    effectiveness_target_score = fields.Float("Effectiveness Target Score", compute="_compute_kpi_target_scores", store=True, readonly=True)
+    efficiency_target_score = fields.Float("Efficiency Target Score", compute="_compute_kpi_target_scores", store=True, readonly=True)
+    accuracy_target_score = fields.Float("Accuracy Target Score", compute="_compute_kpi_target_scores", store=True, readonly=True)
+
+    timeliness_target_result = fields.Selection([('success', 'Success'), ('failed', 'Failed')], string="Timeliness Result", compute="_compute_kpi_target_results", store=True, readonly=True)
+    responsiveness_target_result = fields.Selection([('success', 'Success'), ('failed', 'Failed')], string="Responsiveness Result", compute="_compute_kpi_target_results", store=True, readonly=True)
+    punctuality_target_result = fields.Selection([('success', 'Success'), ('failed', 'Failed')], string="Punctuality Result", compute="_compute_kpi_target_results", store=True, readonly=True)
+    quantity_target_result = fields.Selection([('success', 'Success'), ('failed', 'Failed')], string="Quantity Result", compute="_compute_kpi_target_results", store=True, readonly=True)
+    quality_target_result = fields.Selection([('success', 'Success'), ('failed', 'Failed')], string="Quality Result", compute="_compute_kpi_target_results", store=True, readonly=True)
+    effectiveness_target_result = fields.Selection([('success', 'Success'), ('failed', 'Failed')], string="Effectiveness Result", compute="_compute_kpi_target_results", store=True, readonly=True)
+    efficiency_target_result = fields.Selection([('success', 'Success'), ('failed', 'Failed')], string="Efficiency Result", compute="_compute_kpi_target_results", store=True, readonly=True)
+    accuracy_target_result = fields.Selection([('success', 'Success'), ('failed', 'Failed')], string="Accuracy Result", compute="_compute_kpi_target_results", store=True, readonly=True)
+
     # Responsiveness with Sub-categories
     responsiveness_viber = fields.Float("Viber Response", default=5.0, help="Rate responsiveness on Viber (1-5)")
     responsiveness_google_chat = fields.Float("Google Chat Response", default=5.0, help="Rate responsiveness on Google Chat (1-5)")
     responsiveness_gmail = fields.Float("Gmail Response", default=5.0, help="Rate responsiveness on Google Gmail (1-5)")
     responsiveness_zoho_email = fields.Float("Zoho Email Response", default=5.0, help="Rate responsiveness on Zoho Email (1-5)")
-    responsiveness_score = fields.Float(
-        "Responsiveness Score",
-        compute="_compute_responsiveness_score",
-        store=True,
-        readonly=True,
-        help="Average of Viber, Google Chat, Gmail, and Zoho Email responsiveness scores"
-    )
+    responsiveness_score = fields.Float("Responsiveness Score", compute="_compute_responsiveness_score", store=True, readonly=True, help="Average of Viber, Google Chat, Gmail, and Zoho Email responsiveness scores")
 
     # Task Metrics
     tasks_completed = fields.Integer("Tasks Completed", compute="_compute_task_counts", store=True)
@@ -87,10 +118,56 @@ class HREmployee(models.Model):
             ]
             emp.responsiveness_score = round(sum(scores) / len(scores), 2)
 
+    @api.depends(
+        'timeliness_target_percentage',
+        'responsiveness_target_percentage',
+        'punctuality_target_percentage',
+        'quantity_target_percentage',
+        'quality_target_percentage',
+        'effectiveness_target_percentage',
+        'efficiency_target_percentage',
+        'accuracy_target_percentage',
+    )
+    def _compute_kpi_target_scores(self):
+        for rec in self:
+            rec.timeliness_target_score = rec._target_percentage_to_score(rec.timeliness_target_percentage)
+            rec.responsiveness_target_score = rec._target_percentage_to_score(rec.responsiveness_target_percentage)
+            rec.punctuality_target_score = rec._target_percentage_to_score(rec.punctuality_target_percentage)
+            rec.quantity_target_score = rec._target_percentage_to_score(rec.quantity_target_percentage)
+            rec.quality_target_score = rec._target_percentage_to_score(rec.quality_target_percentage)
+            rec.effectiveness_target_score = rec._target_percentage_to_score(rec.effectiveness_target_percentage)
+            rec.efficiency_target_score = rec._target_percentage_to_score(rec.efficiency_target_percentage)
+            rec.accuracy_target_score = rec._target_percentage_to_score(rec.accuracy_target_percentage)
+
+    @api.depends(
+        'timeliness_score', 'responsiveness_score', 'punctuality_score', 'quantity_score',
+        'quality_score', 'effectiveness_score', 'efficiency_score', 'accuracy_score',
+        'timeliness_target_score', 'responsiveness_target_score', 'punctuality_target_score',
+        'quantity_target_score', 'quality_target_score', 'effectiveness_target_score',
+        'efficiency_target_score', 'accuracy_target_score',
+    )
+    def _compute_kpi_target_results(self):
+        for rec in self:
+            rec.timeliness_target_result = rec._evaluate_target_result(rec.timeliness_score, rec.timeliness_target_score)
+            rec.responsiveness_target_result = rec._evaluate_target_result(rec.responsiveness_score, rec.responsiveness_target_score)
+            rec.punctuality_target_result = rec._evaluate_target_result(rec.punctuality_score, rec.punctuality_target_score)
+            rec.quantity_target_result = rec._evaluate_target_result(rec.quantity_score, rec.quantity_target_score)
+            rec.quality_target_result = rec._evaluate_target_result(rec.quality_score, rec.quality_target_score)
+            rec.effectiveness_target_result = rec._evaluate_target_result(rec.effectiveness_score, rec.effectiveness_target_score)
+            rec.efficiency_target_result = rec._evaluate_target_result(rec.efficiency_score, rec.efficiency_target_score)
+            rec.accuracy_target_result = rec._evaluate_target_result(rec.accuracy_score, rec.accuracy_target_score)
+
+    def _target_percentage_to_score(self, percentage):
+        return round((float(percentage or 0.0) / 100.0) * 5.0, 2)
+
+    def _evaluate_target_result(self, score, target_score):
+        return 'success' if (score or 0.0) >= (target_score or 0.0) else 'failed'
+
     @api.depends('user_id')
     def _compute_timesheet_ids(self):
         """Fetch timesheet entries for the employee"""
         Analytic = self.env['account.analytic.line']
+
         for emp in self:
             if emp.user_id:
                 domain = [('user_id', '=', emp.user_id.id)]
@@ -99,6 +176,7 @@ class HREmployee(models.Model):
                     domain = [('employee_id', '=', emp.id)]
                 else:
                     domain = []
+
             emp.timesheet_ids = Analytic.search(domain) if domain else Analytic.browse()
 
     @api.depends('attendance_ids.check_in', 'attendance_ids.check_out', 'attendance_ids.overtime_status', 'timesheet_ids.unit_amount')
@@ -194,6 +272,20 @@ class HREmployee(models.Model):
             ])
             emp.total_meetings = len(attendances)
             emp.total_lates = len(attendances.filtered(lambda a: a.attendance_status in ['late', 'very_late']))
+
+    @api.model
+    def get_contract_vs_rendered_hours_chart_data(self):
+        employees = self.search([('is_intern', '=', True)], order='name asc')
+        return [
+            {
+                'employee_name': employee.name,
+                'contract_hours': round(employee.contracted_hours or 0.0, 2),
+                'contract_days': round((employee.contracted_hours or 0.0) / 8.0, 2),
+                'rendered_hours': round(employee.hours_rendered or 0.0, 2),
+                'rendered_days': round((employee.hours_rendered or 0.0) / 8.0, 2),
+            }
+            for employee in employees
+        ]
 
     # PORTAL ACCESS
     def _get_public_fields(self):

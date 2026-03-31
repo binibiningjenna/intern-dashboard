@@ -1,0 +1,58 @@
+.intern_evaluation_balanced_list {
+    .o_data_row td {
+        vertical-align: middle;
+    }
+}
+
+.o_intern_kpi_kanban {
+    .o_kanban_record {
+        width: 460px;
+        max-width: 100%;
+    }
+}
+
+.o_kpi_metric_list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.o_kpi_metric_item {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) 56px 92px;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+}
+
+.o_kpi_metric_label {
+    color: #6b7280;
+    font-weight: 400;
+}
+
+.o_kpi_metric_score {
+    text-align: right;
+    font-weight: 600;
+    color: #344054;
+}
+
+.o_kpi_metric_item .badge {
+    justify-self: end;
+    min-width: 88px;
+    text-align: center;
+    border-radius: 999px;
+}
+
+@media (max-width: 768px) {
+    .o_intern_kpi_kanban {
+        .o_kanban_record {
+            width: 100%;
+        }
+    }
+
+    .o_kpi_metric_item {
+        grid-template-columns: minmax(100px, 1fr) 48px 84px;
+        gap: 8px;
+    }
+}

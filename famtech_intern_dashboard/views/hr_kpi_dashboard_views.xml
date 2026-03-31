@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_hr_kpi_dashboard_form" model="ir.ui.view">
+            <field name="name">hr.kpi.dashboard.form</field>
+            <field name="model">hr.kpi.dashboard</field>
+            <field name="arch" type="xml">
+                <form string="Generate and Export Reports">
+                    <sheet>
+                        <group>
+                            <group string="Date Range">
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                            </group>
+                            <group string="Scope">
+                                <field name="employee_scope"/>
+                                <field name="employee_id" invisible="employee_scope != 'single'" required="employee_scope == 'single'"/>
+                            </group>
+                        </group>
+                        <group string="CSV Columns" col="4">
+                            <group>
+                                <field name="include_employee_name"/>
+                                <field name="include_work_email"/>
+                                <field name="include_department"/>
+                                <field name="include_job_position"/>
+                            </group>
+                            <group>
+                                <field name="include_contracted_hours"/>
+                                <field name="include_rendered_hours"/>
+                                <field name="include_task_target"/>
+                                <field name="include_average_score"/>
+                            </group>
+                            <group>
+                                <field name="include_timeliness"/>
+                                <field name="include_responsiveness"/>
+                                <field name="include_punctuality"/>
+                                <field name="include_quantity"/>
+                            </group>
+                            <group>
+                                <field name="include_quality"/>
+                                <field name="include_effectiveness"/>
+                                <field name="include_efficiency"/>
+                                <field name="include_financial_accuracy"/>
+                            </group>
+                        </group>
+                        <footer>
+                            <button name="action_generate_csv_report" type="object" string="Export Metrics and KPI Results (CSV)" class="btn-primary"/>
+                            <button name="action_generate_pdf_report" type="object" string="Export Insights Report (PDF)" class="btn-primary"/>
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_hr_kpi_dashboard" model="ir.actions.act_window">
+            <field name="name">Generate and Export Reports</field>
+            <field name="res_model">hr.kpi.dashboard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_hr_kpi_dashboard_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <record id="view_intern_kpi_list" model="ir.ui.view">
+            <field name="name">hr.employee.intern.kpi.list</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <list string="Intern KPI Dashboard" create="0" edit="0">
+                    <field name="name"/>
+                    <field name="work_email"/>
+                    <field name="department_id"/>
+                    <field name="job_title"/>
+                    <field name="contracted_hours"/>
+                    <field name="hours_rendered"/>
+                    <field name="task_target_monthly"/>
+                    <field name="average_score"/>
+                    <field name="timeliness_score"/>
+                    <field name="timeliness_target_result" widget="badge" decoration-success="timeliness_target_result == 'success'" decoration-danger="timeliness_target_result == 'failed'"/>
+                    <field name="responsiveness_score"/>
+                    <field name="responsiveness_target_result" widget="badge" decoration-success="responsiveness_target_result == 'success'" decoration-danger="responsiveness_target_result == 'failed'"/>
+                    <field name="punctuality_score"/>
+                    <field name="punctuality_target_result" widget="badge" decoration-success="punctuality_target_result == 'success'" decoration-danger="punctuality_target_result == 'failed'"/>
+                    <field name="quantity_score"/>
+                    <field name="quantity_target_result" widget="badge" decoration-success="quantity_target_result == 'success'" decoration-danger="quantity_target_result == 'failed'"/>
+                    <field name="quality_score"/>
+                    <field name="quality_target_result" widget="badge" decoration-success="quality_target_result == 'success'" decoration-danger="quality_target_result == 'failed'"/>
+                    <field name="effectiveness_score"/>
+                    <field name="effectiveness_target_result" widget="badge" decoration-success="effectiveness_target_result == 'success'" decoration-danger="effectiveness_target_result == 'failed'"/>
+                    <field name="efficiency_score"/>
+                    <field name="efficiency_target_result" widget="badge" decoration-success="efficiency_target_result == 'success'" decoration-danger="efficiency_target_result == 'failed'"/>
+                    <field name="accuracy_score"/>
+                    <field name="accuracy_target_result" widget="badge" decoration-success="accuracy_target_result == 'success'" decoration-danger="accuracy_target_result == 'failed'"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_intern_kpi_kanban" model="ir.ui.view">
+            <field name="name">hr.employee.intern.kpi.kanban</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_dashboard o_intern_kpi_kanban" create="0" edit="0">
+                    <field name="name"/>
+                    <field name="job_title"/>
+                    <field name="contracted_hours"/>
+                    <field name="hours_rendered"/>
+                    <field name="average_score"/>
+                    <field name="timeliness_score"/>
+                    <field name="timeliness_target_result"/>
+                    <field name="responsiveness_score"/>
+                    <field name="responsiveness_target_result"/>
+                    <field name="punctuality_score"/>
+                    <field name="punctuality_target_result"/>
+                    <field name="quantity_score"/>
+                    <field name="quantity_target_result"/>
+                    <field name="quality_score"/>
+                    <field name="quality_target_result"/>
+                    <field name="effectiveness_score"/>
+                    <field name="effectiveness_target_result"/>
+                    <field name="efficiency_score"/>
+                    <field name="efficiency_target_result"/>
+                    <field name="accuracy_score"/>
+                    <field name="accuracy_target_result"/>
+
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_card p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <strong class="text-truncate">
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted"><field name="job_title"/></small>
+                                </div>
+
+                                <div class="mb-2">
+                                    <small class="text-muted">Hours Rendered</small>
+                                    <div class="fw-bold">
+                                        <field name="hours_rendered"/> /
+                                        <field name="contracted_hours"/>
+                                    </div>
+                                </div>
+
+                                <div class="progress mb-3" style="height: 8px;">
+                                    <div class="progress-bar"
+                                        role="progressbar"
+                                        t-att-style="'width: ' + (
+                                            record.contracted_hours.value
+                                            ? (record.hours_rendered.value / record.contracted_hours.value * 100)
+                                            : 0
+                                        ) + '%'">
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <small class="text-muted">Task Target (Monthly)</small>
+                                    <span class="fw-bold">
+                                        <field name="task_target_monthly"/>
+                                    </span>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">Average Score</small>
+                                    <span class="fw-bold">
+                                        <field name="average_score"/>
+                                    </span>
+                                </div>
+
+                                <div class="o_kpi_metric_list mt-3 pt-3">
+                                    <div class="o_kpi_metric_item">
+                                        <span class="o_kpi_metric_label">Timeliness</span>
+                                        <span class="o_kpi_metric_score"><field name="timeliness_score"/></span>
+                                        <field name="timeliness_target_result" widget="badge" nolabel="1" decoration-success="timeliness_target_result == 'success'" decoration-danger="timeliness_target_result == 'failed'"/>
+                                    </div>
+                                    <div class="o_kpi_metric_item">
+                                        <span class="o_kpi_metric_label">Punctuality</span>
+                                        <span class="o_kpi_metric_score"><field name="punctuality_score"/></span>
+                                        <field name="punctuality_target_result" widget="badge" nolabel="1" decoration-success="punctuality_target_result == 'success'" decoration-danger="punctuality_target_result == 'failed'"/>
+                                    </div>
+                                    <div class="o_kpi_metric_item">
+                                        <span class="o_kpi_metric_label">Quantity</span>
+                                        <span class="o_kpi_metric_score"><field name="quantity_score"/></span>
+                                        <field name="quantity_target_result" widget="badge" nolabel="1" decoration-success="quantity_target_result == 'success'" decoration-danger="quantity_target_result == 'failed'"/>
+                                    </div>
+                                    <div class="o_kpi_metric_item">
+                                        <span class="o_kpi_metric_label">Quality</span>
+                                        <span class="o_kpi_metric_score"><field name="quality_score"/></span>
+                                        <field name="quality_target_result" widget="badge" nolabel="1" decoration-success="quality_target_result == 'success'" decoration-danger="quality_target_result == 'failed'"/>
+                                    </div>
+                                    <div class="o_kpi_metric_item">
+                                        <span class="o_kpi_metric_label">Effectiveness</span>
+                                        <span class="o_kpi_metric_score"><field name="effectiveness_score"/></span>
+                                        <field name="effectiveness_target_result" widget="badge" nolabel="1" decoration-success="effectiveness_target_result == 'success'" decoration-danger="effectiveness_target_result == 'failed'"/>
+                                    </div>
+                                    <div class="o_kpi_metric_item">
+                                        <span class="o_kpi_metric_label">Efficiency</span>
+                                        <span class="o_kpi_metric_score"><field name="efficiency_score"/></span>
+                                        <field name="efficiency_target_result" widget="badge" nolabel="1" decoration-success="efficiency_target_result == 'success'" decoration-danger="efficiency_target_result == 'failed'"/>
+                                    </div>
+                                    <div class="o_kpi_metric_item">
+                                        <span class="o_kpi_metric_label">Accuracy</span>
+                                        <span class="o_kpi_metric_score"><field name="accuracy_score"/></span>
+                                        <field name="accuracy_target_result" widget="badge" nolabel="1" decoration-success="accuracy_target_result == 'success'" decoration-danger="accuracy_target_result == 'failed'"/>
+                                    </div>
+                                    <div class="o_kpi_metric_item">
+                                        <span class="o_kpi_metric_label">Responsiveness</span>
+                                        <span class="o_kpi_metric_score"><field name="responsiveness_score"/></span>
+                                        <field name="responsiveness_target_result" widget="badge" nolabel="1" decoration-success="responsiveness_target_result == 'success'" decoration-danger="responsiveness_target_result == 'failed'"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="view_intern_kpi_search" model="ir.ui.view">
+            <field name="name">hr.employee.intern.kpi.search</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <search string="Intern KPI Dashboard">
+                    <field name="name"/>
+                    <filter string="Interns" name="interns_only" domain="[('is_intern', '=', True)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_intern_kpi" model="ir.actions.act_window">
+            <field name="name">Intern Metrics and KPI Overview</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="view_id" ref="view_intern_kpi_kanban"/>
+            <field name="domain">[('is_intern', '=', True)]</field>
+        </record>
+
+        <record id="view_intern_kpi_graph_avg_score" model="ir.ui.view">
+            <field name="name">hr.employee.intern.kpi.graph.avg_score</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <graph string="Average Score per Intern" type="bar">
+                    <field name="name" type="row"/>
+                    <field name="average_score" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="action_intern_kpi_graph_avg_score" model="ir.actions.act_window">
+        <field name="name">Average Scores</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">graph,list,form</field>
+            <field name="view_id" ref="view_intern_kpi_graph_avg_score"/>
+            <field name="domain">[('is_intern', '=', True)]</field>
+            <field name="context">{'graph_measure': 'average_score', 'hide_graph_measures': True}</field>
+        </record>
+
+        <record id="action_intern_evaluation_scatter_timeliness_responsiveness" model="ir.actions.client">
+            <field name="name">Timeliness vs Responsiveness</field>
+            <field name="tag">famtech_intern_dashboard.timeliness_responsiveness_scatter</field>
+        </record>
+
+        <record id="action_intern_contract_vs_rendered_hours_chart" model="ir.actions.client">
+            <field name="name">Contract Hours vs Rendered Hours</field>
+            <field name="tag">famtech_intern_dashboard.contract_vs_rendered_hours_chart</field>
+        </record>
+
+        <menuitem id="menu_hr_kpi_dashboard" name="Intern Metrics and KPI" parent="hr.menu_hr_root" sequence="90"/>
+        <menuitem id="menu_intern_kpi_dashboard" name="Overview" parent="menu_hr_kpi_dashboard" action="action_intern_kpi" sequence="5"/>
+        <menuitem id="menu_hr_kpi_export" name="Results and Reports" parent="menu_hr_kpi_dashboard" sequence="30"/>
+        <menuitem id="menu_hr_kpi_graphs" name="Graphs" parent="menu_hr_kpi_dashboard" sequence="20"/>
+        <menuitem id="menu_hr_kpi_dashboard_export" name="Generate Reports" parent="menu_hr_kpi_export" action="action_hr_kpi_dashboard" sequence="10"/>
+        <menuitem id="menu_graph_avg_score" name="Average Scores" parent="menu_hr_kpi_graphs" action="action_intern_kpi_graph_avg_score" sequence="10"/>
+        <menuitem id="menu_graph_timeliness_responsiveness" name="Timeliness vs Responsiveness" parent="menu_hr_kpi_graphs" action="action_intern_evaluation_scatter_timeliness_responsiveness" sequence="30"/>
+        <menuitem id="menu_graph_contract_vs_rendered_hours" name="Contract Hours vs Rendered Hours" parent="menu_hr_kpi_graphs" action="action_intern_contract_vs_rendered_hours_chart" sequence="20"/>
+    </data>
+</odoo>
