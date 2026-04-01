@@ -1,5 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+from datetime import date
 
 class HREmployee(models.Model):
     _inherit = 'hr.employee'
@@ -26,6 +27,7 @@ class HREmployee(models.Model):
     is_intern = fields.Boolean("Is Intern", default=False)
     task_target_monthly = fields.Integer(string="Task Target (Monthly)", required=True)
     contracted_hours = fields.Float("Contracted Hours", help="Total hours per contract")
+    hr_contact_id = fields.Many2one('hr.employee', string="HR Contact")
     hours_rendered = fields.Float("Hours Rendered", compute="_compute_hours_rendered", store=True)
 
     # Onboarding step flags (used by portal onboarding page)
@@ -36,6 +38,8 @@ class HREmployee(models.Model):
     internship_start_date = fields.Date("Internship Start Date")
     internship_end_date = fields.Date("Internship End Date")
     supervisor_id = fields.Many2one('hr.employee', string="Supervisor")
+    hours_alert_sent = fields.Boolean("Hours Alert Sent", default=False)
+    last_performance_alert_sent = fields.Date("Last Performance Alert Sent")
 
     # Performance Scores
     timeliness_score = fields.Float("Timeliness Score", readonly=True)
@@ -76,10 +80,10 @@ class HREmployee(models.Model):
     accuracy_target_result = fields.Selection([('success', 'Success'), ('failed', 'Failed')], string="Accuracy Result", compute="_compute_kpi_target_results", store=True, readonly=True)
 
     # Responsiveness with Sub-categories
-    responsiveness_viber = fields.Float("Viber Response", default=5.0, help="Rate responsiveness on Viber (1-5)")
-    responsiveness_google_chat = fields.Float("Google Chat Response", default=5.0, help="Rate responsiveness on Google Chat (1-5)")
-    responsiveness_gmail = fields.Float("Gmail Response", default=5.0, help="Rate responsiveness on Google Gmail (1-5)")
-    responsiveness_zoho_email = fields.Float("Zoho Email Response", default=5.0, help="Rate responsiveness on Zoho Email (1-5)")
+    responsiveness_viber = fields.Float("Viber Response", default=0.0, help="Rate responsiveness on Viber (1-5)")
+    responsiveness_google_chat = fields.Float("Google Chat Response", default=0.0, help="Rate responsiveness on Google Chat (1-5)")
+    responsiveness_gmail = fields.Float("Gmail Response", default=0.0, help="Rate responsiveness on Google Gmail (1-5)")
+    responsiveness_zoho_email = fields.Float("Zoho Email Response", default=0.0, help="Rate responsiveness on Zoho Email (1-5)")
     responsiveness_score = fields.Float("Responsiveness Score", compute="_compute_responsiveness_score", store=True, readonly=True, help="Average of Viber, Google Chat, Gmail, and Zoho Email responsiveness scores")
 
     # Task Metrics
@@ -111,12 +115,13 @@ class HREmployee(models.Model):
         """Calculate average responsiveness score from sub-categories"""
         for emp in self:
             scores = [
-                emp.responsiveness_viber or 5.0,
-                emp.responsiveness_google_chat or 5.0,
-                emp.responsiveness_gmail or 5.0,
-                emp.responsiveness_zoho_email or 5.0,
+                emp.responsiveness_viber,
+                emp.responsiveness_google_chat,
+                emp.responsiveness_gmail,
+                emp.responsiveness_zoho_email,
             ]
-            emp.responsiveness_score = round(sum(scores) / len(scores), 2)
+            valid = [s for s in scores if s and s > 0]
+            emp.responsiveness_score = round(sum(valid) / len(valid), 2) if valid else 0.0
 
     @api.depends(
         'timeliness_target_percentage',
@@ -201,16 +206,17 @@ class HREmployee(models.Model):
         """Calculate average of all performance scores"""
         for rec in self:
             scores = [
-                rec.timeliness_score or 0,
-                rec.responsiveness_score or 0,
-                rec.punctuality_score or 0,
-                rec.quantity_score or 0,
-                rec.quality_score or 0,
-                rec.effectiveness_score or 0,
-                rec.efficiency_score or 0,
-                rec.accuracy_score or 0,
+                rec.timeliness_score,
+                rec.responsiveness_score,
+                rec.punctuality_score,
+                rec.quantity_score,
+                rec.quality_score,
+                rec.effectiveness_score,
+                rec.efficiency_score,
+                rec.accuracy_score,
             ]
-            rec.average_score = sum(scores) / len(scores) if scores else 0
+            valid = [s for s in scores if s and s > 0]
+            rec.average_score = sum(valid) / len(valid) if valid else 0.0
 
     @api.depends()
     def _compute_task_counts(self):
@@ -313,3 +319,32 @@ class HREmployee(models.Model):
             'accuracy_score',
             'average_score',
         }
+
+    def _cron_check_intern_hours(self):
+        """Daily cron: send alerts for hours reached and low performance."""
+        interns = self.search([('is_intern', '=', True)])
+        for intern in interns:
+            # --- Hours reached alert (only send once) ---
+            if (intern.contracted_hours
+                    and intern.hours_rendered >= intern.contracted_hours
+                    and not intern.hours_alert_sent):
+                template = self.env.ref(
+                    'famtech_intern_dashboard.email_template_intern_hours_reached',
+                    raise_if_not_found=False
+                )
+                if template:
+                    template.sudo().send_mail(intern.id, force_send=True)
+                    intern.sudo().write({'hours_alert_sent': True})
+
+            # --- Low performance alert (weekly, score between 0 and 2.5) ---
+            if intern.average_score and 0 < intern.average_score < 2.5:
+                today = date.today()
+                last_sent = intern.last_performance_alert_sent
+                if not last_sent or (today - last_sent).days >= 7:
+                    template = self.env.ref(
+                        'famtech_intern_dashboard.email_template_intern_low_performance',
+                        raise_if_not_found=False
+                    )
+                    if template:
+                        template.sudo().send_mail(intern.id, force_send=True)
+                        intern.sudo().write({'last_performance_alert_sent': today})
