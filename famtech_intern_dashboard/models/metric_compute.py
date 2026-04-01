@@ -240,7 +240,6 @@ class InternMetricCompute(models.AbstractModel):
 
         for emp in employees:
             timeliness = self.compute_timeliness_score(emp)
-            responsiveness = emp.responsiveness_score or 5.0
             punctuality = self.compute_punctuality_score(emp)
             quantity = self.compute_quantity_score(emp)
             quality = self.compute_quality_score(emp)
@@ -248,19 +247,12 @@ class InternMetricCompute(models.AbstractModel):
             efficiency = self.compute_efficiency_score(emp)
             accuracy = self.compute_accuracy_score(emp)
 
-            average = (
-                timeliness + responsiveness + punctuality + quantity +
-                quality + effectiveness + efficiency + accuracy
-            ) / 8
-
             emp.sudo().write({
                 'timeliness_score': timeliness,
-                'responsiveness_score': responsiveness,
                 'punctuality_score': punctuality,
                 'quantity_score': quantity,
                 'quality_score': quality,
                 'effectiveness_score': effectiveness,
                 'efficiency_score': efficiency,
                 'accuracy_score': accuracy,
-                'average_score': average,
             })
