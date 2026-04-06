@@ -40,6 +40,7 @@ class HREmployee(models.Model):
     supervisor_id = fields.Many2one('hr.employee', string="Supervisor")
     hours_alert_sent = fields.Boolean("Hours Alert Sent", default=False)
     last_performance_alert_sent = fields.Date("Last Performance Alert Sent")
+    approaching_hours_alert_sent = fields.Boolean("Approaching Hours Alert Sent", default=False)
 
     # Performance Scores
     timeliness_score = fields.Float("Timeliness Score", readonly=True)
@@ -335,6 +336,21 @@ class HREmployee(models.Model):
                 if template:
                     template.sudo().send_mail(intern.id, force_send=True)
                     intern.sudo().write({'hours_alert_sent': True})
+
+            # --- Approaching hours alert (50 hrs before, send once) ---
+            if (intern.contracted_hours
+                    and intern.hours_rendered > 0
+                    and not intern.approaching_hours_alert_sent
+                    and not intern.hours_alert_sent):
+                hours_remaining = intern.contracted_hours - intern.hours_rendered
+                if 0 < hours_remaining <= 50:
+                    template = self.env.ref(
+                        'famtech_intern_dashboard.email_template_intern_approaching_hours',
+                        raise_if_not_found=False
+                    )
+                    if template:
+                        template.sudo().send_mail(intern.id, force_send=True)
+                        intern.sudo().write({'approaching_hours_alert_sent': True})
 
             # --- Low performance alert (weekly, score between 0 and 2.5) ---
             if intern.average_score and 0 < intern.average_score < 2.5:
