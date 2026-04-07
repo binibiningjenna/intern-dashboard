@@ -1,0 +1,118 @@
+:root {
+  /* Gold/Yellow Scale */
+  --color-gold-100: #FFF2D1;
+  --color-gold-300: #FFD285;
+  --color-gold-500: #bf9e3c; 
+  --color-gold-700: #937A40;
+  --color-gold-900: #5C4525; 
+
+  /* Navy/Blue Scale */
+  --color-navy-100: #CFDEEB;
+  --color-navy-300: #709ECB;
+  --color-navy-500: #0e4174;
+  --color-navy-700: #052348;
+  --color-navy-900: #02142A; 
+  
+  /* Gray Scale */
+  --color-gray-100: #F3F4F6; 
+  --color-gray-300: #D1D5DB; 
+  --color-gray-500: #6B7280; 
+  --color-gray-700: #374151; 
+  --color-gray-900: #1A1A1A;
+
+  /* Neutrals */
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  color: var(--color-navy-500);
+  font-weight: 700;
+}
+
+/* Divider */
+hr.brand-divider {
+  border-top: 2px solid var(--color-navy-500);
+  opacity: 0.15;
+  margin: 1.5rem 0;
+}
+
+/* Primary Button */
+.btn-primary {
+  --bs-btn-color: var(--color-white);
+  --bs-btn-bg: var(--color-navy-500);
+  --bs-btn-border-color: var(--color-navy-500);
+  
+  /* Hover State: */
+  --bs-btn-hover-color: var(--color-white);
+  --bs-btn-hover-bg: var(--color-navy-700);
+  --bs-btn-hover-border-color: var(--color-navy-700);
+  
+  /* Active State */
+  --bs-btn-active-color: var(--color-white);
+  --bs-btn-active-bg: var(--color-navy-900);
+  --bs-btn-active-border-color: var(--color-navy-900);
+  
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  box-shadow: 0 6px 16px rgba(6, 38, 71, 0.25);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  --bs-btn-color: var(--color-white);
+  --bs-btn-bg: var(--color-gold-500);
+  --bs-btn-border-color: var(--color-gold-500);
+  
+  /* Hover State: */
+  --bs-btn-hover-color: var(--color-white);
+  --bs-btn-hover-bg: var(--color-gold-700);
+  --bs-btn-hover-border-color: var(--color-gold-700);
+  
+  /* Active State */
+  --bs-btn-active-color: var(--color-white);
+  --bs-btn-active-bg: var(--color-gold-700);
+  --bs-btn-active-border-color: var(--color-gold-700);
+  
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+  box-shadow: 0 6px 16px rgba(191, 158, 60, 0.25);
+}
+
+/* Card */
+.card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04); 
+  color: var(--color-gray-900);
+  overflow: hidden;
+}
+
+.card-header {
+  background-color: var(--color-gray-100);
+  border-bottom: 1px solid var(--color-gray-300);
+  color: var(--color-navy-500);
+  font-weight: 700;
+  padding: 1.25rem 1.5rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-footer {
+  background-color: var(--color-white);
+  border-top: 1px solid var(--color-gray-300);
+  padding: 1rem 1.5rem;
+}
