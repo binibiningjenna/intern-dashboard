@@ -1,5 +1,12 @@
 <odoo>
     <template id="intern_navbar" name="Intern Navbar">
+        <!--
+            NOTE: This template only contains the intern navigation bar and related global styles.
+            It is not a full page layout. 
+            All other pages that need the navbar should include it dynamically using:
+            <t t-call="famtech_intern_dashboard.intern_navbar"/>
+            This ensures consistent navigation across all intern dashboard pages.
+        -->
         <link rel="preconnect" href="https://fonts.googleapis.com"/>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin"/>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
