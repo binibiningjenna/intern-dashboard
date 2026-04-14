@@ -17,127 +17,8 @@ class InternPortal(CustomerPortal):
             values['intern_onboarding_count'] = 1 if employee else 0
         return values
 
-    def _auto_detect_onboarding(self, employee):
-        """
-        Auto-detect and update onboarding step fields based on real Odoo data.
-        Called every time the intern visits the onboarding page.
-        Only updates a field if it is not already True (never un-checks a completed step).
-        """
-        updates = {}
-
-        # ------------------------------------------------------------------
-        # STEP 1: Handbook Reviewed
-        # Auto-mark as True on first visit to the onboarding page.
-        # Once they land here, they are considered to have acknowledged it.
-        # ------------------------------------------------------------------
-
-        # ------------------------------------------------------------------
-        # STEP 2: Orientation Completed
-        # Check if a past calendar event with "orientation" in the name
-        # exists and the intern (via their partner) was an attendee.
-        # ------------------------------------------------------------------
-        if not employee.orientation_completed:
-            attendance_record = request.env['famtech.meeting.attendance'].sudo().search([
-                ('employee_id', '=', employee.id),
-            ], limit=1)
-            if attendance_record:
-                updates['orientation_completed'] = True
-
-        # ------------------------------------------------------------------
-        # STEP 3: Odoo Access / Profile Complete
-        # Check if the related user's partner has a phone or mobile filled in.
-        # You can extend this check (e.g. job_position, address) as needed.
-        # ------------------------------------------------------------------
-        if not employee.odoo_access_granted:
-            partner = employee.user_id.partner_id
-            if partner.phone or partner.mobile:
-                updates['odoo_access_granted'] = True
-
-        # ------------------------------------------------------------------
-        # STEP 4: First Task Assigned
-        # Check if any project.task is assigned to this intern.
-        # ------------------------------------------------------------------
-        if not employee.first_task_assigned:
-            task = request.env['project.task'].sudo().search([
-                ('user_ids', 'in', employee.user_id.ids),
-                ('state', '=', '1_done'),  # ← use state field, not stage_id.fold
-            ], limit=1)
-            if task:
-                updates['first_task_assigned'] = True
-
-        # Write all detected updates in one call
-        if updates:
-            employee.sudo().write(updates)
-
-    @http.route(['/my/intern/onboarding'], type='http', auth='user', website=True)
-    def portal_intern_onboarding(self, **kw):
-        user = request.env.user
-        employee = request.env['hr.employee'].sudo().search([
-            ('user_id', '=', user.id)
-        ], limit=1)
-
-        if not employee or not employee.is_intern:
-            return request.redirect('/my/home')
-
-        # Run auto-detection on every page load
-        self._auto_detect_onboarding(employee)
-
-        # Recompute progress after auto-detection
-        completed = sum([
-            bool(employee.handbook_reviewed),
-            bool(employee.orientation_completed),
-            bool(employee.odoo_access_granted),
-            bool(employee.first_task_assigned),
-        ])
-        progress = int((completed / 4) * 100)
-
-        values = {
-            'employee': employee,
-            'progress': progress,
-            'page_name': 'intern_onboarding',
-        }
-        return request.render('famtech_intern_dashboard.portal_intern_onboarding_page', values)
-
-    @http.route(['/my/intern/onboarding/update'], type='http', auth='user', website=True, methods=['POST'], csrf=True)
-    def update_onboarding(self, **kw):
-        """
-        Manual override — HR or intern can still tick/untick checkboxes.
-        Auto-detected steps will be re-detected on next page load anyway.
-        """
-        user = request.env.user
-        employee = request.env['hr.employee'].sudo().search([
-            ('user_id', '=', user.id),
-            ('is_intern', '=', True)
-        ], limit=1)
-
-        if not employee:
-            return request.redirect('/my/home')
-
-        employee.write({
-            'handbook_reviewed': bool(kw.get('handbook_reviewed')),
-            'orientation_completed': bool(kw.get('orientation_completed')),
-            'odoo_access_granted': bool(kw.get('odoo_access_granted')),
-            'first_task_assigned': bool(kw.get('first_task_assigned')),
-        })
-
-        return request.redirect('/my/intern/onboarding')
-    
-    @http.route(['/my/intern/handbook/download'], type='http', auth='user', website=True)
-    def download_handbook(self, **kw):
-        employee = request.env['hr.employee'].sudo().search([
-            ('user_id', '=', request.env.user.id),
-            ('is_intern', '=', True)
-        ], limit=1)
-
-        # Mark handbook as reviewed when they click download
-        if employee and not employee.handbook_reviewed:
-            employee.sudo().write({'handbook_reviewed': True})
-
-        # Redirect to the actual file
-        return request.redirect('https://famtech-innovative-it-solutions2.odoo.com/knowledge/article/78', local=False)
-    
     @http.route(['/my/intern/calendar'], type='http', auth='user', website=True)
-    def portal_intern_calendar(self, **kw):
+    def portal_intern_calendar(self, event_id=None, error=None, logged=None, **kw):
         user = request.env.user
         employee = request.env['hr.employee'].sudo().search([
             ('user_id', '=', user.id),
@@ -148,18 +29,101 @@ class InternPortal(CustomerPortal):
             return request.redirect('/my/home')
 
         partner = employee.user_id.partner_id
-        from datetime import datetime
         now = datetime.now()
 
-        # Fetch upcoming events where the intern is an attendee
+        # All events — past and upcoming — where intern is attendee
         events = request.env['calendar.event'].sudo().search([
-            ('stop', '>=', now),
             ('partner_ids', 'in', partner.ids),
         ], order='start asc', limit=50)
+
+        # Build attendance map: event_id → attendance record
+        attendance_records = request.env['famtech.meeting.attendance'].sudo().search([
+            ('employee_id', '=', employee.id),
+        ])
+        attendance_map = {rec.calendar_event_id.id: rec for rec in attendance_records}
+
+        # Check for session error from join-call redirect
+        session_errors = {}
+        for ev in events:
+            key = 'attendance_error_%s' % ev.id
+            if key in request.session:
+                session_errors[ev.id] = request.session.pop(key)
 
         values = {
             'employee': employee,
             'events': events,
+            'attendance_map': attendance_map,
+            'now': now,
+            'session_errors': session_errors,
+            'url_error': error or '',
             'page_name': 'intern_calendar',
         }
         return request.render('famtech_intern_dashboard.portal_intern_calendar_page', values)
+    
+    @http.route('/my/intern/join-call/<int:event_id>', type='http', auth='user', website=True)
+    def join_call(self, event_id, **kw):
+        """
+        Records attendance then redirects to the video call.
+        Uses famtech.meeting.attendance which enforces the time window.
+        """
+        user = request.env.user
+        employee = request.env['hr.employee'].sudo().search([
+            ('user_id', '=', user.id),
+            ('is_intern', '=', True),
+        ], limit=1)
+
+        if not employee:
+            return request.redirect('/my/home')
+
+        event = request.env['calendar.event'].sudo().browse(event_id)
+        if not event.exists():
+            return request.redirect('/my/intern/calendar')
+
+        error = None
+        try:
+            request.env['famtech.meeting.attendance'].sudo().create({
+                'employee_id': employee.id,
+                'calendar_event_id': event_id,
+            })
+        except Exception as e:
+            error = str(e)
+
+        # Whether attendance succeeded or failed, redirect to the video call
+        # if there's a video URL — attendance error shown on return
+        if event.videocall_location:
+            if error:
+                # Store error in session to show after returning
+                request.session['attendance_error_%s' % event_id] = error
+            return request.redirect(event.videocall_location, local=False)
+
+        # No video URL — stay on calendar page and show result
+        return request.redirect('/my/intern/calendar?event_id=%s&error=%s' % (
+            event_id, error or ''
+        ))
+
+    @http.route('/my/intern/log-attendance/<int:event_id>', type='http', auth='user', website=True)
+    def log_attendance_only(self, event_id, **kw):
+        """
+        For events without a video call — logs attendance directly.
+        """
+        user = request.env.user
+        employee = request.env['hr.employee'].sudo().search([
+            ('user_id', '=', user.id),
+            ('is_intern', '=', True),
+        ], limit=1)
+
+        if not employee:
+            return request.redirect('/my/home')
+
+        error = None
+        try:
+            request.env['famtech.meeting.attendance'].sudo().create({
+                'employee_id': employee.id,
+                'calendar_event_id': event_id,
+            })
+        except Exception as e:
+            error = str(e)
+
+        return request.redirect('/my/intern/calendar?logged=%s&error=%s' % (
+            event_id, error or ''
+        ))
