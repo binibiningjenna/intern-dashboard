@@ -1,5 +1,7 @@
 <odoo>
     <template id="intern_rewards" name="Intern Rewards">
+        <t t-call="famtech_intern_dashboard.intern_navbar"/>
+
        <link rel="preconnect" href="https://fonts.googleapis.com"/>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin"/>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
@@ -14,7 +16,7 @@
                     <div class="col-12">
                         <div class="d-flex align-items-center gap-3 mb-3">
                             <span class="badge rounded-pill px-3 py-2" style="background-color: var(--color-gold-100); color: var(--color-gold-900);">v1.0.0</span>
-                            <span class="text-muted fw-medium">Internal Documentation</span>
+                            <span class="text-muted fw-medium">Internal Documentation - REWARDS PAGE</span>
                         </div>
                         <h1 class="fw-bolder display-5 mb-3">Brand Design System</h1>
                         <p class="lead" style="color: var(--color-gray-500); max-width: 600px;">The official component library and style guide for Intern Dashboard.</p>

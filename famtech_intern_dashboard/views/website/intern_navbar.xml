@@ -1,15 +1,16 @@
 <odoo>
     <template id="intern_navbar" name="Intern Navbar">
-        <nav class="navbar navbar-expand-lg navbar-dark intern-navbar sticky-top">
-            <div class="container-fluid intern-navbar-inner">
+        <nav class="navbar navbar-expand-lg intern-navbar">
+            <div class="container-fluid px-3 px-lg-4">
 
-                <a class="navbar-brand intern-navbar-brand" href="/my/intern_dashboard">
+                <a class="navbar-brand d-flex align-items-center" href="/my/intern_dashboard">
                     <img src="/famtech_intern_dashboard/static/src/img/famtech_logo_no_bg.png"
                          alt="FAMTECH Logo"
                          class="intern-navbar-logo"/>
                 </a>
 
-                <button class="navbar-toggler border-0 shadow-none" type="button"
+                <button class="navbar-toggler border-0 shadow-none"
+                        type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#internNavbarMenu"
                         aria-controls="internNavbarMenu"
@@ -19,30 +20,34 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="internNavbarMenu">
-                    <ul class="navbar-nav ms-lg-auto align-items-lg-center intern-navbar-links">
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+
                         <li class="nav-item">
-                            <a t-att-class="'nav-link ' + ('active' if page_name == 'intern_dashboard' else '')"
+                            <a t-attf-class="nav-link #{'active' if page_name == 'intern_dashboard' else ''}"
                                href="/my/intern_dashboard">
-                                <i class="bi bi-house-door me-2"></i>Intern Dashboard
+                                <i class="bi bi-house-door me-2"></i>
+                                <span>Intern Dashboard</span>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a t-att-class="'nav-link ' + ('active' if page_name == 'intern_onboarding' else '')"
+                            <a t-attf-class="nav-link #{'active' if page_name == 'intern_onboarding' else ''}"
                                href="/my/intern/onboarding">
-                                <i class="bi bi-clipboard-check me-2"></i>Onboarding
+                                <i class="bi bi-clipboard-check me-2"></i>
+                                <span>Onboarding</span>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a t-att-class="'nav-link ' + ('active' if page_name == 'intern_rewards' else '')"
+                            <a t-attf-class="nav-link #{'active' if page_name == 'intern_rewards' else ''}"
                                href="/my/intern/rewards">
-                                <i class="bi bi-trophy me-2"></i>Rewards
+                                <i class="bi bi-trophy me-2"></i>
+                                <span>Rewards</span>
                             </a>
                         </li>
 
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle intern-profile-toggle"
+                            <a class="nav-link dropdown-toggle d-flex align-items-center"
                                href="#"
                                id="internProfileDropdown"
                                role="button"
@@ -50,6 +55,7 @@
                                aria-expanded="false">
                                 <i class="bi bi-person-circle fs-4"></i>
                             </a>
+
                             <ul class="dropdown-menu dropdown-menu-end intern-profile-menu"
                                 aria-labelledby="internProfileDropdown">
                                 <li class="dropdown-item-text fw-semibold">
@@ -63,9 +69,12 @@
                                 </li>
                             </ul>
                         </li>
+
                     </ul>
                 </div>
             </div>
         </nav>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </template>
 </odoo>

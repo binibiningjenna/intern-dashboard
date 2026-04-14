@@ -1,7 +1,8 @@
 <odoo>
     <template id="intern_dashboard" name="Intern Dashboard">
-    <t t-call="website.layout">
-    <t t-call="famtech_intern_dashboard.intern_navbar"/>
+            <t t-call="famtech_intern_dashboard.intern_navbar">
+            <t t-set="page_name" t-value="'intern_dashboard'"/>
+            </t>
 
 
         <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -243,6 +244,5 @@
 
             </div>
         </div>
-    </t>
     </template>
 </odoo>

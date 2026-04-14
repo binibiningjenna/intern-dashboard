@@ -163,3 +163,33 @@ class InternPortal(CustomerPortal):
             'page_name': 'intern_calendar',
         }
         return request.render('famtech_intern_dashboard.portal_intern_calendar_page', values)
+    
+    @http.route(['/my/intern_dashboard'], type='http', auth='user', website=True)
+    def portal_intern_dashboard(self, **kw):
+        user = request.env.user
+
+        employee = request.env['hr.employee'].sudo().search([
+            ('user_id', '=', user.id)
+        ], limit=1)
+
+        values = {
+            'employee_name': employee.name if employee else user.name,
+            'page_name': 'intern_dashboard',  # ⭐ THIS FIXES IT
+        }
+
+        return request.render('famtech_intern_dashboard.intern_dashboard', values)
+    
+    @http.route(['/my/intern/rewards'], type='http', auth='user', website=True)
+    def portal_intern_rewards(self, **kw):
+        user = request.env.user
+        employee = request.env['hr.employee'].sudo().search([
+            ('user_id', '=', user.id)
+        ], limit=1)
+
+        if not employee or not employee.is_intern:
+            return request.redirect('/my/home')
+
+        values = {
+            'page_name': 'intern_rewards',
+        }
+        return request.render('famtech_intern_dashboard.intern_rewards', values)

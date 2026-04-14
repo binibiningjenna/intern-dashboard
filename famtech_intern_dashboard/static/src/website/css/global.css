@@ -117,101 +117,55 @@ hr.brand-divider {
   padding: 1rem 1.5rem;
 }
 
- /* no double navbar */
-header#top,
-#top_menu,
-.o_header_standard {
-    display: none !important;
-}
-
-
 /* =========================
    NAVBAR
 ========================= */
 .intern-navbar {
     background: linear-gradient(90deg, var(--color-navy-700), var(--color-navy-500));
-    font-family: 'Poppins', sans-serif;
-    padding: 0.55rem 0;
     box-shadow: 0 4px 16px rgba(2, 20, 42, 0.25);
     z-index: 1030;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
 }
 
-.intern-navbar-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    gap: 0.75rem;
-}
-
-.intern-navbar-brand {
-    display: flex;
-    align-items: center;
-    margin: 0;
-    min-width: 0;
-    flex: 1 1 auto;
-    max-width: calc(100% - 64px);
+.intern-navbar .navbar-brand {
+    margin-right: 1rem;
 }
 
 .intern-navbar-logo {
     display: block;
-    height: 48px;
+    height: 44px;
     width: auto;
-    max-width: 100%;
     object-fit: contain;
 }
 
-.intern-navbar-links {
-    gap: 1.4rem;
-}
-
-/* NAV LINKS DEFAULT */
-.intern-navbar .nav-link {
+.intern-navbar .navbar-nav .nav-link {
     color: var(--color-white) !important;
     font-weight: 500;
-    padding: 0.65rem 0.95rem;
-    border-radius: 999px;
-    transition: all 0.25s ease;
+    padding: 0.65rem 0.9rem;
+    border-radius: 0.5rem;
+    transition: color 0.2s ease, background-color 0.2s ease;
 }
 
-/* HOVER */
-.intern-navbar .nav-link:hover,
-.intern-navbar .nav-link:focus {
+.intern-navbar .navbar-nav .nav-item:not(.dropdown) .nav-link:hover,
+.intern-navbar .navbar-nav .nav-item:not(.dropdown) .nav-link:focus,
+.intern-navbar .navbar-nav .nav-item:not(.dropdown) .nav-link.active,
+.intern-navbar .navbar-nav .nav-item:not(.dropdown) .nav-link[aria-current="page"] {
     color: var(--color-gold-300) !important;
     font-weight: 700;
-    background: transparent !important;
-}
-
-/* ACTIVE (CURRENT PAGE) */
-.intern-navbar .nav-link.active {
-    color: var(--color-gold-300) !important;
-    font-weight: 700;
-    background: transparent !important;
+    background-color: rgba(255, 255, 255, 0.06) !important;
 }
 
 .intern-navbar .navbar-toggler {
-    flex: 0 0 auto;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 0.2rem 0.45rem;
-    color: var(--color-white) !important;
+    color: var(--color-white);
 }
 
-.intern-navbar .navbar-toggler-icon {
-    width: 1.5em;
-    height: 1.5em;
-}
-
-.intern-navbar .navbar-toggler:focus,
-.intern-navbar .navbar-toggler:active {
-    outline: none;
+.intern-navbar .navbar-toggler:focus {
     box-shadow: none;
 }
 
-.intern-profile-toggle {
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
+.intern-navbar .navbar-toggler-icon {
+    filter: brightness(0) invert(1);
 }
 
 .intern-profile-menu {
@@ -231,65 +185,26 @@ header#top,
     padding: 0.55rem 1rem;
 }
 
-@media (min-width: 992px) {
-    .intern-navbar .navbar-collapse {
-        display: flex !important;
-        flex-basis: auto;
-    }
-}
-
 @media (max-width: 991.98px) {
-    .intern-navbar .navbar-toggler {
-        display: inline-flex !important;
+    .intern-navbar .navbar-collapse {
+        margin-top: 0.75rem;
+        background-color: var(--color-navy-700);
+        border-radius: 12px;
+        padding: 0.75rem;
+    }
+
+    .intern-navbar .navbar-nav .nav-link {
+        display: flex;
+        align-items: center;
+        width: 100%;
     }
 
     .intern-navbar-logo {
         height: 34px;
     }
-
-    .intern-navbar .navbar-collapse {
-        width: 100%;
-        background: var(--color-navy-700);
-        margin-top: 0.75rem;
-        padding: 0.85rem;
-        border-radius: 12px;
-    }
-
-    .intern-navbar .navbar-nav {
-        width: 100%;
-        gap: 0.35rem;
-    }
-
-    .intern-navbar .nav-item {
-        width: 100%;
-    }
-
-    .intern-navbar .nav-link {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        padding: 0.8rem 1rem;
-        border-radius: 10px;
-    }
-
-    .intern-profile-toggle {
-        justify-content: flex-start;
-    }
 }
 
 @media (max-width: 480px) {
-    .intern-navbar {
-        padding: 0.45rem 0;
-    }
-
-    .intern-navbar-inner {
-        gap: 0.5rem;
-    }
-
-    .intern-navbar-brand {
-        max-width: calc(100% - 56px);
-    }
-
     .intern-navbar-logo {
         height: 28px;
     }
