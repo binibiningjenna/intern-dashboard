@@ -1,5 +1,8 @@
 <odoo>
     <template id="portal_intern_onboarding_page" name="Intern Onboarding">
+
+        <title>Intern Onboarding</title> 
+
         <t t-call="famtech_intern_dashboard.intern_navbar"/>
 
         <link rel="preconnect" href="https://fonts.googleapis.com"/>

@@ -1,5 +1,8 @@
 <odoo>
     <template id="intern_dashboard" name="Intern Dashboard">
+    
+        <title>Intern Dashboard</title> 
+
             <t t-call="famtech_intern_dashboard.intern_navbar">
             <t t-set="page_name" t-value="'intern_dashboard'"/>
             </t>

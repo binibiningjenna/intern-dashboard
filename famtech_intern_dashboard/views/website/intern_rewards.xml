@@ -1,5 +1,8 @@
 <odoo>
     <template id="intern_rewards" name="Intern Rewards">
+
+         <title>Intern Rewards</title> 
+         
         <t t-call="famtech_intern_dashboard.intern_navbar"/>
 
        <link rel="preconnect" href="https://fonts.googleapis.com"/>
