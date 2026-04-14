@@ -26,8 +26,19 @@ class InternDashboard(http.Controller):
         if not employee or not employee.is_intern:
             return request.redirect('/my/home')
 
+        metrics = [
+            {'label': 'Timeliness', 'value': employee.timeliness_score, 'icon': 'clock-history'},
+            {'label': 'Punctuality', 'value': employee.punctuality_score, 'icon': 'calendar-check'},
+            {'label': 'Quantity', 'value': employee.quantity_score, 'icon': 'boxes'},
+            {'label': 'Quality', 'value': employee.quality_score, 'icon': 'star'},
+            {'label': 'Effectiveness', 'value': employee.effectiveness_score, 'icon': 'bullseye'},
+            {'label': 'Efficiency', 'value': employee.efficiency_score, 'icon': 'lightning-charge'},
+            {'label': 'Accuracy', 'value': employee.accuracy_score, 'icon': 'check2-circle'},
+            {'label': 'Responsiveness', 'value': employee.responsiveness_score, 'icon': 'chat-right-text'},
+        ]
+
         values = {
-            'employee_name': employee.name,
+            'metrics': metrics,
             'page_name': 'intern_dashboard'
         }
 
