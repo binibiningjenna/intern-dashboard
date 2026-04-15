@@ -1,5 +1,3 @@
-import csv
-import io
 import json
 
 from odoo import fields, http
@@ -9,7 +7,10 @@ from odoo.http import request
 class InternDashboard(http.Controller):
     def _get_kpi_payload(self, employee):
         evaluations = request.env['intern.evaluation'].sudo().search(
-            [('employee_id', '=', employee.id)],
+            [
+                ('employee_id', '=', employee.id),
+                ('is_weekly_snapshot', '=', True),
+            ],
             order='eval_date asc, id asc',
         )
 
@@ -39,13 +40,6 @@ class InternDashboard(http.Controller):
             for evaluation in evaluations
         ]
 
-        if not timeliness_responsiveness_trend:
-            timeliness_responsiveness_trend = [{
-                'timeliness': round(employee.timeliness_score or 0.0, 2),
-                'responsiveness': round(employee.responsiveness_score or 0.0, 2),
-                'evaluation_date': fields.Date.today().strftime('%Y-%m-%d'),
-            }]
-
         return {
             'summary': {
                 'average_score': average_score,
@@ -71,52 +65,23 @@ class InternDashboard(http.Controller):
             'timeliness_responsiveness_trend': timeliness_responsiveness_trend,
         }
 
-    def _get_kpi_csv(self, employee, payload):
-        output = io.StringIO()
-        writer = csv.writer(output)
-        result_labels = dict(employee._fields['timeliness_target_result'].selection)
-        writer.writerow([
-            'Name',
-            'Work Email',
-            'Department',
-            'Job Position',
-            'Contracted Hours',
-            'Rendered Hours',
-            'Average Score',
-            'Timeliness',
-            'Responsiveness',
-            'Punctuality',
-            'Quantity',
-            'Quality',
-            'Effectiveness',
-            'Efficiency',
-            'Accuracy',
-        ])
-
-        summary = payload['summary']
-        writer.writerow([
-            employee.name or '',
-            employee.work_email or '',
-            employee.department_id.name or '',
-            employee.job_title or employee.job_id.name or '',
-            summary['contracted_hours'],
-            summary['rendered_hours'],
-            summary['average_score'],
-            result_labels.get(employee.timeliness_target_result or 'failed', 'Failed'),
-            result_labels.get(employee.responsiveness_target_result or 'failed', 'Failed'),
-            result_labels.get(employee.punctuality_target_result or 'failed', 'Failed'),
-            result_labels.get(employee.quantity_target_result or 'failed', 'Failed'),
-            result_labels.get(employee.quality_target_result or 'failed', 'Failed'),
-            result_labels.get(employee.effectiveness_target_result or 'failed', 'Failed'),
-            result_labels.get(employee.efficiency_target_result or 'failed', 'Failed'),
-            result_labels.get(employee.accuracy_target_result or 'failed', 'Failed'),
-        ])
-        return output.getvalue()
-
-    def _get_kpi_csv_filename(self, employee):
+    def _get_kpi_pdf_filename(self, employee):
         report_date = fields.Date.today()
         employee_name = (employee.name or 'No Employee').replace('"', '')
-        return f'{employee_name} - Metrics and KPI Results ({report_date}).csv'
+        return f'{employee_name} - Insight Report ({report_date}).pdf'
+
+    def _get_report_date_range(self, employee):
+        evaluations = request.env['intern.evaluation'].sudo().search(
+            [
+                ('employee_id', '=', employee.id),
+                ('is_weekly_snapshot', '=', True),
+            ],
+            order='eval_date asc, id asc',
+            limit=1,
+        )
+        date_to = fields.Date.today()
+        date_from = evaluations.eval_date or date_to
+        return date_from, date_to
 
     @http.route(['/my'], type='http', auth='user', website=True)
     def redirect_my(self, **kwargs):
@@ -215,13 +180,25 @@ class InternDashboard(http.Controller):
         if not employee or not employee.is_intern:
             return request.redirect('/my/home')
 
-        csv_data = self._get_kpi_csv(employee, self._get_kpi_payload(employee))
-        filename = self._get_kpi_csv_filename(employee)
+        date_from, date_to = self._get_report_date_range(employee)
+        wizard = request.env['hr.kpi.dashboard'].sudo().create({
+            'date_from': date_from,
+            'date_to': date_to,
+            'employee_scope': 'single',
+            'employee_id': employee.id,
+        })
+        report = request.env.ref('famtech_intern_dashboard.action_report_hr_kpi_insights').sudo()
+        pdf_content, _content_type = request.env['ir.actions.report'].sudo()._render_qweb_pdf(
+            report.report_name,
+            res_ids=wizard.id,
+        )
+        filename = self._get_kpi_pdf_filename(employee)
         headers = [
-            ('Content-Type', 'text/csv; charset=utf-8'),
+            ('Content-Type', 'application/pdf'),
+            ('Content-Length', str(len(pdf_content))),
             ('Content-Disposition', f'attachment; filename="{filename}"'),
         ]
-        return request.make_response(csv_data, headers=headers)
+        return request.make_response(pdf_content, headers=headers)
 
     @http.route('/my/intern_navbar', type='http', auth='user', website=True)
     def intern_navbar(self, **kwargs):

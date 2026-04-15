@@ -29,6 +29,11 @@ class InternEvaluation(models.Model):
         default=fields.Date.today,
         required=True,
     )
+    is_weekly_snapshot = fields.Boolean(
+        string="Weekly Snapshot",
+        default=False,
+        help="Marks this evaluation as the official end-of-week snapshot used for trend charts.",
+    )
 
     technical_score = fields.Float(string="Technical Skills")
     communication_score = fields.Float(string="Communication")

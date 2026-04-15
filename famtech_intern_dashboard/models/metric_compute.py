@@ -256,3 +256,57 @@ class InternMetricCompute(models.AbstractModel):
                 'efficiency_score': efficiency,
                 'accuracy_score': accuracy,
             })
+
+    @api.model
+    def _cron_create_weekly_snapshots(self):
+        today = fields.Date.today()
+        if today.weekday() != 6:
+            return False
+
+        employees = self.env['hr.employee'].search([
+            ('is_intern', '=', True)
+        ])
+
+        evaluation_model = self.env['intern.evaluation'].sudo()
+        for employee in employees:
+            values = {
+                'employee_id': employee.id,
+                'eval_date': today,
+                'is_weekly_snapshot': True,
+                'timeliness_score': employee.timeliness_score,
+                'responsiveness_score': employee.responsiveness_score,
+                'punctuality_score': employee.punctuality_score,
+                'quantity_score': employee.quantity_score,
+                'quality_score': employee.quality_score,
+                'effectiveness_score': employee.effectiveness_score,
+                'efficiency_score': employee.efficiency_score,
+                'financial_accuracy_score': employee.accuracy_score,
+                'timeliness_target_percentage': employee.timeliness_target_percentage,
+                'responsiveness_target_percentage': employee.responsiveness_target_percentage,
+                'punctuality_target_percentage': employee.punctuality_target_percentage,
+                'quantity_target_percentage': employee.quantity_target_percentage,
+                'quality_target_percentage': employee.quality_target_percentage,
+                'effectiveness_target_percentage': employee.effectiveness_target_percentage,
+                'efficiency_target_percentage': employee.efficiency_target_percentage,
+                'accuracy_target_percentage': employee.accuracy_target_percentage,
+                'tasks_completed': employee.tasks_completed,
+                'tasks_on_time': employee.tasks_on_time,
+                'contract_hours': employee.contracted_hours,
+                'actual_hours': employee.hours_rendered,
+            }
+
+            existing_snapshot = evaluation_model.search(
+                [
+                    ('employee_id', '=', employee.id),
+                    ('eval_date', '=', today),
+                    ('is_weekly_snapshot', '=', True),
+                ],
+                limit=1,
+            )
+
+            if existing_snapshot:
+                existing_snapshot.write(values)
+            else:
+                evaluation_model.create(values)
+
+        return True

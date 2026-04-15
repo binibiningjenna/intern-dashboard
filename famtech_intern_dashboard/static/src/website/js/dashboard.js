@@ -22,12 +22,12 @@
         Chart.defaults.maintainAspectRatio = false;
     }
 
-    function emptyState(element) {
+    function emptyState(element, messageText = "No KPI data available yet.") {
         const parent = element && element.parentElement ? element.parentElement : element;
         if (parent && !parent.querySelector(".dashboard-empty-state")) {
             const message = document.createElement("div");
             message.className = "dashboard-empty-state";
-            message.textContent = "No KPI data available yet.";
+            message.textContent = messageText;
             parent.appendChild(message);
         }
     }
@@ -103,7 +103,8 @@
         const rows = payload.timeliness_responsiveness_trend || [];
         if (!canvas || !rows.length) {
             if (canvas) {
-                emptyState(canvas);
+                canvas.style.display = "none";
+                emptyState(canvas, "Weekly trend will appear after the first Sunday snapshot is recorded.");
             }
             return;
         }
