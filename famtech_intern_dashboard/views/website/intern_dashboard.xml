@@ -102,6 +102,9 @@
                                 </div>
                                 <div class="card-body dashboard-progress-card__body">
                                     <div class="dashboard-chart-frame dashboard-chart-frame-lg">
+                                        <div id="timelinessResponsivenessEmptyState" class="dashboard-empty-state">
+                                            No data available yet.
+                                        </div>
                                         <canvas id="timelinessResponsivenessChart"></canvas>
                                     </div>
                                 </div>

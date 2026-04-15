@@ -22,7 +22,7 @@
         Chart.defaults.maintainAspectRatio = false;
     }
 
-    function emptyState(element, messageText = "No KPI data available yet.") {
+    function emptyState(element, messageText = "No data available yet.") {
         const parent = element && element.parentElement ? element.parentElement : element;
         if (parent && !parent.querySelector(".dashboard-empty-state")) {
             const message = document.createElement("div");
@@ -100,11 +100,14 @@
 
     function renderTimelinessResponsivenessChart() {
         const canvas = document.getElementById("timelinessResponsivenessChart");
+        const emptyStateElement = document.getElementById("timelinessResponsivenessEmptyState");
         const rows = payload.timeliness_responsiveness_trend || [];
         if (!canvas || !rows.length) {
             if (canvas) {
                 canvas.style.display = "none";
-                emptyState(canvas, "Weekly trend will appear after the first Sunday snapshot is recorded.");
+            }
+            if (emptyStateElement) {
+                emptyStateElement.style.display = "flex";
             }
             return;
         }
@@ -112,6 +115,11 @@
         if (!window.Chart) {
             return;
         }
+
+        if (emptyStateElement) {
+            emptyStateElement.style.display = "none";
+        }
+        canvas.style.display = "block";
 
         new Chart(canvas, {
             type: "line",

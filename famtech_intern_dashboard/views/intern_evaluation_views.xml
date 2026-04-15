@@ -13,6 +13,7 @@
                         <group>
                             <group>
                                 <field name="eval_date"/>
+                                <field name="is_weekly_snapshot"/>
                             </group>
                         </group>
                         <notebook>
@@ -100,6 +101,7 @@
                 <list string="Intern Evaluations" multi_edit="1" class="intern_evaluation_balanced_list">
                     <field name="employee_id"/>
                     <field name="eval_date"/>
+                    <field name="is_weekly_snapshot"/>
                     <field name="avg_score"/>
                     <field name="timeliness_target_percentage"/>
                     <field name="timeliness_target_result" widget="badge" decoration-success="timeliness_target_result == 'success'" decoration-danger="timeliness_target_result == 'failed'"/>
@@ -120,6 +122,8 @@
                 <search string="Intern Evaluations">
                     <field name="employee_id"/>
                     <field name="eval_date"/>
+                    <field name="is_weekly_snapshot"/>
+                    <filter string="Weekly Snapshots" name="weekly_snapshots" domain="[('is_weekly_snapshot', '=', True)]"/>
                     <filter string="Current Month" name="current_month"
                         domain="[('eval_date', '&gt;=', context_today().replace(day=1)), ('eval_date', '&lt;=', context_today().replace(day=28) + relativedelta(months=1, day=1) - relativedelta(days=1))]"/>
                     <separator/>

@@ -5,14 +5,25 @@ from odoo.http import request
 
 
 class InternDashboard(http.Controller):
-    def _get_kpi_payload(self, employee):
-        evaluations = request.env['intern.evaluation'].sudo().search(
+    def _get_trend_evaluations(self, employee):
+        evaluation_model = request.env['intern.evaluation'].sudo()
+        weekly_snapshots = evaluation_model.search(
             [
                 ('employee_id', '=', employee.id),
                 ('is_weekly_snapshot', '=', True),
             ],
             order='eval_date asc, id asc',
         )
+        if weekly_snapshots:
+            return weekly_snapshots
+
+        return evaluation_model.search(
+            [('employee_id', '=', employee.id)],
+            order='eval_date asc, id asc',
+        )
+
+    def _get_kpi_payload(self, employee):
+        evaluations = self._get_trend_evaluations(employee)
 
         average_score = round(employee.average_score or 0.0, 2)
         contracted_hours = round(employee.contracted_hours or 0.0, 2)
@@ -71,14 +82,7 @@ class InternDashboard(http.Controller):
         return f'{employee_name} - Insight Report ({report_date}).pdf'
 
     def _get_report_date_range(self, employee):
-        evaluations = request.env['intern.evaluation'].sudo().search(
-            [
-                ('employee_id', '=', employee.id),
-                ('is_weekly_snapshot', '=', True),
-            ],
-            order='eval_date asc, id asc',
-            limit=1,
-        )
+        evaluations = self._get_trend_evaluations(employee)[:1]
         date_to = fields.Date.today()
         date_from = evaluations.eval_date or date_to
         return date_from, date_to
