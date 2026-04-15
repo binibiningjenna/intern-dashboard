@@ -1,16 +1,108 @@
 from odoo import http
 from odoo.http import request
 
-class InternOnboardingController(http.Controller):
 
-    @http.route('/my/intern/onboarding', type='http', auth='user', website=True)
+class InternOnboarding(http.Controller):
+
+    def _is_onboarding_complete(self, employee):
+        """Returns True only when all 4 steps are done."""
+        return all([
+            employee.handbook_reviewed,
+            employee.orientation_completed,
+            employee.odoo_access_granted,
+            employee.first_task_assigned,
+        ])
+
+    def _auto_detect_onboarding(self, employee):
+        updates = {}
+
+        if not employee.orientation_completed:
+            attendance = request.env['famtech.meeting.attendance'].sudo().search([
+                ('employee_id', '=', employee.id),
+            ], limit=1)
+            if attendance:
+                updates['orientation_completed'] = True
+
+        if not employee.odoo_access_granted:
+            partner = employee.user_id.partner_id
+            if partner.phone or partner.mobile:
+                updates['odoo_access_granted'] = True
+
+        if not employee.first_task_assigned:
+            task = request.env['project.task'].sudo().search([
+                ('user_ids', 'in', employee.user_id.ids),
+                ('state', '=', '1_done'),
+            ], limit=1)
+            if task:
+                updates['first_task_assigned'] = True
+
+        if updates:
+            employee.sudo().write(updates)
+
+    @http.route('/onboarding', type='http', auth='user', website=True)
     def intern_onboarding(self, **kwargs):
-        employee = request.env.user.employee_id
-        if not employee or not employee.is_intern:
+        user = request.env.user
+        employee = request.env['hr.employee'].sudo().search([
+            ('user_id', '=', user.id),
+            ('is_intern', '=', True),
+        ], limit=1)
+
+        if not employee:
             return request.redirect('/my/home')
+
+        # Auto-detect progress from existing records (no redirect — page always renders)
+        self._auto_detect_onboarding(employee)
+
+        completed = sum([
+            bool(employee.handbook_reviewed),
+            bool(employee.orientation_completed),
+            bool(employee.odoo_access_granted),
+            bool(employee.first_task_assigned),
+        ])
+        progress = int((completed / 4) * 100)
 
         values = {
             'employee': employee,
-            'page_name': 'intern_onboarding'
+            'progress': progress,
+            'page_name': 'intern_onboarding',
         }
-        return request.render('famtech_intern_dashboard.intern_onboarding', values)
+        return request.render(
+            'famtech_intern_dashboard.intern_onboarding_page', values
+        )
+
+    @http.route('/onboarding/update', type='http', auth='user',
+                website=True, methods=['POST'], csrf=True)
+    def update_onboarding(self, **kwargs):
+        user = request.env.user
+        employee = request.env['hr.employee'].sudo().search([
+            ('user_id', '=', user.id),
+            ('is_intern', '=', True),
+        ], limit=1)
+
+        if not employee:
+            return request.redirect('/my/home')
+
+        employee.write({
+            'handbook_reviewed': bool(kwargs.get('handbook_reviewed')),
+            'orientation_completed': bool(kwargs.get('orientation_completed')),
+            'odoo_access_granted': bool(kwargs.get('odoo_access_granted')),
+            'first_task_assigned': bool(kwargs.get('first_task_assigned')),
+        })
+
+        # Always stay on onboarding page after saving so user can review their progress
+        return request.redirect('/onboarding')
+
+    @http.route('/my/intern/handbook/download', type='http', auth='user', website=True)
+    def download_handbook(self, **kwargs):
+        employee = request.env['hr.employee'].sudo().search([
+            ('user_id', '=', request.env.user.id),
+            ('is_intern', '=', True),
+        ], limit=1)
+
+        if employee and not employee.handbook_reviewed:
+            employee.sudo().write({'handbook_reviewed': True})
+
+        return request.redirect(
+            'https://famtech-innovative-it-solutions2.odoo.com/knowledge/article/78',
+            local=False
+        )

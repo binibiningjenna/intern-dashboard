@@ -48,6 +48,11 @@
             'famtech_intern_dashboard/static/src/xml/graph_measure_override.xml',
             'famtech_intern_dashboard/static/src/scss/intern_evaluation_list.scss',
         ],
+        'web.assets_website': [
+            'famtech_intern_dashboard/static/src/website/css/global.css',
+            'famtech_intern_dashboard/static/src/website/css/onboarding.css',
+            'famtech_intern_dashboard/static/src/website/css/dashboard.css',
+        ],
     },
     'installable': True,
 }

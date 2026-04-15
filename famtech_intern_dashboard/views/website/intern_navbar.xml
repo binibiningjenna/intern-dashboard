@@ -39,7 +39,7 @@
 
                         <li class="nav-item w-100 w-lg-auto">
                             <a t-attf-class="nav-link nav-link-custom d-flex align-items-center gap-2 #{'active' if page_name == 'intern_onboarding' else ''}"
-                               href="/my/intern/onboarding">
+                               href="/onboarding">
                                 <i class="bi bi-clipboard-check"></i>
                                 <span class="fw-bold text-uppercase">Onboarding</span>
                             </a>

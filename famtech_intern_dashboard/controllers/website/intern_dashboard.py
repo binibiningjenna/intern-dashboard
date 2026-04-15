@@ -1,6 +1,7 @@
 from odoo import http
 from odoo.http import request
 
+
 class InternDashboard(http.Controller):
 
     @http.route(['/my'], type='http', auth='user', website=True)
@@ -10,18 +11,28 @@ class InternDashboard(http.Controller):
         if user.has_group('base.group_portal'):
             employee = user.employee_id.sudo()
 
-            # Intern → dashboard
             if employee and employee.is_intern:
+                onboarding_done = all([
+                    employee.handbook_reviewed,
+                    employee.orientation_completed,
+                    employee.odoo_access_granted,
+                    employee.first_task_assigned,
+                ])
+                # /my/home card: redirect to onboarding if incomplete,
+                # dashboard if complete
+                if not onboarding_done:
+                    return request.redirect('/onboarding')
                 return request.redirect('/my/intern_dashboard')
 
-            # Not Intern → onboarding/home
+            # Non-intern portal user
             return request.redirect('/my/home')
 
-        return request.redirect('/web/login') 
+        # Public user or internal user without portal access
+        return request.redirect('/')
 
     @http.route('/my/intern_dashboard', type='http', auth='user', website=True)
     def intern_dashboard(self, **kwargs):
-        employee = request.env.user.employee_id
+        employee = request.env.user.employee_id.sudo()
 
         if not employee or not employee.is_intern:
             return request.redirect('/my/home')
@@ -41,5 +52,11 @@ class InternDashboard(http.Controller):
             'metrics': metrics,
             'page_name': 'intern_dashboard'
         }
-
         return request.render('famtech_intern_dashboard.intern_dashboard', values)
+
+    @http.route('/my/intern_navbar', type='http', auth='user', website=True)
+    def intern_navbar(self, **kwargs):
+        employee = request.env.user.employee_id
+        if not employee or not employee.is_intern:
+            return request.redirect('/my/home')
+        return request.render('famtech_intern_dashboard.intern_navbar')
