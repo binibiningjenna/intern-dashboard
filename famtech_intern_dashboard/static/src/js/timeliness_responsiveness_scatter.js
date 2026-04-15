@@ -61,6 +61,7 @@ class TimelinessResponsivenessScatter extends Component {
                         borderColor: "#1d4ed8",
                         pointRadius: 6,
                         pointHoverRadius: 8,
+                        clip: false,
                     },
                 ],
             },
@@ -76,7 +77,7 @@ class TimelinessResponsivenessScatter extends Component {
                             label: (context) => {
                                 const raw = context.raw;
                                 const datePart = raw.evaluationDate ? `, Eval Date: ${raw.evaluationDate}` : "";
-                                return `${raw.employeeName}: Timeliness ${raw.x}%, Responsiveness ${raw.y}${datePart}`;
+                                return `${raw.employeeName}: Timeliness ${raw.x}, Responsiveness ${raw.y}${datePart}`;
                             },
                         },
                     },
@@ -85,42 +86,27 @@ class TimelinessResponsivenessScatter extends Component {
                     x: {
                         title: {
                             display: true,
-                            text: "Timeliness (%)",
+                            text: "Timeliness",
                         },
                         min: 0,
-                        max: 100,
+                        max: 5,
                     },
                     y: {
                         title: {
                             display: true,
-                            text: "Responsiveness Score",
+                            text: "Responsiveness",
                         },
                         min: 0,
                         max: 5,
                     },
                 },
-            },
-            plugins: [
-                {
-                    id: "pointLabels",
-                    afterDatasetsDraw: (chart) => {
-                        const { ctx } = chart;
-                        ctx.save();
-                        ctx.font = "12px sans-serif";
-                        ctx.fillStyle = "#334155";
-
-                        chart.data.datasets.forEach((dataset, datasetIndex) => {
-                            const meta = chart.getDatasetMeta(datasetIndex);
-                            meta.data.forEach((element, index) => {
-                                const point = dataset.data[index];
-                                ctx.fillText(point.employeeName, element.x + 8, element.y - 8);
-                            });
-                        });
-
-                        ctx.restore();
+                layout: {
+                    padding: {
+                        top: 16,
+                        right: 28,
                     },
                 },
-            ],
+            },
         });
     }
 }

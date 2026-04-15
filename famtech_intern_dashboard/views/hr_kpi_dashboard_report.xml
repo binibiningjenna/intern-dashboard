@@ -297,7 +297,7 @@
                                         <span class="kpi-card-value"><span t-esc="payload['avg_score']"/></span>
                                     </td>
                                     <td class="kpi-card">
-                                        <span class="kpi-card-title">Average Timeliness %</span>
+                                        <span class="kpi-card-title">Average Timeliness</span>
                                         <span class="kpi-card-value"><span t-esc="payload['avg_timeliness']"/></span>
                                     </td>
                                     <td class="kpi-card">

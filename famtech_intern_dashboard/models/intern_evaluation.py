@@ -105,31 +105,19 @@ class InternEvaluation(models.Model):
             if evaluation.employee_id.id not in latest_by_employee:
                 latest_by_employee[evaluation.employee_id.id] = evaluation
 
-        if not latest_by_employee:
-            employees = self.env["hr.employee"].search([("is_intern", "=", True)], order="name asc")
-            return [
-                {
-                    "employee_name": employee.name,
-                    "timeliness": round(
-                        ((employee.tasks_on_time / employee.tasks_completed) * 100)
-                        if employee.tasks_completed
-                        else 0.0,
-                        2,
-                    ),
-                    "responsiveness": round(employee.responsiveness_score or 0.0, 2),
-                    "evaluation_date": False,
-                }
-                for employee in employees
-            ]
-
+        employees = self.env["hr.employee"].search([("is_intern", "=", True)], order="name asc")
         return [
             {
-                "employee_name": evaluation.employee_id.name,
-                "timeliness": round(evaluation.timeliness_percentage or 0.0, 2),
-                "responsiveness": round(evaluation.responsiveness_score or 0.0, 2),
-                "evaluation_date": evaluation.eval_date.strftime("%Y-%m-%d") if evaluation.eval_date else False,
+                "employee_name": employee.name,
+                "timeliness": round(employee.timeliness_score or 0.0, 2),
+                "responsiveness": round(employee.responsiveness_score or 0.0, 2),
+                "evaluation_date": (
+                    latest_by_employee[employee.id].eval_date.strftime("%Y-%m-%d")
+                    if latest_by_employee.get(employee.id) and latest_by_employee[employee.id].eval_date
+                    else False
+                ),
             }
-            for evaluation in latest_by_employee.values()
+            for employee in employees
         ]
 
     @api.onchange("employee_id")
