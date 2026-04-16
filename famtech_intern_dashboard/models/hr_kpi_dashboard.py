@@ -533,16 +533,11 @@ class HRKPIDashboard(models.TransientModel):
             if evaluation_count:
                 avg_score = round(sum(employee_evaluations.mapped("avg_score")) / evaluation_count, 2)
                 avg_timeliness = round(
-                    sum(employee_evaluations.mapped("timeliness_percentage")) / evaluation_count, 2
+                    sum(employee_evaluations.mapped("timeliness_score")) / evaluation_count, 2
                 )
             else:
                 avg_score = round(employee.average_score or 0.0, 2)
-                avg_timeliness = round(
-                    ((employee.tasks_on_time / employee.tasks_completed) * 100)
-                    if employee.tasks_completed
-                    else 0.0,
-                    2,
-                )
+                avg_timeliness = round(employee.timeliness_score or 0.0, 2)
 
             attendance_rate = round(
                 ((employee.hours_rendered or 0.0) / (employee.contracted_hours or 1.0) * 100)
