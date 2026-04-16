@@ -121,12 +121,20 @@
         }
         canvas.style.display = "block";
 
+        function formatWeekAxisLabel(rawLabel, fallbackIndex) {
+            const labelWithoutDateRange = (rawLabel || `Week ${fallbackIndex + 1}`)
+                .replace(/\s*\([^)]*\)\s*/g, "")
+                .trim();
+            const numberedWeekMatch = labelWithoutDateRange.match(/^Week\s+(\d+)$/i);
+            return numberedWeekMatch ? numberedWeekMatch[1] : labelWithoutDateRange;
+        }
+
         new Chart(canvas, {
             type: "line",
             data: {
                 labels: rows.map((row, index) => {
-                    const rawLabel = row.week_display_label || row.week_label || `Week ${index + 1}`;
-                    return rawLabel.replace(/\s*\([^)]*\)\s*/g, "").trim();
+                    const rawLabel = row.week_display_label || row.week_label;
+                    return formatWeekAxisLabel(rawLabel, index);
                 }),
                 datasets: [
                     {
