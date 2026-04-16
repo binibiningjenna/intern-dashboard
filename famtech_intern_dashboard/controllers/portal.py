@@ -6,6 +6,21 @@ from datetime import datetime
 
 class InternPortal(CustomerPortal):
 
+    # CUSTOM ERROR PAGE HELPER
+    def _render_error_page(self, code='404', title='Page not found', message='The page you are looking for could not be found.'):
+        return request.render(
+            'famtech_intern_dashboard.intern_error_page',
+            {
+                'error_code': code,
+                'error_title': title,
+                'error_message': message,
+                'primary_label': 'Go to Dashboard',
+                'primary_url': '/dashboard',
+                'secondary_label': 'Go Back',
+                'secondary_url': 'javascript:history.back()',
+            }
+        )
+
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
         user = request.env.user
@@ -25,8 +40,13 @@ class InternPortal(CustomerPortal):
             ('is_intern', '=', True)
         ], limit=1)
 
+        # ACCESS CONTROL - If user is not a valid intern, show custom error page
         if not employee:
-            return request.redirect('/my/home')
+            return self._render_error_page(
+                code='403',
+                title='Access denied',
+                message='You do not have permission to access the calendar page.'
+            )
 
         partner = employee.user_id.partner_id
         now = datetime.now()
@@ -72,12 +92,22 @@ class InternPortal(CustomerPortal):
             ('is_intern', '=', True),
         ], limit=1)
 
+        # ACCESS CONTROL - Prevent non-intern users from joining call actions
         if not employee:
-            return request.redirect('/my/home')
+            return self._render_error_page(
+                code='403',
+                title='Access denied',
+                message='You do not have permission to access this meeting.'
+            )
 
         event = request.env['calendar.event'].sudo().browse(event_id)
+        # INVALID ROUTE / RECORD - Show custom 404 if the calendar event no longer exists
         if not event.exists():
-            return request.redirect('/my/intern/calendar')
+            return self._render_error_page(
+                code='404',
+                title='Page not found',
+                message='The meeting or calendar event you are trying to access could not be found.'
+            )
 
         error = None
         try:
@@ -112,8 +142,13 @@ class InternPortal(CustomerPortal):
             ('is_intern', '=', True),
         ], limit=1)
 
+        # ACCESS CONTROL - Prevent non-intern users from logging attendance
         if not employee:
-            return request.redirect('/my/home')
+            return self._render_error_page(
+                code='403',
+                title='Access denied',
+                message='You do not have permission to log attendance for this event.'
+            )
 
         error = None
         try:

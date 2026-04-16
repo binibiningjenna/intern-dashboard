@@ -22,7 +22,7 @@ class InternDashboard(http.Controller):
                 # dashboard if complete
                 if not onboarding_done:
                     return request.redirect('/onboarding')
-                return request.redirect('/my/intern_dashboard')
+                return request.redirect('/dashboard')
 
             # Non-intern portal user
             return request.redirect('/my/home')
@@ -30,7 +30,7 @@ class InternDashboard(http.Controller):
         # Public user or internal user without portal access
         return request.redirect('/')
 
-    @http.route('/my/intern_dashboard', type='http', auth='user', website=True)
+    @http.route('/dashboard', type='http', auth='user', website=True)
     def intern_dashboard(self, **kwargs):
         employee = request.env.user.employee_id.sudo()
 

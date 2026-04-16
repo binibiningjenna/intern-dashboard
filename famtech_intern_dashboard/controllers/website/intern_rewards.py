@@ -3,7 +3,7 @@ from odoo.http import request
 
 class InternRewardsController(http.Controller):
 
-    @http.route('/my/intern/rewards', type='http', auth='user', website=True)
+    @http.route('/rewards', type='http', auth='user', website=True)
     def intern_rewards(self, **kwargs):
         employee = request.env.user.employee_id
         if not employee or not employee.is_intern:

@@ -1,245 +1,273 @@
 <odoo>
-    <template id="intern_error_404" name="Intern Not Found Page">
-        <head>
-            <title>404 Page Not Found</title>
-            <meta charset="utf-8"/>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <template id="intern_error_page" name="Intern Error Page">
+        <t t-call="web.html_container">
+            <t t-set="title">404 Page Not Found</t>
+
             <link rel="preconnect" href="https://fonts.googleapis.com"/>
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin"/>
             <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
-            <link href="/famtech_intern_dashboard/static/src/website/css/global.css" rel="stylesheet"/>
-        </head>
 
-        <div class="w-100" style="background: radial-gradient(circle at 50% 0%, var(--color-white) 0%, var(--color-gray-100) 100%); min-height: 100vh; font-family: 'Poppins', sans-serif;">
-            <div class="container py-5">
-                
-                <div class="row mb-5">
-                    <div class="col-12">
-                        <div class="d-flex align-items-center gap-3 mb-3">
-                            <span class="badge rounded-pill px-3 py-2" style="background-color: var(--color-gold-100); color: var(--color-gold-900);">v1.0.0</span>
-                            <span class="text-muted fw-medium">Internal Documentation</span>
-                        </div>
-                        <h1 class="fw-bolder display-5 mb-3">Brand Design System</h1>
-                        <p class="lead" style="color: var(--color-gray-500); max-width: 600px;">The official component library and style guide for Intern Dashboard.</p>
-                    </div>
-                </div>
+            <section class="intern-error-page d-flex align-items-center justify-content-center">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-xl-10">
+                            <div class="intern-error-card">
+                                <div class="intern-error-content text-center">
 
-                <div class="row g-4">
-                    <div class="col-xl-8">
-                        
-                        <div class="card mb-4 border-0 shadow-sm" style="background-color: var(--color-white); border: 1px solid rgba(209, 213, 219, 0.4) !important;">
-                            <div class="card-body p-4 p-md-5">
-                                <h3 class="fw-bold mb-1"><i class="bi bi-palette2 me-2" style="color: var(--color-gold-500);"></i>Color Scales</h3>
-                                <p style="color: var(--color-gray-500);">The core 5-step tonal variations for the brand.</p>
-                                <hr class="brand-divider mb-5"/>
-                                
-                                <h6 class="mb-3 fw-bold text-uppercase" style="letter-spacing: 1px; color: var(--color-navy-500);">Navy (Primary)</h6>
-                                <div class="d-flex rounded-3 overflow-hidden border mb-5" style="height: 60px; border-color: var(--color-gray-300) !important;">
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-navy-100); color: var(--color-navy-900);">100</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-navy-300); color: var(--color-navy-900);">300</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-navy-500); color: var(--color-white);">500</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-navy-700); color: var(--color-white);">700</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-navy-900); color: var(--color-white);">900</div>
-                                </div>
-
-                                <h6 class="mb-3 fw-bold text-uppercase" style="letter-spacing: 1px; color: var(--color-gold-500);">Gold (Secondary)</h6>
-                                <div class="d-flex rounded-3 overflow-hidden border mb-5" style="height: 60px; border-color: var(--color-gray-300) !important;">
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gold-100); color: var(--color-gold-900);">100</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gold-300); color: var(--color-gold-900);">300</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gold-500); color: var(--color-white);">500</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gold-700); color: var(--color-white);">700</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gold-900); color: var(--color-white);">900</div>
-                                </div>
-
-                                <h6 class="mb-3 fw-bold text-uppercase" style="letter-spacing: 1px; color: var(--color-gray-900);">Neutrals</h6>
-                                <div class="d-flex rounded-3 overflow-hidden border mb-4" style="height: 60px; border-color: var(--color-gray-300) !important;">
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gray-100); color: var(--color-gray-900);">100</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gray-300); color: var(--color-gray-900);">300</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gray-500); color: var(--color-white);">500</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gray-700); color: var(--color-white);">700</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gray-900); color: var(--color-white);">900</div>
-                                </div>
-
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <div class="rounded-3 p-3 border text-center" style="background-color: var(--color-white); border-color: var(--color-gray-300) !important;">
-                                            <span class="fw-bold mb-0" style="color: var(--color-black);">Pure White</span>
-                                        </div>
+                                    <div class="intern-error-icon mx-auto mb-4">
+                                        <i class="bi bi-exclamation-triangle"></i>
                                     </div>
-                                    <div class="col-6">
-                                        <div class="rounded-3 p-3 text-center" style="background-color: var(--color-black);">
-                                            <span class="fw-bold mb-0" style="color: var(--color-white);">Pure Black</span>
-                                        </div>
+
+                                    <div class="intern-error-pill mx-auto mb-4">
+                                        Oops! Something went wrong
                                     </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="card mb-4 border-0 shadow-sm" style="border: 1px solid rgba(209, 213, 219, 0.4) !important;">
-                            <div class="card-body p-4 p-md-5">
-                                <h3 class="fw-bold mb-1"><i class="bi bi-type me-2" style="color: var(--color-gold-500);"></i>Typography</h3>
-                                <p style="color: var(--color-gray-500);">Headings automatically inherit Primary Navy.</p>
-                                <hr class="brand-divider mb-4"/>
+                                    <h1 class="intern-error-code mb-2">
+                                        <t t-esc="error_code or '404'"/>
+                                    </h1>
 
-                                <div class="row align-items-center mb-4 pb-4 border-bottom mx-0">
-                                    <div class="col-md-5 px-0"><h1>Heading 1</h1></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;h1&gt;</code> - Main Page Titles</p></div>
-                                </div>
-                                <div class="row align-items-center mb-4 pb-4 border-bottom mx-0">
-                                    <div class="col-md-5 px-0"><h2>Heading 2</h2></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;h2&gt;</code> - Major Section Headers</p></div>
-                                </div>
-                                <div class="row align-items-center mb-4 pb-4 border-bottom mx-0">
-                                    <div class="col-md-5 px-0"><h3>Heading 3</h3></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;h3&gt;</code> - Sub-sections / Modals</p></div>
-                                </div>
-                                <div class="row align-items-center mb-4 pb-4 border-bottom mx-0">
-                                    <div class="col-md-5 px-0"><h4>Heading 4</h4></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;h4&gt;</code> - Card Titles</p></div>
-                                </div>
-                                <div class="row align-items-center mb-4 pb-4 border-bottom mx-0">
-                                    <div class="col-md-5 px-0"><h5>Heading 5</h5></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;h5&gt;</code> - Small Blocks / Widgets</p></div>
-                                </div>
-                                <div class="row align-items-center mb-4 pb-4 border-bottom mx-0">
-                                    <div class="col-md-5 px-0"><h6>Heading 6</h6></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;h6&gt;</code> - Labels / Meta Data</p></div>
-                                </div>
-                                <div class="row align-items-center mb-4 pb-4 border-bottom mx-0">
-                                    <div class="col-md-5 px-0"><p class="lead fw-medium mb-0" style="color: var(--color-gray-900);">Subheading (Lead)</p></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;p class="lead"&gt;</code> - Introductory text.</p></div>
-                                </div>
-                                <div class="row align-items-center mx-0">
-                                    <div class="col-md-5 px-0"><p class="mb-0" style="color: var(--color-gray-700);">Standard Body Text. This is what long-form paragraphs look like.</p></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;p&gt;</code> - Default reading text.</p></div>
-                                </div>
-                            </div>
-                        </div>
+                                    <h2 class="intern-error-title mb-3">
+                                        <t t-esc="error_title or 'Page not found'"/>
+                                    </h2>
 
-                    </div>
+                                    <p class="intern-error-message mb-4">
+                                        <t t-esc="error_message or 'The page you are looking for could not be found.'"/>
+                                    </p>
 
-                    <div class="col-xl-4">
-                        
-                        <div class="card mb-4 border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <h4 class="fw-bold mb-1"><i class="bi bi-hand-index-thumb me-2" style="color: var(--color-gold-500);"></i>Buttons</h4>
-                                <hr class="brand-divider mb-4"/>
+                                    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mb-4">
+                                        <a t-att-href="primary_url or '/dashboard'"
+                                           class="intern-btn intern-btn-primary">
+                                            <i class="bi bi-house-door me-2"></i>
+                                            <t t-esc="primary_label or 'Go to Dashboard'"/>
+                                        </a>
 
-                                <div class="mb-5">
-                                    <button class="btn btn-primary px-4 py-2 w-100 mb-3">Primary Action</button>
-                                    <p class="mb-0 small fw-bold" style="color: var(--color-navy-500);">Navy Button</p>
-                                    <p class="mb-0 small" style="color: var(--color-gray-500);">Use <code>.btn-primary</code> for the main action (Submit, Save).</p>
-                                </div>
-
-                                <div class="mb-5">
-                                    <button class="btn btn-secondary px-4 py-2 w-100 mb-3">Secondary Action</button>
-                                    <p class="mb-0 small fw-bold" style="color: var(--color-gold-700);">Gold Button</p>
-                                    <p class="mb-0 small" style="color: var(--color-gray-500);">Use <code>.btn-secondary</code> for alternative actions.</p>
-                                </div>
-
-                                <div>
-                                    <h6 class="fw-bold mb-3" style="color: var(--color-navy-500);">Size Variations</h6>
-                                    <div class="d-flex flex-column gap-3 align-items-start">
-                                        <button class="btn btn-primary btn-lg px-4 shadow-sm"><i class="bi bi-rocket-takeoff me-2"></i>Large Button</button>
-                                        <button class="btn btn-primary px-4 shadow-sm">Default Size</button>
-                                        <button class="btn btn-primary btn-sm px-3 shadow-sm">Small</button>
+                                        <a t-att-href="secondary_url or 'javascript:history.back()'"
+                                           class="intern-btn intern-btn-secondary">
+                                            <i class="bi bi-arrow-left me-2"></i>
+                                            <t t-esc="secondary_label or 'Go Back'"/>
+                                        </a>
                                     </div>
-                                    <p class="mt-3 mb-0 small" style="color: var(--color-gray-500);">Add <code>.btn-lg</code> or <code>.btn-sm</code> to adjust sizes while retaining brand styling.</p>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="card mb-4 border-0 shadow-sm" style="border: 1px solid rgba(209, 213, 219, 0.4) !important;">
-                            <div class="card-body p-4">
-                                <h4 class="fw-bold mb-1"><i class="bi bi-stars me-2" style="color: var(--color-gold-500);"></i>Icons</h4>
-                                <p class="small" style="color: var(--color-gray-500);">Use Bootstrap Icons (Outline).</p>
-                                <hr class="brand-divider mb-4"/>
-                                
-                                <div class="d-flex gap-3 flex-wrap justify-content-between mb-4" style="font-size: 1.5rem; color: var(--color-navy-500);">
-                                    <div class="text-center p-3 rounded-3 border" style="background-color: var(--color-white); border-color: var(--color-gray-300) !important;"><i class="bi bi-house"></i></div>
-                                    <div class="text-center p-3 rounded-3 border" style="background-color: var(--color-white); border-color: var(--color-gray-300) !important;"><i class="bi bi-gear"></i></div>
-                                    <div class="text-center p-3 rounded-3 border" style="background-color: var(--color-white); border-color: var(--color-gray-300) !important;"><i class="bi bi-envelope"></i></div>
-                                    <div class="text-center p-3 rounded-3 border" style="background-color: var(--color-white); border-color: var(--color-gray-300) !important;"><i class="bi bi-shield-check"></i></div>
-                                </div>
+                                    <p class="intern-error-help mb-0">
+                                        Need help? Contact your administrator or try again later.
+                                    </p>
 
-                                <a href="https://icons.getbootstrap.com/" target="_blank" class="btn btn-secondary w-100"><i class="bi bi-box-arrow-up-right me-2"></i>Browse Library</a>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <h4 class="fw-bold mb-4" style="color: var(--color-navy-500);"><i class="bi bi-layout-text-window-reverse me-2"></i>Application Examples</h4>
-                    </div>
-                </div>
-                
-                <div class="row g-4">
-                    <div class="col-lg-6">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body p-4 p-md-5">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h3 class="fw-bold mb-0">Welcome back, Username!</h3>
-                                    <i class="bi bi-buildings fs-1 opacity-25" style="color: var(--color-navy-500);"></i>
-                                </div>
-                                <p class="lead" style="color: var(--color-gray-700);">This is a sample layout utilizing the custom <code>.card</code> class.</p>
-                                <hr class="brand-divider mb-4"/>
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-primary px-4"><i class="bi bi-calendar-event me-2"></i>View Schedule</button>
-                                    <button class="btn btn-secondary px-4"><i class="bi bi-download me-2"></i>Export</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-6">
-                        <div class="row g-4">
-                            <div class="col-sm-6">
-                                <div class="card border-0 shadow-sm" style="background-color: var(--color-navy-500);">
-                                    <div class="card-body p-4">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <h6 class="fw-bold text-white mb-0">Active Projects</h6>
-                                            <i class="bi bi-kanban fs-4" style="color: var(--color-gold-500);"></i>
-                                        </div>
-                                        <h1 class="display-4 fw-bolder text-white mb-0">12</h1>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="card border-0 shadow-sm" style="border: 1px solid rgba(209, 213, 219, 0.4) !important;">
-                                    <div class="card-body p-4">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <h6 class="fw-bold mb-0" style="color: var(--color-navy-500);">Pending</h6>
-                                            <i class="bi bi-clock-history fs-4" style="color: var(--color-gray-500);"></i>
-                                        </div>
-                                        <h1 class="display-4 fw-bolder mb-0" style="color: var(--color-gold-500);">4</h1>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="card border-0 shadow-sm" style="border: 1px solid rgba(209, 213, 219, 0.4) !important;">
-                                    <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <div class="rounded-circle p-3 d-flex align-items-center justify-content-center" style="background-color: var(--color-navy-100); color: var(--color-navy-700);">
-                                                <i class="bi bi-file-earmark-check fs-4"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="fw-bold mb-0" style="color: var(--color-gray-900);">System Report generated</h6>
-                                                <p class="mb-0 small" style="color: var(--color-gray-500);">10 minutes ago</p>
-                                            </div>
-                                        </div>
-                                        <button class="btn btn-secondary btn-sm px-3">View</button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </section>
 
-            </div>
-        </div>
+            <style>
+                :root {
+                    --color-gold-100: #FFF2D1;
+                    --color-gold-300: #FFD285;
+                    --color-gold-500: #bf9e3c;
+                    --color-gold-700: #937A40;
+                    --color-gold-900: #5C4525;
+
+                    --color-navy-100: #CFDEEB;
+                    --color-navy-300: #709ECB;
+                    --color-navy-500: #0e4174;
+                    --color-navy-700: #052348;
+                    --color-navy-900: #02142A;
+
+                    --color-gray-100: #F3F4F6;
+                    --color-gray-300: #D1D5DB;
+                    --color-gray-500: #6B7280;
+                    --color-gray-700: #374151;
+                    --color-gray-900: #1A1A1A;
+
+                    --color-white: #fefefe;
+                    --color-black: #000000;
+                }
+
+                html, body {
+                    margin: 0;
+                    padding: 0;
+                    font-family: 'Poppins', sans-serif;
+                    background: #f1f2f4;
+                }
+
+                .intern-error-page {
+                    min-height: 100vh;
+                    padding: 36px 16px;
+                    background:
+                        radial-gradient(circle at 50% 0%,
+                            var(--color-white) 0%,
+                            var(--color-gray-100) 70%,
+                            #ececec 100%);
+                }
+
+                .intern-error-card {
+                    width: 100%;
+                    max-width: 950px;
+                    margin: 0 auto;
+                    background: var(--color-white);
+                    border: 1px solid rgba(209, 213, 219, 0.8);
+                    border-radius: 28px;
+                    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+                    min-height: 640px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .intern-error-content {
+                    width: 100%;
+                    max-width: 700px;
+                    padding: 40px 20px;
+                }
+
+                .intern-error-icon {
+                    width: 102px;
+                    height: 102px;
+                    border-radius: 50%;
+                    background: var(--color-gold-100);
+                    color: var(--color-gold-900);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 2.5rem;
+                    box-shadow: 0 8px 22px rgba(191, 158, 60, 0.12);
+                }
+
+                .intern-error-pill {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0.8rem 1.5rem;
+                    border-radius: 999px;
+                    background: #cfdceb;
+                    color: var(--color-navy-700);
+                    font-weight: 700;
+                    font-size: 1rem;
+                    line-height: 1;
+                }
+
+                .intern-error-code {
+                    font-size: clamp(5rem, 10vw, 7rem);
+                    line-height: 0.95;
+                    font-weight: 800;
+                    letter-spacing: -0.04em;
+                    color: var(--color-navy-500);
+                    margin: 0;
+                }
+
+                .intern-error-title {
+                    font-size: clamp(2.2rem, 4vw, 3rem);
+                    line-height: 1.08;
+                    font-weight: 700;
+                    color: var(--color-navy-500);
+                    margin: 0;
+                }
+
+                .intern-error-message {
+                    max-width: 620px;
+                    margin-left: auto;
+                    margin-right: auto;
+                    font-size: 1.2rem;
+                    line-height: 1.6;
+                    color: var(--color-gray-500);
+                }
+
+                .intern-error-help {
+                    font-size: 1.05rem;
+                    line-height: 1.5;
+                    color: var(--color-gray-500);
+                }
+
+                .intern-btn {
+                    min-width: 235px;
+                    min-height: 52px;
+                    padding: 0.78rem 1.5rem;
+                    border-radius: 10px;
+                    font-size: 1rem;
+                    font-weight: 700;
+                    text-decoration: none;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: none;
+                    transition: all 0.25s ease;
+                }
+
+                .intern-btn:hover {
+                    transform: translateY(-1px);
+                    text-decoration: none;
+                }
+
+                .intern-btn-primary,
+                .intern-btn-primary:visited,
+                .intern-btn-primary:hover,
+                .intern-btn-primary:focus,
+                .intern-btn-primary:active {
+                    background: #0e4174 !important;
+                    color: #fefefe !important;
+                    box-shadow: 0 6px 16px rgba(6, 38, 71, 0.25);
+                }
+
+                .intern-btn-primary:hover,
+                .intern-btn-primary:focus {
+                    background: #052348 !important;
+                }
+
+                .intern-btn-secondary,
+                .intern-btn-secondary:visited,
+                .intern-btn-secondary:hover,
+                .intern-btn-secondary:focus,
+                .intern-btn-secondary:active {
+                    background: #bf9e3c !important;
+                    color: #fefefe !important;
+                    box-shadow: 0 6px 16px rgba(191, 158, 60, 0.25);
+                }
+
+                .intern-btn-secondary:hover,
+                .intern-btn-secondary:focus {
+                    background: #937A40 !important;
+                }
+
+                @media (max-width: 767.98px) {
+                    .intern-error-page {
+                        padding: 16px;
+                    }
+
+                    .intern-error-card {
+                        min-height: auto;
+                        border-radius: 22px;
+                    }
+
+                    .intern-error-content {
+                        padding: 32px 12px;
+                    }
+
+                    .intern-error-icon {
+                        width: 84px;
+                        height: 84px;
+                        font-size: 2rem;
+                    }
+
+                    .intern-error-pill {
+                        font-size: 0.92rem;
+                        padding: 0.7rem 1rem;
+                    }
+
+                    .intern-error-message,
+                    .intern-error-help {
+                        font-size: 1rem;
+                    }
+
+                    .intern-btn {
+                        width: 100%;
+                        min-width: unset;
+                    }
+                }
+            </style>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        </t>
     </template>
 </odoo>

@@ -1,8 +1,67 @@
 from odoo import http
 from odoo.http import request
+from werkzeug.exceptions import NotFound, MethodNotAllowed
 
 
 class InternOnboarding(http.Controller):
+
+    # ========================= START OF ERROR BLOCK =========================
+    # CUSTOM ERROR PAGE HELPER
+    def _render_error_page(self, code='404', title='Page not found', message='The page you are looking for could not be found.'):
+        return request.render(
+            'famtech_intern_dashboard.intern_error_page',
+            {
+                'error_code': code,
+                'error_title': title,
+                'error_message': message,
+                'primary_label': 'Go to Dashboard',
+                'primary_url': '/dashboard',
+                'secondary_label': 'Go Back',
+                'secondary_url': 'javascript:history.back()',
+            }
+        )
+    
+
+    @http.route('/my/intern/profile', type='http', auth='user', website=True)
+    def intern_profile(self, **kwargs):
+        # Real destination for profile editing
+        target_url = '/my/account'
+
+       # Check whether the destination route still exists. If it does not, render the custom error page.
+        try:
+            request.env['ir.http'].routing_map().bind_to_environ(
+                request.httprequest.environ
+            ).match(target_url, method='GET')
+        except (NotFound, MethodNotAllowed):
+            return self._render_error_page(
+                code='404',
+                title='Page not found',
+                message='The profile page is currently unavailable.'
+            )
+
+        return request.redirect(target_url)
+
+    @http.route('/my/intern/tasks', type='http', auth='user', website=True)
+    def intern_tasks(self, **kwargs):
+        # Real destination for tasks page
+        target_url = '/my/tasks'
+
+        # Check whether the destination route still exists. If it does not, render the custom error page.
+        try:
+            request.env['ir.http'].routing_map().bind_to_environ(
+                request.httprequest.environ
+            ).match(target_url, method='GET')
+        except (NotFound, MethodNotAllowed):
+            return self._render_error_page(
+                code='404',
+                title='Page not found',
+                message='The tasks page is currently unavailable.'
+            )
+
+        return request.redirect(target_url)
+    
+    # ========================= END OF ERROR BLOCK =========================
+
 
     def _is_onboarding_complete(self, employee):
         """Returns True only when all 4 steps are done."""
@@ -47,8 +106,13 @@ class InternOnboarding(http.Controller):
             ('is_intern', '=', True),
         ], limit=1)
 
+        # ACCESS CONTROL - If user is not a valid intern, show custom error page
         if not employee:
-            return request.redirect('/my/home')
+            return self._render_error_page(
+                code='403',
+                title='Access denied',
+                message='You do not have permission to access the onboarding page.'
+            )
 
         # Auto-detect progress from existing records (no redirect — page always renders)
         self._auto_detect_onboarding(employee)
@@ -79,8 +143,13 @@ class InternOnboarding(http.Controller):
             ('is_intern', '=', True),
         ], limit=1)
 
+        # ACCESS CONTROL - Prevent non-intern users from updating onboarding
         if not employee:
-            return request.redirect('/my/home')
+            return self._render_error_page(
+                code='403',
+                title='Access denied',
+                message='You do not have permission to update onboarding progress.'
+            )       
 
         employee.write({
             'handbook_reviewed': bool(kwargs.get('handbook_reviewed')),
@@ -98,6 +167,14 @@ class InternOnboarding(http.Controller):
             ('user_id', '=', request.env.user.id),
             ('is_intern', '=', True),
         ], limit=1)
+
+        # ACCESS CONTROL - If user is not a valid intern, block access
+        if not employee:
+            return self._render_error_page(
+                code='403',
+                title='Access denied',
+                message='You do not have permission to access the handbook.'
+            )        
 
         if employee and not employee.handbook_reviewed:
             employee.sudo().write({'handbook_reviewed': True})
