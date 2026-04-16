@@ -3,6 +3,25 @@ from odoo.http import request
 
 
 class InternDashboard(http.Controller):
+    
+    # Reusable helper to render the custom error page.
+    def _render_error_page(self, code=404, title=None, message=None):
+        return request.render('famtech_intern_dashboard.intern_error_page', {
+            # Pass dynamic values to the QWeb template
+            'error_code': code,
+
+            # Default title fallback based on code
+            'error_title': title or (
+                'Access Denied' if code == 403 else 'Page Not Found'
+            ),
+
+            # Default message fallback based on code
+            'error_message': message or (
+                'You do not have permission to access this page.'
+                if code == 403 else
+                'The page you are looking for could not be found.'
+            ),
+        })
 
     @http.route(['/my'], type='http', auth='user', website=True)
     def redirect_my(self, **kwargs):
@@ -34,8 +53,12 @@ class InternDashboard(http.Controller):
     def intern_dashboard(self, **kwargs):
         employee = request.env.user.employee_id.sudo()
 
+        # If user is not an intern, show 403 error page instead of redirect
         if not employee or not employee.is_intern:
-            return request.redirect('/my/home')
+            return self._render_error_page(
+                code=403,
+                message="You are not allowed to access the Intern Dashboard."
+            )
 
         metrics = [
             {'label': 'Timeliness', 'value': employee.timeliness_score, 'icon': 'clock-history'},
@@ -57,6 +80,12 @@ class InternDashboard(http.Controller):
     @http.route('/my/intern_navbar', type='http', auth='user', website=True)
     def intern_navbar(self, **kwargs):
         employee = request.env.user.employee_id
+        
+        # Prevent non-intern users from accessing navbar route
         if not employee or not employee.is_intern:
-            return request.redirect('/my/home')
+            return self._render_error_page(
+                code=403,
+                message="You are not allowed to access this page."
+            )
+        
         return request.render('famtech_intern_dashboard.intern_navbar')
