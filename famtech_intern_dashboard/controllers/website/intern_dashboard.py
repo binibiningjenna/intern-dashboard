@@ -1,29 +1,117 @@
 import json
+from datetime import timedelta
 
 from odoo import fields, http
 from odoo.http import request
 
 
 class InternDashboard(http.Controller):
+    def _format_week_range_label(self, date_from, date_to):
+        if not date_from or not date_to:
+            return ""
+        if date_from == date_to:
+            return date_from.strftime('%b %d')
+        if date_from.year == date_to.year and date_from.month == date_to.month:
+            return f"{date_from.strftime('%b %d')}-{date_to.strftime('%d')}"
+        return f"{date_from.strftime('%b %d')} - {date_to.strftime('%b %d')}"
+
+    def _build_weekly_grouped_trend(self, evaluations):
+        weekly_groups = []
+        evaluations = evaluations.sorted(key=lambda record: (record.eval_date or fields.Date.today(), record.id))
+        first_date = evaluations[0].eval_date if evaluations else False
+
+        for evaluation in evaluations:
+            if not evaluation.eval_date or not first_date:
+                continue
+
+            week_index = ((evaluation.eval_date - first_date).days // 7) + 1
+            if len(weekly_groups) < week_index:
+                week_start = first_date + timedelta(days=(week_index - 1) * 7)
+                week_end = week_start + timedelta(days=6)
+                weekly_groups.append({
+                    'week_label': f'Week {week_index}',
+                    'date_from': week_start.strftime('%Y-%m-%d'),
+                    'date_to': week_end.strftime('%Y-%m-%d'),
+                    'timeliness_values': [],
+                    'responsiveness_values': [],
+                    'is_weekly_average': True,
+                })
+
+            bucket = weekly_groups[week_index - 1]
+            bucket['timeliness_values'].append(evaluation.timeliness_score or 0.0)
+            bucket['responsiveness_values'].append(evaluation.responsiveness_score or 0.0)
+
+        return [
+            {
+                'week_label': bucket['week_label'],
+                'week_display_label': f"{bucket['week_label']} ({self._format_week_range_label(fields.Date.from_string(bucket['date_from']), fields.Date.from_string(bucket['date_to']))})",
+                'timeliness': round(sum(bucket['timeliness_values']) / len(bucket['timeliness_values']), 2)
+                if bucket['timeliness_values'] else 0.0,
+                'responsiveness': round(sum(bucket['responsiveness_values']) / len(bucket['responsiveness_values']), 2)
+                if bucket['responsiveness_values'] else 0.0,
+                'evaluation_date': bucket['date_to'],
+                'date_from': bucket['date_from'],
+                'date_to': bucket['date_to'],
+                'is_weekly_average': bucket['is_weekly_average'],
+            }
+            for bucket in weekly_groups
+        ]
+
+    def _build_live_trend_fallback(self, employee):
+        has_live_scores = any([
+            employee.timeliness_score,
+            employee.responsiveness_score,
+        ])
+        if not has_live_scores:
+            return []
+
+        today = fields.Date.today()
+        return [{
+            'week_label': 'Current Week',
+            'week_display_label': f"Current Week ({self._format_week_range_label(today, today)})",
+            'timeliness': round(employee.timeliness_score or 0.0, 2),
+            'responsiveness': round(employee.responsiveness_score or 0.0, 2),
+            'evaluation_date': today.strftime('%Y-%m-%d'),
+            'date_from': today.strftime('%Y-%m-%d'),
+            'date_to': today.strftime('%Y-%m-%d'),
+            'is_weekly_average': False,
+        }]
+
+    def _append_current_week_live_point(self, trend_rows, employee):
+        live_rows = self._build_live_trend_fallback(employee)
+        if not live_rows:
+            return trend_rows
+
+        current_live_row = live_rows[0]
+        current_date = fields.Date.from_string(current_live_row['evaluation_date'])
+        for row in trend_rows:
+            row_date_from = fields.Date.from_string(row['date_from']) if row.get('date_from') else False
+            row_date_to = fields.Date.from_string(row['date_to']) if row.get('date_to') else False
+            if row_date_from and row_date_to and row_date_from <= current_date <= row_date_to:
+                return trend_rows
+
+        return trend_rows + [current_live_row]
+
     def _get_trend_evaluations(self, employee):
         evaluation_model = request.env['intern.evaluation'].sudo()
-        weekly_snapshots = evaluation_model.search(
+        return evaluation_model.search(
             [
                 ('employee_id', '=', employee.id),
-                ('is_weekly_snapshot', '=', True),
+                ('is_weekly_snapshot', '=', False),
             ],
-            order='eval_date asc, id asc',
-        )
-        if weekly_snapshots:
-            return weekly_snapshots
-
-        return evaluation_model.search(
-            [('employee_id', '=', employee.id)],
             order='eval_date asc, id asc',
         )
 
     def _get_kpi_payload(self, employee):
         evaluations = self._get_trend_evaluations(employee)
+        timeliness_responsiveness_trend = self._build_weekly_grouped_trend(evaluations)
+        if not timeliness_responsiveness_trend:
+            timeliness_responsiveness_trend = self._build_live_trend_fallback(employee)
+        else:
+            timeliness_responsiveness_trend = self._append_current_week_live_point(
+                timeliness_responsiveness_trend,
+                employee,
+            )
 
         average_score = round(employee.average_score or 0.0, 2)
         contracted_hours = round(employee.contracted_hours or 0.0, 2)
@@ -33,23 +121,20 @@ class InternDashboard(http.Controller):
 
         timeliness_responsiveness = [{
             'employee_name': employee.name,
-            'timeliness': round(employee.timeliness_score or 0.0, 2),
-            'responsiveness': round(employee.responsiveness_score or 0.0, 2),
+            'timeliness': round(
+                (timeliness_responsiveness_trend[-1]['timeliness'] if timeliness_responsiveness_trend else employee.timeliness_score) or 0.0,
+                2,
+            ),
+            'responsiveness': round(
+                (timeliness_responsiveness_trend[-1]['responsiveness'] if timeliness_responsiveness_trend else employee.responsiveness_score) or 0.0,
+                2,
+            ),
             'evaluation_date': (
-                evaluations[-1].eval_date.strftime('%Y-%m-%d')
-                if evaluations and evaluations[-1].eval_date
+                timeliness_responsiveness_trend[-1]['evaluation_date']
+                if timeliness_responsiveness_trend
                 else False
             ),
         }]
-
-        timeliness_responsiveness_trend = [
-            {
-                'timeliness': round(evaluation.timeliness_score or 0.0, 2),
-                'responsiveness': round(evaluation.responsiveness_score or 0.0, 2),
-                'evaluation_date': evaluation.eval_date.strftime('%Y-%m-%d') if evaluation.eval_date else False,
-            }
-            for evaluation in evaluations
-        ]
 
         return {
             'summary': {

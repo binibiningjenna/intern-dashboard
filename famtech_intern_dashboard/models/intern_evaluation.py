@@ -30,10 +30,12 @@ class InternEvaluation(models.Model):
         required=True,
     )
     is_weekly_snapshot = fields.Boolean(
-        string="Weekly Snapshot",
+        string="Weekly Average Snapshot",
         default=False,
-        help="Marks this evaluation as the official end-of-week snapshot used for trend charts.",
+        help="Marks this evaluation as a rolling 7-day average snapshot used for trend charts.",
     )
+    raw_timeliness_score = fields.Float(string="Raw Timeliness")
+    raw_responsiveness_score = fields.Float(string="Raw Responsiveness")
 
     technical_score = fields.Float(string="Technical Skills")
     communication_score = fields.Float(string="Communication")

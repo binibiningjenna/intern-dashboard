@@ -124,7 +124,10 @@
         new Chart(canvas, {
             type: "line",
             data: {
-                labels: rows.map((row, index) => `Week ${index + 1}`),
+                labels: rows.map((row, index) => {
+                    const rawLabel = row.week_display_label || row.week_label || `Week ${index + 1}`;
+                    return rawLabel.replace(/\s*\([^)]*\)\s*/g, "").trim();
+                }),
                 datasets: [
                     {
                         label: "Timeliness",
@@ -155,11 +158,16 @@
                     legend: { display: true },
                     tooltip: {
                         callbacks: {
+                            title: (tooltipItems) => {
+                                const row = rows[tooltipItems[0]?.dataIndex] || {};
+                                if (row.week_display_label) {
+                                    return row.week_display_label;
+                                }
+                                return tooltipItems[0]?.label || "";
+                            },
                             label: (context) => {
-                                const row = rows[context.dataIndex] || {};
                                 const value = Number(context.raw || 0).toFixed(2);
-                                const datePart = row.evaluation_date ? ` (${row.evaluation_date})` : "";
-                                return `${context.dataset.label}: ${value}${datePart}`;
+                                return `${context.dataset.label}: ${value}`;
                             },
                         },
                     },
