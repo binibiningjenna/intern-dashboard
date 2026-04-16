@@ -13,62 +13,60 @@
                 <div class="container">
                     <div class="row justify-content-center">
                         <div class="col-12 col-xl-10">
-                            <div class="intern-error-card">
-                                <div class="intern-error-content text-center">
+                            <div class="intern-error-content text-center">
 
-                                    <div class="intern-error-icon mx-auto mb-4">
-                                        <i class="bi bi-exclamation-triangle"></i>
-                                    </div>
-
-                                    <div class="intern-error-pill mx-auto mb-4">
-                                        Oops! Something went wrong
-                                    </div>
-
-                                    <h1 class="intern-error-code mb-2">
-                                        <t t-esc="error_code or '404'"/>
-                                    </h1>
-
-                                    <h2 class="intern-error-title mb-3">
-                                        <t t-esc="error_title or 'Page not found'"/>
-                                    </h2>
-
-                                    <p class="intern-error-message mb-4">
-                                        <t t-esc="error_message or 'The page you are looking for could not be found.'"/>
-                                    </p>
-
-                                    <!-- 403: show only Go to Login -->
-                                    <t t-if="(error_code or '404') == '403'">
-                                        <div class="d-flex justify-content-center mb-4">
-                                            <a href="/web/login"
-                                               class="intern-btn intern-btn-secondary">
-                                                <i class="bi bi-arrow-left me-2"></i>
-                                                Go to Login
-                                            </a>
-                                        </div>
-                                    </t>
-
-                                    <!-- Other errors: keep original buttons -->
-                                    <t t-else="">
-                                        <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mb-4">
-                                            <a t-att-href="primary_url or '/dashboard'"
-                                               class="intern-btn intern-btn-primary">
-                                                <i class="bi bi-house-door me-2"></i>
-                                                <t t-esc="primary_label or 'Go to Dashboard'"/>
-                                            </a>
-
-                                            <a t-att-href="secondary_url or 'javascript:history.back()'"
-                                               class="intern-btn intern-btn-secondary">
-                                                <i class="bi bi-arrow-left me-2"></i>
-                                                <t t-esc="secondary_label or 'Go Back'"/>
-                                            </a>
-                                        </div>
-                                    </t>
-
-                                    <p class="intern-error-help mb-0">
-                                        Need help? Contact your administrator or try again later.
-                                    </p>
-
+                                <div class="intern-error-icon mx-auto mb-4">
+                                    <i class="bi bi-exclamation-triangle"></i>
                                 </div>
+
+                                <div class="intern-error-pill mx-auto mb-4">
+                                    Oops! Something went wrong
+                                </div>
+
+                                <h1 class="intern-error-code mb-2">
+                                    <t t-esc="error_code or '404'"/>
+                                </h1>
+
+                                <h2 class="intern-error-title mb-3">
+                                    <t t-esc="error_title or 'Page not found'"/>
+                                </h2>
+
+                                <p class="intern-error-message mb-4">
+                                    <t t-esc="error_message or 'The page you are looking for could not be found.'"/>
+                                </p>
+
+                                <!-- 403: show only Go to Login -->
+                                <t t-if="(error_code or '404') == '403'">
+                                    <div class="d-flex justify-content-center mb-4">
+                                        <a href="/web/login"
+                                           class="intern-btn intern-btn-secondary">
+                                            <i class="bi bi-arrow-left me-2"></i>
+                                            Go to Login
+                                        </a>
+                                    </div>
+                                </t>
+
+                                <!-- Other errors: keep original buttons -->
+                                <t t-else="">
+                                    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mb-4">
+                                        <a t-att-href="primary_url or '/dashboard'"
+                                           class="intern-btn intern-btn-primary">
+                                            <i class="bi bi-house-door me-2"></i>
+                                            <t t-esc="primary_label or 'Go to Dashboard'"/>
+                                        </a>
+
+                                        <a t-att-href="secondary_url or 'javascript:history.back()'"
+                                           class="intern-btn intern-btn-secondary">
+                                            <i class="bi bi-arrow-left me-2"></i>
+                                            <t t-esc="secondary_label or 'Go Back'"/>
+                                        </a>
+                                    </div>
+                                </t>
+
+                                <p class="intern-error-help mb-0">
+                                    Need help? Contact your administrator or try again later.
+                                </p>
+
                             </div>
                         </div>
                     </div>
@@ -109,31 +107,18 @@
                 .intern-error-page {
                     min-height: 100vh;
                     padding: 36px 16px;
-                    background:
-                        radial-gradient(circle at 50% 0%,
-                            var(--color-white) 0%,
-                            var(--color-gray-100) 70%,
-                            #ececec 100%);
-                }
-
-                .intern-error-card {
-                    width: 100%;
-                    max-width: 950px;
-                    margin: 0 auto;
-                    background: var(--color-white);
-                    border: 1px solid rgba(209, 213, 219, 0.8);
-                    border-radius: 28px;
-                    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-                    min-height: 640px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
                 }
 
                 .intern-error-content {
                     width: 100%;
                     max-width: 700px;
+                    min-height: 640px;
+                    margin: 0 auto;
                     padding: 40px 20px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
                 }
 
                 .intern-error-icon {
@@ -249,12 +234,8 @@
                         padding: 16px;
                     }
 
-                    .intern-error-card {
-                        min-height: auto;
-                        border-radius: 22px;
-                    }
-
                     .intern-error-content {
+                        min-height: auto;
                         padding: 32px 12px;
                     }
 

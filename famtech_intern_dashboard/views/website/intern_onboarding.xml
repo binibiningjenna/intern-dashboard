@@ -84,7 +84,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <a href="/my/intern/handbook/download" class="btn btn-secondary btn-sm px-3">
+                                        <a href="/my/intern/handbook/download" target="_blank" class="btn btn-secondary btn-sm px-3">
                                             <i class="bi bi-file-earmark-text me-1"></i>Intern Handbook
                                         </a>
                                     </div>
@@ -128,7 +128,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <a href="/my/account" class="btn btn-secondary btn-sm px-3">
+                                        <a href="/my/account" target="_blank" class="btn btn-secondary btn-sm px-3">
                                             <i class="bi bi-pencil-square me-1"></i>Edit Profile
                                         </a>
                                     </div>
@@ -150,7 +150,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <a href="/my/tasks" class="btn btn-secondary btn-sm px-3">
+                                        <a href="/my/tasks" target="_blank" class="btn btn-secondary btn-sm px-3">
                                             <i class="bi bi-list-task me-1"></i>View Tasks
                                         </a>
                                     </div>
