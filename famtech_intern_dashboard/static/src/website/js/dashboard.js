@@ -144,6 +144,7 @@
                         borderColor: colors.goldDark,
                         pointRadius: 5,
                         pointHoverRadius: 7,
+                        clip: false,
                         tension: 0,
                         yAxisID: "y",
                     },
@@ -154,6 +155,7 @@
                         borderColor: colors.navyDark,
                         pointRadius: 5,
                         pointHoverRadius: 7,
+                        clip: false,
                         tension: 0,
                         yAxisID: "y1",
                     },
@@ -195,6 +197,12 @@
                         max: 5,
                         position: "right",
                         grid: { drawOnChartArea: false },
+                    },
+                },
+                layout: {
+                    padding: {
+                        top: 10,
+                        bottom: 6,
                     },
                 },
             },
