@@ -6,6 +6,19 @@ from datetime import datetime
 
 class InternPortal(CustomerPortal):
 
+    # Custom Error Block
+    def _render_error_page(self, code='404', title='Page Not Found', message='The page you are looking for could not be found.'):
+        values = {
+            'error_code': code,
+            'error_title': title,
+            'error_message': message,
+            'primary_url': '/my/intern/calendar',
+            'primary_label': 'Go to Calendar',
+            'secondary_url': 'javascript:history.back()',
+            'secondary_label': 'Go Back',
+        }
+        return request.render('famtech_intern_dashboard.intern_error_page', values)
+
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
         user = request.env.user
@@ -24,9 +37,14 @@ class InternPortal(CustomerPortal):
             ('user_id', '=', user.id),
             ('is_intern', '=', True)
         ], limit=1)
-
+        
+        # Error Handler
         if not employee:
-            return request.redirect('/my/home')
+            return self._render_error_page(
+                code='403',
+                title='Access Denied',
+                message='You do not have permission to access the onboarding page.',
+            )
 
         partner = employee.user_id.partner_id
         now = datetime.now()
@@ -72,12 +90,21 @@ class InternPortal(CustomerPortal):
             ('is_intern', '=', True),
         ], limit=1)
 
+        # Error Handler
         if not employee:
-            return request.redirect('/my/home')
-
+            return self._render_error_page(
+                code='403',
+                title='Access Denied',
+                message='You do not have permission to access the onboarding page.',
+            )
+        
         event = request.env['calendar.event'].sudo().browse(event_id)
         if not event.exists():
-            return request.redirect('/my/intern/calendar')
+            return self._render_error_page(
+                code='404',
+                title='Page Not Found',
+                message='The requested calendar event could not be found.',
+            )
 
         error = None
         try:
@@ -113,7 +140,19 @@ class InternPortal(CustomerPortal):
         ], limit=1)
 
         if not employee:
-            return request.redirect('/my/home')
+            return self._render_error_page(
+                code='403',
+                title='Access Denied',
+                message='You do not have permission to log attendance for this event.',
+            )
+
+        event = request.env['calendar.event'].sudo().browse(event_id)
+        if not event.exists():
+            return self._render_error_page(
+                code='404',
+                title='Page Not Found',
+                message='The requested calendar event could not be found.',
+            )
 
         error = None
         try:

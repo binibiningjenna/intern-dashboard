@@ -12,6 +12,19 @@ class InternOnboarding(http.Controller):
             employee.odoo_access_granted,
             employee.first_task_assigned,
         ])
+    
+    # Custom Error Block
+    def _render_error_page(self, code='404', title='Page Not Found', message='The page you are looking for could not be found.'):
+        values = {
+            'error_code': code,
+            'error_title': title,
+            'error_message': message,
+            'primary_url': '/my/intern_dashboard',
+            'primary_label': 'Go to Dashboard',
+            'secondary_url': 'javascript:history.back()',
+            'secondary_label': 'Go Back',
+        }
+        return request.render('famtech_intern_dashboard.intern_error_page', values)
 
     def _auto_detect_onboarding(self, employee):
         updates = {}
@@ -47,8 +60,13 @@ class InternOnboarding(http.Controller):
             ('is_intern', '=', True),
         ], limit=1)
 
+        # Error Handler
         if not employee:
-            return request.redirect('/my/home')
+            return self._render_error_page(
+                code='403',
+                title='Access Denied',
+                message='You do not have permission to access the onboarding page.',
+            )
 
         # Auto-detect progress from existing records (no redirect — page always renders)
         self._auto_detect_onboarding(employee)
@@ -79,8 +97,13 @@ class InternOnboarding(http.Controller):
             ('is_intern', '=', True),
         ], limit=1)
 
+        # Error Handler
         if not employee:
-            return request.redirect('/my/home')
+            return self._render_error_page(
+                code='403',
+                title='Access Denied',
+                message='You do not have permission to access the onboarding page.',
+            )
 
         employee.write({
             'handbook_reviewed': bool(kwargs.get('handbook_reviewed')),

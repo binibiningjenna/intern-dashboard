@@ -14,6 +14,19 @@ class InternDashboard(http.Controller):
         if date_from.year == date_to.year and date_from.month == date_to.month:
             return f"{date_from.strftime('%b %d')}-{date_to.strftime('%d')}"
         return f"{date_from.strftime('%b %d')} - {date_to.strftime('%b %d')}"
+    
+    # Custom Error Block
+    def _render_error_page(self, code='404', title='Page Not Found', message='The page you are looking for could not be found.'):
+        values = {
+            'error_code': code,
+            'error_title': title,
+            'error_message': message,
+            'primary_url': '/my/intern_dashboard',
+            'primary_label': 'Go to Dashboard',
+            'secondary_url': 'javascript:history.back()',
+            'secondary_label': 'Go Back',
+        }
+        return request.render('famtech_intern_dashboard.intern_error_page', values)
 
     def _build_weekly_grouped_trend(self, evaluations):
         weekly_groups = []
@@ -198,8 +211,13 @@ class InternDashboard(http.Controller):
     def intern_dashboard(self, **kwargs):
         employee = request.env.user.employee_id.sudo()
 
+        # Error Handler
         if not employee or not employee.is_intern:
-            return request.redirect('/my/home')
+            return self._render_error_page(
+                code='403',
+                title='Access Denied',
+                message='You do not have permission to access the intern dashboard.',
+            )
 
         metrics = [
             {
@@ -266,8 +284,13 @@ class InternDashboard(http.Controller):
     def intern_dashboard_kpi_export(self, **kwargs):
         employee = request.env.user.employee_id.sudo()
 
+        # Error Handler
         if not employee or not employee.is_intern:
-            return request.redirect('/my/home')
+            return self._render_error_page(
+                code='403',
+                title='Access Denied',
+                message='You do not have permission to export this report.',
+            )
 
         date_from, date_to = self._get_report_date_range(employee)
         wizard = request.env['hr.kpi.dashboard'].sudo().create({
@@ -292,6 +315,13 @@ class InternDashboard(http.Controller):
     @http.route('/my/intern_navbar', type='http', auth='user', website=True)
     def intern_navbar(self, **kwargs):
         employee = request.env.user.employee_id
+        
+        # Error Handler
         if not employee or not employee.is_intern:
-            return request.redirect('/my/home')
+            return self._render_error_page(
+                code='403',
+                title='Access Denied',
+                message='You do not have permission to view the intern navigation.',
+            )
+        
         return request.render('famtech_intern_dashboard.intern_navbar')

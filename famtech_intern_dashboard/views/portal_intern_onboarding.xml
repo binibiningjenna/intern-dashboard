@@ -398,6 +398,8 @@
                                                       <!-- Join + Log Attendance (available 5 min before start) -->
                                                       <t t-if="window_open or is_ongoing">
                                                           <a t-attf-href="/my/intern/join-call/#{event.id}"
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
                                                             class="btn btn-primary btn-sm px-3">
                                                               <i class="bi bi-camera-video me-1"></i>Join &amp; Log Attendance
                                                           </a>
