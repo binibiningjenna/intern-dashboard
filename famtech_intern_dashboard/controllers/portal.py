@@ -1,4 +1,4 @@
-from odoo import http
+from odoo import http, fields
 from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from datetime import datetime
@@ -19,17 +19,22 @@ class InternPortal(CustomerPortal):
         }
         return request.render('famtech_intern_dashboard.intern_error_page', values)
 
+    # Used to determine if the logged-in user is an intern and display onboarding-related UI elements.
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
         user = request.env.user
+
         employee = request.env['hr.employee'].sudo().search([
             ('user_id', '=', user.id),
             ('is_intern', '=', True)
         ], limit=1)
+
         if 'intern_onboarding_count' in counters:
             values['intern_onboarding_count'] = 1 if employee else 0
+
         return values
 
+    # Renders the intern calendar page showing all calendar events where the intern is an attendee.
     @http.route(['/my/intern/calendar'], type='http', auth='user', website=True)
     def portal_intern_calendar(self, event_id=None, error=None, logged=None, **kw):
         user = request.env.user
@@ -47,21 +52,56 @@ class InternPortal(CustomerPortal):
             )
 
         partner = employee.user_id.partner_id
-        now = datetime.now()
+        now = fields.Datetime.context_timestamp(
+            request.env.user,
+            fields.Datetime.now()
+        )
 
-        # All events — past and upcoming — where intern is attendee
         events = request.env['calendar.event'].sudo().search([
             ('partner_ids', 'in', partner.ids),
         ], order='start asc', limit=50)
 
-        # Build attendance map: event_id → attendance record
+        processed_events = []
+
+        for event in events:
+            start = event.start
+            stop = event.stop
+
+            if start:
+                start = fields.Datetime.context_timestamp(request.env.user, start)
+            if stop:
+                stop = fields.Datetime.context_timestamp(request.env.user, stop)
+
+            processed_events.append({
+                'event': event,
+                'start': start,
+                'stop': stop,
+            })
+
         attendance_records = request.env['famtech.meeting.attendance'].sudo().search([
             ('employee_id', '=', employee.id),
         ])
-        attendance_map = {rec.calendar_event_id.id: rec for rec in attendance_records}
 
-        # Check for session error from join-call redirect
+        processed_attendance = {}
+
+        for rec in attendance_records:
+            join_time = rec.join_time
+
+            if join_time:
+                join_time = fields.Datetime.context_timestamp(
+                    request.env.user,
+                    join_time
+                )
+
+            processed_attendance[rec.calendar_event_id.id] = {
+                'record': rec,
+                'join_time': join_time
+            }
+
+        attendance_map = processed_attendance
+
         session_errors = {}
+
         for ev in events:
             key = 'attendance_error_%s' % ev.id
             if key in request.session:
@@ -69,21 +109,22 @@ class InternPortal(CustomerPortal):
 
         values = {
             'employee': employee,
-            'events': events,
+            'events': processed_events,
             'attendance_map': attendance_map,
             'now': now,
             'session_errors': session_errors,
             'url_error': error or '',
             'page_name': 'intern_calendar',
         }
-        return request.render('famtech_intern_dashboard.portal_intern_calendar_page', values)
-    
+
+        return request.render(
+            'famtech_intern_dashboard.portal_intern_calendar_page',
+            values
+        )
+
+    # Creates attendance record and redirects user to the meeting link if available.
     @http.route('/my/intern/join-call/<int:event_id>', type='http', auth='user', website=True)
     def join_call(self, event_id, **kw):
-        """
-        Records attendance then redirects to the video call.
-        Uses famtech.meeting.attendance which enforces the time window.
-        """
         user = request.env.user
         employee = request.env['hr.employee'].sudo().search([
             ('user_id', '=', user.id),
@@ -128,12 +169,12 @@ class InternPortal(CustomerPortal):
             event_id, error or ''
         ))
 
+    # Logs attendance for events without video call links.
     @http.route('/my/intern/log-attendance/<int:event_id>', type='http', auth='user', website=True)
     def log_attendance_only(self, event_id, **kw):
-        """
-        For events without a video call — logs attendance directly.
-        """
+
         user = request.env.user
+
         employee = request.env['hr.employee'].sudo().search([
             ('user_id', '=', user.id),
             ('is_intern', '=', True),

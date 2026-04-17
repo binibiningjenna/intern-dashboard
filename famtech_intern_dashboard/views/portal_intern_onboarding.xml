@@ -284,152 +284,218 @@
       TEMPLATE 3: Portal calendar page at /my/intern/calendar
       ============================================================ -->
   <template id="portal_intern_calendar_page" name="Intern Calendar">
-    <t t-call="famtech_intern_dashboard.intern_navbar"/>
-    <head>
-      <title>Intern Calendar</title>
-      <meta charset="utf-8"/>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-      <link rel="preconnect" href="https://fonts.googleapis.com"/>
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin"/>
-      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
-      <link href="/famtech_intern_dashboard/static/src/website/css/global.css" rel="stylesheet"/>
-    </head>
+      <t t-call="famtech_intern_dashboard.intern_navbar"/>
+      <head>
+          <title>Intern Calendar</title>
+          <meta charset="utf-8"/>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-      <div class="w-100" style="background: radial-gradient(circle at 50% 0%, var(--color-white) 0%, var(--color-gray-100) 100%); min-height: 100vh; font-family: 'Poppins', sans-serif;">
+          <link rel="preconnect" href="https://fonts.googleapis.com"/>
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin"/>
+          <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+          <link href="/famtech_intern_dashboard/static/src/website/css/global.css" rel="stylesheet"/>
+      </head>
+
+      <div class="w-100"
+          style="background: radial-gradient(circle at 50% 0%, var(--color-white) 0%, var(--color-gray-100) 100%); min-height: 100vh; font-family: 'Poppins', sans-serif;">
+
           <div class="container py-5">
-
-              <!-- Header -->
               <div class="row mb-4">
                   <div class="col-12 d-flex justify-content-between align-items-center flex-wrap gap-2">
+
                       <div class="d-flex align-items-center gap-2">
-                          <i class="bi bi-calendar3" style="color: var(--color-gold-500); font-size: 1.5rem;"></i>
+                          <i class="bi bi-calendar3"
+                            style="color: var(--color-gold-500); font-size: 1.5rem;"></i>
                           <h1 class="fw-bold mb-0">My Orientation &amp; Meetings</h1>
                       </div>
+
                       <a href="/onboarding" class="btn btn-secondary btn-sm px-3">
                           <i class="bi bi-arrow-left me-1"></i>Back to Onboarding
                       </a>
+
                   </div>
               </div>
 
-              <!-- Events -->
               <div class="row">
                   <div class="col-12">
+
                       <t t-if="events">
                           <div class="d-flex flex-column gap-3">
-                              <t t-foreach="events" t-as="event">
 
-                                  <!-- Variables for this event -->
-                                  <t t-set="attendance" t-value="attendance_map.get(event.id)"/>
-                                  <t t-set="has_attended" t-value="bool(attendance)"/>
-                                  <t t-set="is_ongoing" t-value="event.start &lt;= now and now &lt;= event.stop"/>
-                                  <t t-set="is_upcoming" t-value="now &lt; event.start"/>
-                                  <t t-set="is_past" t-value="now > event.stop"/>
-                                  <t t-set="window_open" t-value="(event.start - relativedelta(minutes=5)) &lt;= now"/>
-                                  <t t-set="session_error" t-value="session_errors.get(event.id, '')"/>
+                              <t t-foreach="events" t-as="e">
+                                  <t t-set="event" t-value="e['event']"/>
+                                  <t t-set="attendance_data" t-value="attendance_map.get(event.id)"/>
+                                  <t t-set="attendance" t-value="attendance_data and attendance_data['record']"/>
+                                  <t t-set="is_ongoing"
+                                    t-value="e.get('start') and e.get('stop') and e['start'] &lt;= now and now &lt;= e['stop']"/>
+                                  <t t-set="is_upcoming"
+                                    t-value="e.get('start') and now &lt; e['start']"/>
+                                  <t t-set="is_past"
+                                    t-value="e.get('stop') and now &gt; e['stop']"/>
+                                  <t t-set="window_open"
+                                    t-value="e.get('start') and (e['start'] - relativedelta(minutes=5)) &lt;= now"/>
+                                  <t t-set="session_error"
+                                    t-value="session_errors.get(event.id, '')"/>
 
                                   <div class="card">
                                       <div class="card-body">
                                           <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
-
-                                              <!-- Event Info -->
                                               <div class="flex-grow-1">
+
                                                   <div class="d-flex align-items-center gap-2 mb-2">
-                                                      <i class="bi bi-calendar-event" style="color: var(--color-gold-500);"></i>
-                                                      <h5 class="fw-bold mb-0"><t t-out="event.name"/></h5>
-                                                      <!-- Status badge -->
+
+                                                      <i class="bi bi-calendar-event"
+                                                        style="color: var(--color-gold-500);"></i>
+
+                                                      <h5 class="fw-bold mb-0">
+                                                          <t t-out="event.name"/>
+                                                      </h5>
+
                                                       <t t-if="is_ongoing">
-                                                          <span class="badge rounded-pill" style="background-color: var(--color-navy-100); color: var(--color-navy-700);">Live</span>
+                                                          <span class="badge rounded-pill"
+                                                                style="background-color: var(--color-navy-100); color: var(--color-navy-700);">
+                                                              Live
+                                                          </span>
                                                       </t>
+
                                                       <t t-elif="is_past">
-                                                          <span class="badge rounded-pill" style="background-color: var(--color-gray-100); color: var(--color-gray-500);">Ended</span>
+                                                          <span class="badge rounded-pill"
+                                                                style="background-color: var(--color-gray-100); color: var(--color-gray-500);">
+                                                              Ended
+                                                          </span>
                                                       </t>
+
                                                       <t t-else="">
-                                                          <span class="badge rounded-pill" style="background-color: var(--color-gold-100); color: var(--color-gold-900);">Upcoming</span>
+                                                          <span class="badge rounded-pill"
+                                                                style="background-color: var(--color-gold-100); color: var(--color-gold-900);">
+                                                              Upcoming
+                                                          </span>
                                                       </t>
+
                                                   </div>
 
-                                                  <div class="d-flex flex-wrap gap-3 small mb-2" style="color: var(--color-gray-500);">
-                                                      <span><i class="bi bi-clock me-1"></i><strong>Start:</strong> <t t-out="event.start.strftime('%B %d, %Y %I:%M %p')"/></span>
-                                                      <span><i class="bi bi-clock-history me-1"></i><strong>End:</strong> <t t-out="event.stop.strftime('%B %d, %Y %I:%M %p')"/></span>
+                                                  <div class="d-flex flex-wrap gap-3 small mb-2"
+                                                      style="color: var(--color-gray-500);">
+
+                                                      <span>
+                                                          <i class="bi bi-clock me-1"></i>
+                                                          <strong>Start:</strong>
+                                                          <t t-if="e.get('start')">
+                                                              <t t-out="e['start'].strftime('%B %d, %Y %I:%M %p')"/>
+                                                          </t>
+                                                      </span>
+
+                                                      <span>
+                                                          <i class="bi bi-clock-history me-1"></i>
+                                                          <strong>End:</strong>
+                                                          <t t-if="e.get('stop')">
+                                                              <t t-out="e['stop'].strftime('%B %d, %Y %I:%M %p')"/>
+                                                          </t>
+                                                      </span>
+
                                                       <t t-if="event.location">
-                                                          <span><i class="bi bi-geo-alt me-1"></i><t t-out="event.location"/></span>
+                                                          <span>
+                                                              <i class="bi bi-geo-alt me-1"></i>
+                                                              <t t-out="event.location"/>
+                                                          </span>
                                                       </t>
+
                                                   </div>
 
-                                                  <!-- Attendance status -->
-                                                  <t t-if="has_attended">
+                                                  <t t-if="attendance">
                                                       <div class="d-flex align-items-center gap-2 small mt-2">
-                                                          <i class="bi bi-check-circle-fill" style="color: var(--color-navy-500);"></i>
+                                                          <i class="bi bi-check-circle-fill"
+                                                            style="color: var(--color-navy-500);"></i>
+
                                                           <span style="color: var(--color-navy-700);">
                                                               Attendance logged —
-                                                              <strong><t t-out="attendance.attendance_status.replace('_', ' ').title()"/></strong>
-                                                              at <t t-out="attendance.join_time.strftime('%I:%M %p')"/>
-                                                              <t t-if="attendance.minutes_late > 0">
-                                                                  (<t t-out="attendance.minutes_late"/> min late)
+                                                              <strong>
+                                                                  <t t-out="attendance.attendance_status.replace('_', ' ').title()"/>
+                                                              </strong>
+
+                                                              at
+
+                                                              <t t-if="attendance_data and attendance_data['join_time']">
+                                                                  <t t-out="attendance_data['join_time'].strftime('%I:%M %p')"/>
                                                               </t>
                                                           </span>
                                                       </div>
                                                   </t>
 
-                                                  <!-- Session error (shown after returning from video call) -->
                                                   <t t-if="session_error">
-                                                      <div class="small mt-2 p-2 rounded" style="background-color: var(--color-gold-100); color: var(--color-gold-900);">
+                                                      <div class="small mt-2 p-2 rounded"
+                                                          style="background-color: var(--color-gold-100); color: var(--color-gold-900);">
                                                           <i class="bi bi-exclamation-triangle me-1"></i>
                                                           <t t-out="session_error"/>
                                                       </div>
                                                   </t>
 
                                                   <t t-if="event.description">
-                                                      <p class="mt-2 mb-0 small" style="color: var(--color-gray-500);"><t t-out="event.description"/></p>
+                                                      <p class="mt-2 mb-0 small"
+                                                        style="color: var(--color-gray-500);">
+                                                          <t t-out="event.description"/>
+                                                      </p>
                                                   </t>
+
                                               </div>
 
-                                              <!-- Action buttons -->
                                               <div class="d-flex flex-column align-items-end gap-2 flex-shrink-0">
-
-                                                  <!-- Date badge -->
-                                                  <span class="badge rounded-pill px-3 py-2" style="background-color: var(--color-navy-100); color: var(--color-navy-700);">
-                                                      <t t-out="event.start.strftime('%b %d')"/>
+                                                  <span class="badge rounded-pill px-3 py-2"
+                                                        style="background-color: var(--color-navy-100); color: var(--color-navy-700);">
+                                                      <t t-if="e.get('start')">
+                                                          <t t-out="e['start'].strftime('%b %d')"/>
+                                                      </t>
                                                   </span>
 
-                                                  <t t-if="event.videocall_location and not has_attended and not is_past">
+                                                  <t t-if="event.videocall_location and not attendance and not is_past">
                                                       <!-- Join + Log Attendance (available 5 min before start) -->
                                                       <t t-if="window_open or is_ongoing">
-                                                          <a t-attf-href="/my/intern/join-call/#{event.id}"
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
+                                                          <a t-attf-href="/my/intern/join-call/#{event.id}" target="_blank" rel="noopener noreferrer"
                                                             class="btn btn-primary btn-sm px-3">
-                                                              <i class="bi bi-camera-video me-1"></i>Join &amp; Log Attendance
+                                                              <i class="bi bi-camera-video me-1"></i>
+                                                              Join &amp; Log Attendance
                                                           </a>
                                                       </t>
+
                                                       <t t-else="">
-                                                          <span class="btn btn-primary btn-sm px-3 disabled" style="opacity: 0.5;">
-                                                              <i class="bi bi-camera-video me-1"></i>Join Call
-                                                          </span>
-                                                          <small class="text-end" style="color: var(--color-gray-500); max-width: 160px;">
+                                                          <button class="btn btn-primary btn-sm px-3"
+                                                                  disabled="disabled"
+                                                                  target="_blank" rel="noopener noreferrer"
+                                                                  style="opacity: 0.5;">
+                                                              <i class="bi bi-camera-video me-1"></i>
+                                                              Join Call
+                                                          </button>
+
+                                                          <small class="text-end"
+                                                                style="color: var(--color-gray-500); max-width: 160px;">
                                                               Available 5 min before start
                                                           </small>
                                                       </t>
+
                                                   </t>
 
-                                                  <t t-elif="event.videocall_location and has_attended">
-                                                      <!-- Already attended — still allow rejoining without re-logging -->
-                                                      <a t-att-href="event.videocall_location" target="_blank"
+                                                  <t t-elif="event.videocall_location and attendance">
+                                                       <!-- Already attended — still allow rejoining without re-logging -->
+                                                      <a t-att-href="event.videocall_location"
+                                                        target="_blank"
                                                         class="btn btn-secondary btn-sm px-3">
-                                                          <i class="bi bi-camera-video me-1"></i>Rejoin Call
+                                                          <i class="bi bi-camera-video me-1"></i>
+                                                          Rejoin Call
                                                       </a>
+
                                                   </t>
 
-                                                  <t t-elif="not event.videocall_location and not has_attended and (is_ongoing or window_open) and not is_past">
+                                                  <t t-elif="not event.videocall_location and not attendance and (is_ongoing or window_open) and not is_past">
                                                       <!-- In-person event — log attendance manually -->
                                                       <a t-attf-href="/my/intern/log-attendance/#{event.id}"
                                                         class="btn btn-primary btn-sm px-3">
-                                                          <i class="bi bi-check2-circle me-1"></i>Log Attendance
+                                                          <i class="bi bi-check2-circle me-1"></i>
+                                                          Log Attendance
                                                       </a>
-                                                  </t>
 
+                                                  </t>
                                               </div>
                                           </div>
                                       </div>
@@ -441,8 +507,10 @@
                       <t t-else="">
                           <div class="card">
                               <div class="card-body text-center py-5">
-                                  <i class="bi bi-calendar-x" style="font-size: 3rem; color: var(--color-gray-300);"></i>
-                                  <p class="mt-3 mb-0" style="color: var(--color-gray-500);">
+                                  <i class="bi bi-calendar-x"
+                                    style="font-size: 3rem; color: var(--color-gray-300);"></i>
+                                  <p class="mt-3 mb-0"
+                                    style="color: var(--color-gray-500);">
                                       No orientation or meeting events found for your account.
                                       Please contact HR if you believe this is an error.
                                   </p>
@@ -454,5 +522,4 @@
           </div>
       </div>
   </template>
-
 </odoo>
