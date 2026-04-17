@@ -126,7 +126,7 @@ class InternMetricCompute(models.AbstractModel):
 
         total = len(leads)
         if total == 0:
-            return 0.0
+            return 5.0
 
         won = sum(1 for l in leads if l.stage_id and l.stage_id.is_won)
         ratio = won / total
