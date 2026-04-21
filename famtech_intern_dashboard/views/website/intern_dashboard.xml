@@ -101,6 +101,16 @@
                                     </div>
                                 </div>
                                 <div class="card-body dashboard-progress-card__body">
+                                    <div class="dashboard-trend-indicator" aria-label="Trend line guide">
+                                        <span class="dashboard-trend-indicator__item">
+                                            <span class="dashboard-trend-indicator__line dashboard-trend-indicator__line--solid"></span>
+                                            <span>High Performance</span>
+                                        </span>
+                                        <span class="dashboard-trend-indicator__item">
+                                            <span class="dashboard-trend-indicator__line dashboard-trend-indicator__line--dashed"></span>
+                                            <span>Low Performance</span>
+                                        </span>
+                                    </div>
                                     <div class="dashboard-chart-frame dashboard-chart-frame-lg">
                                         <div id="timelinessResponsivenessEmptyState" class="dashboard-empty-state">
                                             No data available yet.

@@ -129,6 +129,31 @@
             return numberedWeekMatch ? numberedWeekMatch[1] : labelWithoutDateRange;
         }
 
+        function buildTrendDataset({ label, values, baseColor, baseBorderColor, axisId }) {
+            return {
+                label,
+                data: values,
+                backgroundColor: baseColor,
+                borderColor: baseBorderColor,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointBorderWidth: 2,
+                pointBorderColor: baseBorderColor,
+                pointBackgroundColor: baseColor,
+                segment: {
+                    borderColor: baseBorderColor,
+                    borderDash: (context) => {
+                        const fromValue = Number(context.p0.parsed.y || 0);
+                        const toValue = Number(context.p1.parsed.y || 0);
+                        return toValue < fromValue ? [6, 4] : undefined;
+                    },
+                },
+                clip: false,
+                tension: 0,
+                yAxisID: axisId,
+            };
+        }
+
         new Chart(canvas, {
             type: "line",
             data: {
@@ -137,28 +162,20 @@
                     return formatWeekAxisLabel(rawLabel, index);
                 }),
                 datasets: [
-                    {
+                    buildTrendDataset({
                         label: "Timeliness",
-                        data: rows.map((row) => row.timeliness),
-                        backgroundColor: colors.gold,
-                        borderColor: colors.goldDark,
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        clip: false,
-                        tension: 0,
-                        yAxisID: "y",
-                    },
-                    {
+                        values: rows.map((row) => row.timeliness),
+                        baseColor: colors.gold,
+                        baseBorderColor: colors.goldDark,
+                        axisId: "y",
+                    }),
+                    buildTrendDataset({
                         label: "Responsiveness",
-                        data: rows.map((row) => row.responsiveness),
-                        backgroundColor: colors.navy,
-                        borderColor: colors.navyDark,
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        clip: false,
-                        tension: 0,
-                        yAxisID: "y1",
-                    },
+                        values: rows.map((row) => row.responsiveness),
+                        baseColor: colors.navy,
+                        baseBorderColor: colors.navyDark,
+                        axisId: "y1",
+                    }),
                 ],
             },
             options: {
@@ -177,7 +194,16 @@
                             },
                             label: (context) => {
                                 const value = Number(context.raw || 0).toFixed(2);
-                                return `${context.dataset.label}: ${value}`;
+                                const currentValue = Number(context.raw || 0);
+                                const datasetValues = context.dataset.data || [];
+                                const previousValue = context.dataIndex > 0
+                                    ? Number(datasetValues[context.dataIndex - 1] || 0)
+                                    : null;
+                                const flags = [];
+                                if (previousValue !== null && currentValue < previousValue) {
+                                    flags.push("Declining");
+                                }
+                                return `${context.dataset.label}: ${value}${flags.length ? ` (${flags.join(", ")})` : ""}`;
                             },
                         },
                     },
