@@ -27,24 +27,47 @@
                 
                 <hr class="brand-divider mb-4" />
                 
-                <!-- Completion Banner — only shows when all steps done -->
-                <t t-if="progress == 100">
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <div class="d-flex align-items-center gap-3 p-3 rounded-3"
-                                style="background-color: var(--color-navy-100); border: 1px solid var(--color-navy-300);">
-                                <i class="bi bi-patch-check-fill fs-4" style="color: var(--color-navy-500);"></i>
-                                <div>
-                                    <div class="fw-bold" style="color: var(--color-navy-700);">
-                                        Onboarding Complete!
-                                    </div>
-                                    <div class="small" style="color: var(--color-navy-500);">
-                                        You have completed all onboarding steps. Great work, <t t-out="employee.name"/>!
-                                    </div>
+               <t t-if="progress == 100 and not employee.onboarding_modal_seen">
+                    <div class="modal fade" id="completionModal" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-sm rounded-4 overflow-hidden">
+
+                                <!-- Header -->
+                                <div class="modal-header border-0 justify-content-center position-relative py-3"
+                                    style="background-color: var(--color-navy-100);">
+                                    <h6 class="modal-title fw-bold text-center w-100 m-0"
+                                        style="color: var(--color-navy-700); letter-spacing: 0.4px;">
+                                        ONBOARDING COMPLETE
+                                    </h6>
+                                    <button type="button"
+                                            class="btn-close position-absolute end-0 me-3"
+                                            data-bs-dismiss="modal"></button>
                                 </div>
-                                <a href="/my/intern_dashboard" class="btn btn-primary ms-auto">
-                                    <i class="bi bi-speedometer2 me-2"></i>Go to Dashboard
-                                </a>
+
+                                <!-- Body -->
+                                <div class="modal-body text-center py-4">
+                                    <div class="mb-3">
+                                        <i class="bi bi-patch-check-fill"
+                                        style="color: var(--color-navy-500); font-size: 3.2rem;"></i>
+                                    </div>
+                                    <h6 class="fw-semibold mb-2"
+                                        style="color: var(--color-navy-700);">
+                                        Great work,
+                                        <t t-out="employee.name and employee.name.split(' ')[0] or 'Intern'"/>!
+                                    </h6>
+                                    <p class="small mb-0 px-2"
+                                    style="color: var(--color-gray-500); line-height: 1.5;">
+                                        You’ve completed all onboarding steps.
+                                    </p>
+                                </div>
+
+                                <!-- Footer -->
+                                <div class="modal-footer border-0 justify-content-center pb-4 pt-0">
+                                    <a href="/my/intern_dashboard" class="btn btn-primary" id="goDashboardBtn">
+                                        <i class="bi bi-speedometer2 me-2"></i>
+                                        Go to Dashboard
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -187,7 +210,7 @@
                                         </t>
                                     </div>
 
-                                    <h5 class="fw-bold mb-1" style="color: var(--color-navy-800);">
+                                    <h5 class="fw-bold mb-1" style="color: var(--color-navy-500);">
                                         <t t-out="employee.name"/>
                                     </h5>
                                     <div class="text-muted mb-3" style="font-size: 0.9rem;">
@@ -210,7 +233,7 @@
                                         <div class="col-6">
                                             <div class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem; letter-spacing: 0.5px;">Phone</div>
                                             <div class="fw-semibold text-dark" style="font-size: 0.95rem;">
-                                                <t t-out="employee.mobile_phone or 'N/A'"/>
+                                                <t t-out="employee.mobile_phone or 'Not Set'"/>
                                             </div>
                                         </div>
                                         <div class="col-6">
@@ -259,5 +282,32 @@
                 </div>
             </div>
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const modalEl = document.getElementById("completionModal");
+
+                if (!modalEl) return;
+
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+
+                function markSeen() {
+                    fetch('/onboarding/mark_seen', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    });
+                }
+
+                modalEl.addEventListener('hidden.bs.modal', markSeen);
+
+                const btn = document.getElementById("goDashboardBtn");
+                if (btn) {
+                    btn.addEventListener("click", markSeen);
+                }
+            });
+        </script>
     </template>
 </odoo>

@@ -5,6 +5,7 @@ from datetime import date
 class HREmployee(models.Model):
     _inherit = 'hr.employee'
 
+    onboarding_modal_seen = fields.Boolean(default=False)
 
     KPI_TARGET_SELECTION = [
         ('0', '0%'),

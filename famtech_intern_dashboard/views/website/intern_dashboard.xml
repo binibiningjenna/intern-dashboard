@@ -38,9 +38,9 @@
                                                      style="font-size: 0.70rem; letter-spacing: 0.5px">
                                                     <t t-esc="metric['label']"/>
                                                 </div>
-                                                 <span t-attf-class="badge rounded-2 px-1 px-sm-2 py-1 #{'bg-success-subtle text-success border border-success-subtle' if metric['result'] == 'success' else 'bg-danger-subtle text-danger border border-danger-subtle'}"
+                                                 <span t-attf-class="badge rounded-2 px-1 px-sm-2 py-1 #{'bg-primary-subtle text-primary-emphasis border-primary-subtle' if metric['result'] == 'success' else 'bg-warning-subtle text-dark border-warning-subtle'}"
                                                       style="font-size: 0.7rem;">
-                                                    <t t-esc="'Success' if metric['result'] == 'success' else 'Failed'"/>
+                                                    <t t-esc="'Passed' if metric['result'] == 'success' else 'Failed'"/>
                                                 </span>
                                             </div>
                                             <h3 class="fw-bolder mb-0 lh-1" style="color: var(--color-navy-500); font-size: 1.75rem;">
@@ -101,16 +101,6 @@
                                     </div>
                                 </div>
                                 <div class="card-body dashboard-progress-card__body">
-                                    <div class="dashboard-trend-indicator" aria-label="Trend line guide">
-                                        <span class="dashboard-trend-indicator__item">
-                                            <span class="dashboard-trend-indicator__line dashboard-trend-indicator__line--solid"></span>
-                                            <span>High Performance</span>
-                                        </span>
-                                        <span class="dashboard-trend-indicator__item">
-                                            <span class="dashboard-trend-indicator__line dashboard-trend-indicator__line--dashed"></span>
-                                            <span>Low Performance</span>
-                                        </span>
-                                    </div>
                                     <div class="dashboard-chart-frame dashboard-chart-frame-lg">
                                         <div id="timelinessResponsivenessEmptyState" class="dashboard-empty-state">
                                             No data available yet.

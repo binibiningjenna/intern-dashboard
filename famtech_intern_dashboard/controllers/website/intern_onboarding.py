@@ -52,6 +52,13 @@ class InternOnboarding(http.Controller):
         if updates:
             employee.sudo().write(updates)
 
+    @http.route('/onboarding/mark_seen', type='json', auth='user')
+    def mark_onboarding_seen(self):
+        employee = request.env.user.employee_id
+        if employee:
+            employee.sudo().write({'onboarding_modal_seen': True})
+        return {'status': 'ok'}
+    
     @http.route('/onboarding', type='http', auth='user', website=True)
     def intern_onboarding(self, **kwargs):
         user = request.env.user

@@ -289,237 +289,264 @@
           <title>Intern Calendar</title>
           <meta charset="utf-8"/>
           <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
           <link rel="preconnect" href="https://fonts.googleapis.com"/>
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin"/>
           <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
           <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
           <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
           <link href="/famtech_intern_dashboard/static/src/website/css/global.css" rel="stylesheet"/>
+          <link href="/famtech_intern_dashboard/static/src/website/css/onboarding.css" rel="stylesheet"/>
       </head>
 
-      <div class="w-100"
-          style="background: radial-gradient(circle at 50% 0%, var(--color-white) 0%, var(--color-gray-100) 100%); min-height: 100vh; font-family: 'Poppins', sans-serif;">
+      <div class="w-100 main-bg" style="min-height: 100vh; font-family: 'Poppins', sans-serif; background-color: var(--color-gray-100);">
+        <div class="container py-5">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center">
+                <h4 class="mb-3 mb-sm-0 text-center text-sm-start" style="text-transform: uppercase;">My Meetings</h4>
+                <a href="/onboarding" class="btn btn-primary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Onboarding
+                </a>
+            </div>
 
-          <div class="container py-5">
-              <div class="row mb-4">
-                  <div class="col-12 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <hr class="brand-divider mb-4"/>
 
-                      <div class="d-flex align-items-center gap-2">
-                          <i class="bi bi-calendar3"
-                            style="color: var(--color-gold-500); font-size: 1.5rem;"></i>
-                          <h1 class="fw-bold mb-0">My Orientation &amp; Meetings</h1>
-                      </div>
+            <div class="row g-2 mb-4 align-items-center">
+                <!-- Search -->
+                <div class="col-12 col-lg-5 col-xl-6">
+                    <div class="input-group custom-search-group">
 
-                      <a href="/onboarding" class="btn btn-secondary btn-sm px-3">
-                          <i class="bi bi-arrow-left me-1"></i>Back to Onboarding
-                      </a>
+                        <span class="input-group-text custom-search-icon">
+                            <i class="bi bi-search text-white"></i>
+                        </span>
 
-                  </div>
-              </div>
+                        <input type="text"
+                              id="meetingSearch"
+                              class="form-control custom-input"
+                              placeholder="Search meeting..." />
+                    </div>
+                </div>
 
-              <div class="row">
-                  <div class="col-12">
+                <!-- Filter and Sort -->
+                <div class="col-12 col-lg-7 col-xl-6">
+                    <div class="d-flex gap-2 w-100 justify-content-lg-end">
 
-                      <t t-if="events">
-                          <div class="d-flex flex-column gap-3">
+                        <!-- Event Filter -->
+                        <div class="position-relative flex-fill flex-lg-grow-0 select-wrapper">
+                            <i class="bi bi-calendar-event select-icon"></i>
+                            <select id="eventFilter"
+                                    class="form-select custom-select">
+                                <option value="all">All Events</option>
+                                <option value="live">Live</option>
+                                <option value="upcoming">Upcoming</option>
+                                <option value="ended">Ended</option>
+                            </select>
+                        </div>
 
-                              <t t-foreach="events" t-as="e">
-                                  <t t-set="event" t-value="e['event']"/>
-                                  <t t-set="attendance_data" t-value="attendance_map.get(event.id)"/>
-                                  <t t-set="attendance" t-value="attendance_data and attendance_data['record']"/>
-                                  <t t-set="is_ongoing"
-                                    t-value="e.get('start') and e.get('stop') and e['start'] &lt;= now and now &lt;= e['stop']"/>
-                                  <t t-set="is_upcoming"
-                                    t-value="e.get('start') and now &lt; e['start']"/>
-                                  <t t-set="is_past"
-                                    t-value="e.get('stop') and now &gt; e['stop']"/>
-                                  <t t-set="window_open"
-                                    t-value="e.get('start') and (e['start'] - relativedelta(minutes=5)) &lt;= now"/>
-                                  <t t-set="session_error"
-                                    t-value="session_errors.get(event.id, '')"/>
+                        <!-- Attendance Status Filter -->
+                        <div class="position-relative flex-fill flex-lg-grow-0 select-wrapper">
+                            <i class="bi bi-person-check select-icon"></i>
+                            <select id="attendanceFilter" class="form-select custom-select">
+                                <option value="all">All Status</option>
+                                <option value="ontime">On Time</option>
+                                <option value="late">Late</option>
+                                <option value="very_late">Very Late</option>
+                                <option value="absent">Absent</option>
+                            </select>
+                        </div>
 
-                                  <div class="card">
-                                      <div class="card-body">
-                                          <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
-                                              <div class="flex-grow-1">
+                        <!-- Sort -->
+                        <div class="position-relative flex-fill flex-lg-grow-0 select-wrapper">
+                            <i class="bi bi-arrow-down-up select-icon"></i>
+                            <select id="dateOrder"
+                                    class="form-select custom-select">
+                                <option value="asc">Oldest</option>
+                                <option value="desc">Newest</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                                                  <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="row g-3" id="eventsGrid">
+                <t t-if="events">
+                    <t t-foreach="events" t-as="e">
+                        <t t-set="event" t-value="e['event']"/>
+                        <t t-set="attendance_data" t-value="attendance_map.get(event.id)"/>
+                        <t t-set="attendance" t-value="attendance_data and attendance_data['record']"/>
+                        <t t-set="is_ongoing" t-value="e.get('start') and e.get('stop') and e['start'] &lt;= now and now &lt;= e['stop']"/>
+                        <t t-set="is_past" t-value="e.get('stop') and now &gt; e['stop']"/>
+                        <t t-set="window_open" t-value="e.get('start') and (e['start'] - relativedelta(minutes=5)) &lt;= now"/>
+                        <t t-set="session_error" t-value="session_errors.get(event.id, '')"/>
 
-                                                      <i class="bi bi-calendar-event"
-                                                        style="color: var(--color-gold-500);"></i>
+                        <div class="col-12 col-md-6 col-lg-4 col-xl-3 event-card-wrapper" 
+                            t-att-data-name="event.name.lower()" 
+                            t-att-data-status="'live' if is_ongoing else ('ended' if is_past else 'upcoming')"
+                            t-att-data-attendance="attendance.attendance_status if attendance else ('absent' if is_past else 'none')"
+                            t-att-data-timestamp="e.get('start').timestamp() if e.get('start') else 0">
+                            
+                            <div class="card h-100 border shadow-sm d-flex flex-column" style="border-radius: 12px; border-color: var(--color-gray-300) !important;">
+                                <div class="px-3 pt-3 pb-2 d-flex justify-content-between align-items-center">
+                                    <div class="text-uppercase fw-bold" style="font-size: 0.65rem; letter-spacing: 0.5px; color: var(--color-gray-500);">
+                                        Event Details
+                                    </div>
+                                    <t t-if="is_ongoing">
+                                        <span class="badge rounded-2 px-2 py-1" style="background-color: var(--color-navy-100); color: var(--color-navy-700); border: 1px solid var(--color-navy-300); font-size: 0.65rem;">LIVE</span>
+                                    </t>
+                                    <t t-elif="is_past">
+                                        <span class="badge rounded-2 px-2 py-1" style="background-color: var(--color-gray-100); color: var(--color-gray-700); border: 1px solid var(--color-gray-300); font-size: 0.65rem;">ENDED</span>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="badge rounded-2 px-2 py-1" style="background-color: var(--color-gold-100); color: var(--color-gold-900); border: 1px solid var(--color-gold-300); font-size: 0.65rem;">UPCOMING</span>
+                                    </t>
+                                </div>
 
-                                                      <h5 class="fw-bold mb-0">
-                                                          <t t-out="event.name"/>
-                                                      </h5>
+                                <div class="card-body px-3 py-0 d-flex flex-column flex-grow-1">
+                                    <h6 class="fw-bold mb-2" style="line-height: 1.2; color: var(--color-navy-900);">
+                                        <t t-out="event.name"/>
+                                    </h6>
 
-                                                      <t t-if="is_ongoing">
-                                                          <span class="badge rounded-pill"
-                                                                style="background-color: var(--color-navy-100); color: var(--color-navy-700);">
-                                                              Live
-                                                          </span>
-                                                      </t>
+                                    <div class="mb-3 p-2 rounded-2" style="background-color: var(--color-white); border-left: 3px solid var(--color-gold-500); box-shadow: inset 0 0 5px rgba(0,0,0,0.02);">
+                                        <div class="text-uppercase fw-bold mb-0" style="font-size: 0.65rem; letter-spacing: 0.5px; color: var(--color-gray-500);">Schedule</div>
+                                        <div class="small fw-bold" style="color: var(--color-navy-700);">
+                                            <t t-if="e.get('start')">
+                                                <t t-out="e['start'].strftime('%B %d, %Y')"/>
+                                                <div class="fw-normal" style="font-size: 0.80rem; color: var(--color-gray-700);">
+                                                    <t t-out="e['start'].strftime('%I:%M %p')"/> – <t t-out="e['stop'].strftime('%I:%M %p')"/>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
 
-                                                      <t t-elif="is_past">
-                                                          <span class="badge rounded-pill"
-                                                                style="background-color: var(--color-gray-100); color: var(--color-gray-500);">
-                                                              Ended
-                                                          </span>
-                                                      </t>
+                                    <t t-if="session_error">
+                                        <div class="mb-2 small p-2 rounded" style="font-size: 0.7rem; background-color: #FFF5F5; color: #C53030;">
+                                            <i class="bi bi-exclamation-triangle me-1"></i><t t-out="session_error"/>
+                                        </div>
+                                    </t>
 
-                                                      <t t-else="">
-                                                          <span class="badge rounded-pill"
-                                                                style="background-color: var(--color-gold-100); color: var(--color-gold-900);">
-                                                              Upcoming
-                                                          </span>
-                                                      </t>
+                                    <!-- Attendance Status -->
+                                    <div class="mt-auto pb-3 d-flex justify-content-between align-items-center gap-2 border-top pt-2">
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <!-- Present -->
+                                            <t t-if="attendance">
+                                                <t t-set="status_map" t-value="{
+                                                    'ontime': 'On Time',
+                                                    'late': 'Late',
+                                                    'very_late': 'Very Late'
+                                                }"/>
+                                                <t t-set="status_color"
+                                                  t-value="'var(--color-navy-500)' if attendance.attendance_status == 'ontime' else 'var(--color-gold-500)'"/>
+                                                <div class="d-flex align-items-center gap-1">
+                                                    <i class="bi bi-check-circle-fill"
+                                                      t-att-style="'font-size: 0.8rem; color: ' + status_color"/>
+                                                    <span class="fw-bold"
+                                                          t-att-style="'font-size: 0.75rem; color: ' + status_color">
+                                                        <t t-esc="status_map.get(attendance.attendance_status, 'On Time')"/>
+                                                    </span>
+                                                    <span style="color: var(--color-gray-400); font-size: 0.7rem;">at</span>
+                                                    <t t-if="attendance_data and attendance_data.get('join_time')">
+                                                        <span class="small"
+                                                              style="font-size: 0.70rem; color: var(--color-gray-500);">
+                                                            <t t-out="attendance_data['join_time'].strftime('%I:%M %p')"/>
+                                                        </span>
+                                                    </t>
+                                                </div>
+                                            </t>
 
-                                                  </div>
+                                            <!-- Absent -->
+                                            <t t-elif="not attendance">
+                                                <t t-if="is_past">
+                                                    <div class="d-flex align-items-center gap-1">
+                                                        <i class="bi bi-x-circle-fill"
+                                                          style="font-size: 0.8rem; color: var(--color-gray-500)"></i>
 
-                                                  <div class="d-flex flex-wrap gap-3 small mb-2"
-                                                      style="color: var(--color-gray-500);">
+                                                        <span class="fw-bold"
+                                                              style="font-size: 0.75rem; color: var(--color-gray-500);">
+                                                            Absent
+                                                        </span>
+                                                    </div>
 
-                                                      <span>
-                                                          <i class="bi bi-clock me-1"></i>
-                                                          <strong>Start:</strong>
-                                                          <t t-if="e.get('start')">
-                                                              <t t-out="e['start'].strftime('%B %d, %Y %I:%M %p')"/>
-                                                          </t>
-                                                      </span>
+                                                </t>
 
-                                                      <span>
-                                                          <i class="bi bi-clock-history me-1"></i>
-                                                          <strong>End:</strong>
-                                                          <t t-if="e.get('stop')">
-                                                              <t t-out="e['stop'].strftime('%B %d, %Y %I:%M %p')"/>
-                                                          </t>
-                                                      </span>
+                                                <!-- No recorded attendance yet -->
+                                                <t t-else="">
 
-                                                      <t t-if="event.location">
-                                                          <span>
-                                                              <i class="bi bi-geo-alt me-1"></i>
-                                                              <t t-out="event.location"/>
-                                                          </span>
-                                                      </t>
+                                                    <div class="d-flex align-items-center gap-1">
+                                                        <i class="bi bi-clock-fill"
+                                                          style="font-size: 0.8rem; color: var(--color-gray-400)"></i>
 
-                                                  </div>
+                                                        <span class="fw-bold"
+                                                              style="font-size: 0.75rem; color: var(--color-gray-400);">
+                                                            No Record
+                                                        </span>
+                                                    </div>
+                                                </t>
+                                            </t>
 
-                                                  <t t-if="attendance">
-                                                      <div class="d-flex align-items-center gap-2 small mt-2">
-                                                          <i class="bi bi-check-circle-fill"
-                                                            style="color: var(--color-navy-500);"></i>
+                                            <!-- Meeting location -->
+                                            <t t-if="event.location">
+                                                <span class="text-truncate"
+                                                      style="font-size: 0.75rem; max-width: 150px; color: var(--color-gray-500);">
+                                                    <i class="bi bi-geo-alt me-1"></i>
+                                                    <t t-out="event.location"/>
+                                                </span>
+                                            </t>
+                                        </div>
 
-                                                          <span style="color: var(--color-navy-700);">
-                                                              Attendance logged —
-                                                              <strong>
-                                                                  <t t-out="attendance.attendance_status.replace('_', ' ').title()"/>
-                                                              </strong>
+                                        <!-- Control meeting buttons -->
+                                        <div class="flex-shrink-0">
+                                            <t t-if="event.videocall_location and not attendance and not is_past">
+                                                <!-- Show join if no attendance and ongoing meeting -->
+                                                <t t-if="window_open or is_ongoing">
+                                                    <a t-attf-href="/my/intern/join-call/#{event.id}" target="_blank" 
+                                                      class="btn btn-secondary">
+                                                        <i class="bi bi-camera-video me-2"></i>Join
+                                                    </a>
+                                                </t>
+                                                <!-- Show standby is the meeting is not yet started -->
+                                                <t t-else="">
+                                                    <button class="btn btn-secondary opacity-50" disabled="disabled">
+                                                        <i class="bi bi-hourglass-split me-2"></i>Standby
+                                                    </button>
+                                                </t>
+                                            </t>
+                                            <!-- Show rejoin if already attended -->
+                                            <t t-elif="event.videocall_location and attendance and not is_past">
+                                                <a t-att-href="event.videocall_location" target="_blank" 
+                                                  class="btn btn-secondary">
+                                                    <i class="bi bi-arrow-repeat me-2"></i>Rejoin
+                                                </a>
+                                            </t>
+                                            <!-- Log attendance if no video call link -->
+                                            <t t-elif="not event.videocall_location and not attendance and (is_ongoing or window_open) and not is_past">
+                                                <a t-attf-href="/my/intern/log-attendance/#{event.id}" 
+                                                  class="btn btn-secondary">
+                                                    <i class="bi bi-pencil-square me-2"></i>Log
+                                                </a>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </div>
 
-                                                              at
+            <!-- Empty state -->
+            <div id="noResults" class="col-12 text-center py-5 bg-white border shadow-sm d-none mt-3" style="border-radius: 12px; border-color: var(--color-gray-100) !important;">
+                <i class="bi bi-search mb-2 d-block" style="font-size: 2rem; color: var(--color-gray-300);"></i>
+                <div class="text-uppercase fw-bold text-muted mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">No Matches</div>
+                <p class="text-muted mb-0 small">Try adjusting your search or filters.</p>
+            </div>
 
-                                                              <t t-if="attendance_data and attendance_data['join_time']">
-                                                                  <t t-out="attendance_data['join_time'].strftime('%I:%M %p')"/>
-                                                              </t>
-                                                          </span>
-                                                      </div>
-                                                  </t>
-
-                                                  <t t-if="session_error">
-                                                      <div class="small mt-2 p-2 rounded"
-                                                          style="background-color: var(--color-gold-100); color: var(--color-gold-900);">
-                                                          <i class="bi bi-exclamation-triangle me-1"></i>
-                                                          <t t-out="session_error"/>
-                                                      </div>
-                                                  </t>
-
-                                                  <t t-if="event.description">
-                                                      <p class="mt-2 mb-0 small"
-                                                        style="color: var(--color-gray-500);">
-                                                          <t t-out="event.description"/>
-                                                      </p>
-                                                  </t>
-
-                                              </div>
-
-                                              <div class="d-flex flex-column align-items-end gap-2 flex-shrink-0">
-                                                  <span class="badge rounded-pill px-3 py-2"
-                                                        style="background-color: var(--color-navy-100); color: var(--color-navy-700);">
-                                                      <t t-if="e.get('start')">
-                                                          <t t-out="e['start'].strftime('%b %d')"/>
-                                                      </t>
-                                                  </span>
-
-                                                  <t t-if="event.videocall_location and not attendance and not is_past">
-                                                      <!-- Join + Log Attendance (available 5 min before start) -->
-                                                      <t t-if="window_open or is_ongoing">
-                                                          <a t-attf-href="/my/intern/join-call/#{event.id}" target="_blank" rel="noopener noreferrer"
-                                                            class="btn btn-primary btn-sm px-3">
-                                                              <i class="bi bi-camera-video me-1"></i>
-                                                              Join &amp; Log Attendance
-                                                          </a>
-                                                      </t>
-
-                                                      <t t-else="">
-                                                          <button class="btn btn-primary btn-sm px-3"
-                                                                  disabled="disabled"
-                                                                  target="_blank" rel="noopener noreferrer"
-                                                                  style="opacity: 0.5;">
-                                                              <i class="bi bi-camera-video me-1"></i>
-                                                              Join Call
-                                                          </button>
-
-                                                          <small class="text-end"
-                                                                style="color: var(--color-gray-500); max-width: 160px;">
-                                                              Available 5 min before start
-                                                          </small>
-                                                      </t>
-
-                                                  </t>
-
-                                                  <t t-elif="event.videocall_location and attendance">
-                                                       <!-- Already attended — still allow rejoining without re-logging -->
-                                                      <a t-att-href="event.videocall_location"
-                                                        target="_blank"
-                                                        class="btn btn-secondary btn-sm px-3">
-                                                          <i class="bi bi-camera-video me-1"></i>
-                                                          Rejoin Call
-                                                      </a>
-
-                                                  </t>
-
-                                                  <t t-elif="not event.videocall_location and not attendance and (is_ongoing or window_open) and not is_past">
-                                                      <!-- In-person event — log attendance manually -->
-                                                      <a t-attf-href="/my/intern/log-attendance/#{event.id}"
-                                                        class="btn btn-primary btn-sm px-3">
-                                                          <i class="bi bi-check2-circle me-1"></i>
-                                                          Log Attendance
-                                                      </a>
-
-                                                  </t>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </t>
-                          </div>
-                      </t>
-
-                      <t t-else="">
-                          <div class="card">
-                              <div class="card-body text-center py-5">
-                                  <i class="bi bi-calendar-x"
-                                    style="font-size: 3rem; color: var(--color-gray-300);"></i>
-                                  <p class="mt-3 mb-0"
-                                    style="color: var(--color-gray-500);">
-                                      No orientation or meeting events found for your account.
-                                      Please contact HR if you believe this is an error.
-                                  </p>
-                              </div>
-                          </div>
-                      </t>
-                  </div>
-              </div>
-          </div>
-      </div>
+            <t t-if="not events">
+                <div class="col-12 text-center py-5 bg-white border shadow-sm mt-3" style="border-radius: 12px; border-color: var(--color-gray-100) !important;">
+                    <i class="bi bi-calendar-event mb-2 d-block" style="font-size: 2rem; color: var(--color-gray-300);"></i>
+                    <div class="text-uppercase fw-bold text-muted mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Schedule Status</div>
+                    <p class="text-muted mb-0 small">No scheduled events found at this time.</p>
+                </div>
+            </t>
+        </div>
+    </div>
+    <script src="/famtech_intern_dashboard/static/src/website/js/onboarding.js"></script>
   </template>
 </odoo>
