@@ -101,6 +101,62 @@ class InternEvaluation(models.Model):
     comments = fields.Text(string="Evaluation Comments")
 
     @api.model
+    def _prepare_snapshot_values(self, employee, snapshot_date):
+        return {
+            "employee_id": employee.id,
+            "eval_date": snapshot_date,
+            "is_weekly_snapshot": False,
+            "raw_timeliness_score": employee.timeliness_score,
+            "raw_responsiveness_score": employee.responsiveness_score,
+            "timeliness_score": employee.timeliness_score,
+            "responsiveness_score": employee.responsiveness_score,
+            "punctuality_score": employee.punctuality_score,
+            "quantity_score": employee.quantity_score,
+            "quality_score": employee.quality_score,
+            "effectiveness_score": employee.effectiveness_score,
+            "efficiency_score": employee.efficiency_score,
+            "financial_accuracy_score": employee.accuracy_score,
+            "timeliness_target_percentage": employee.timeliness_target_percentage,
+            "responsiveness_target_percentage": employee.responsiveness_target_percentage,
+            "punctuality_target_percentage": employee.punctuality_target_percentage,
+            "quantity_target_percentage": employee.quantity_target_percentage,
+            "quality_target_percentage": employee.quality_target_percentage,
+            "effectiveness_target_percentage": employee.effectiveness_target_percentage,
+            "efficiency_target_percentage": employee.efficiency_target_percentage,
+            "accuracy_target_percentage": employee.accuracy_target_percentage,
+            "tasks_completed": employee.tasks_completed,
+            "tasks_on_time": employee.tasks_on_time,
+            "contract_hours": employee.contracted_hours,
+            "actual_hours": employee.hours_rendered,
+        }
+
+    @api.model
+    def cron_capture_daily_score_snapshots(self):
+        self.env["intern.metric.compute"].sudo().compute_all_interns_metrics()
+
+        snapshot_date = fields.Date.context_today(self)
+        employees = self.env["hr.employee"].sudo().search(
+            [("is_intern", "=", True)]
+        )
+
+        for employee in employees:
+            values = self._prepare_snapshot_values(employee, snapshot_date)
+            existing = self.sudo().search(
+                [
+                    ("employee_id", "=", employee.id),
+                    ("eval_date", "=", snapshot_date),
+                    ("is_weekly_snapshot", "=", False),
+                ],
+                order="id desc",
+                limit=1,
+            )
+            if existing:
+                existing.write(values)
+            else:
+                self.sudo().create(values)
+        return True
+
+    @api.model
     def get_timeliness_responsiveness_scatter_data(self):
         latest_by_employee = {}
         evaluations = self.search(

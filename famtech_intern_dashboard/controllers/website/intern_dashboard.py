@@ -1,11 +1,23 @@
 import json
 from datetime import timedelta
+from decimal import Decimal, ROUND_HALF_UP
 
 from odoo import fields, http
 from odoo.http import request
 
 
 class InternDashboard(http.Controller):
+    TREND_WEEK_LENGTH_DAYS = 7
+
+    def _round_score(self, value, digits=2):
+        quantize_pattern = "1." + ("0" * digits)
+        return float(
+            Decimal(str(value or 0.0)).quantize(
+                Decimal(quantize_pattern),
+                rounding=ROUND_HALF_UP,
+            )
+        )
+
     def _format_week_range_label(self, date_from, date_to):
         if not date_from or not date_to:
             return ""
@@ -32,15 +44,16 @@ class InternDashboard(http.Controller):
         weekly_groups = []
         evaluations = evaluations.sorted(key=lambda record: (record.eval_date or fields.Date.today(), record.id))
         first_date = evaluations[0].eval_date if evaluations else False
+        bucket_size = self.TREND_WEEK_LENGTH_DAYS
 
         for evaluation in evaluations:
             if not evaluation.eval_date or not first_date:
                 continue
 
-            week_index = ((evaluation.eval_date - first_date).days // 7) + 1
+            week_index = ((evaluation.eval_date - first_date).days // bucket_size) + 1
             if len(weekly_groups) < week_index:
-                week_start = first_date + timedelta(days=(week_index - 1) * 7)
-                week_end = week_start + timedelta(days=6)
+                week_start = first_date + timedelta(days=(week_index - 1) * bucket_size)
+                week_end = week_start + timedelta(days=bucket_size - 1)
                 weekly_groups.append({
                     'week_label': f'Week {week_index}',
                     'date_from': week_start.strftime('%Y-%m-%d'),
@@ -58,9 +71,9 @@ class InternDashboard(http.Controller):
             {
                 'week_label': bucket['week_label'],
                 'week_display_label': f"{bucket['week_label']} ({self._format_week_range_label(fields.Date.from_string(bucket['date_from']), fields.Date.from_string(bucket['date_to']))})",
-                'timeliness': round(sum(bucket['timeliness_values']) / len(bucket['timeliness_values']), 2)
+                'timeliness': self._round_score(sum(bucket['timeliness_values']) / len(bucket['timeliness_values']))
                 if bucket['timeliness_values'] else 0.0,
-                'responsiveness': round(sum(bucket['responsiveness_values']) / len(bucket['responsiveness_values']), 2)
+                'responsiveness': self._round_score(sum(bucket['responsiveness_values']) / len(bucket['responsiveness_values']))
                 if bucket['responsiveness_values'] else 0.0,
                 'evaluation_date': bucket['date_to'],
                 'date_from': bucket['date_from'],
@@ -68,6 +81,7 @@ class InternDashboard(http.Controller):
                 'is_weekly_average': bucket['is_weekly_average'],
             }
             for bucket in weekly_groups
+            if len(bucket['timeliness_values']) >= bucket_size
         ]
 
     def _build_live_trend_fallback(self, employee):
@@ -90,13 +104,28 @@ class InternDashboard(http.Controller):
             'is_weekly_average': False,
         }]
 
-    def _append_current_week_live_point(self, trend_rows, employee):
+    def _append_current_week_live_point(self, trend_rows, employee, evaluations):
         live_rows = self._build_live_trend_fallback(employee)
         if not live_rows:
             return trend_rows
 
         current_live_row = live_rows[0]
         current_date = fields.Date.from_string(current_live_row['evaluation_date'])
+        bucket_size = self.TREND_WEEK_LENGTH_DAYS
+
+        if evaluations:
+            first_date = evaluations[0].eval_date
+            if first_date:
+                current_bucket_index = ((current_date - first_date).days // bucket_size) + 1
+                current_bucket_start = first_date + timedelta(days=(current_bucket_index - 1) * bucket_size)
+                current_bucket_end = current_bucket_start + timedelta(days=bucket_size - 1)
+                current_bucket_snapshot_count = len(evaluations.filtered(
+                    lambda evaluation: evaluation.eval_date
+                    and current_bucket_start <= evaluation.eval_date <= current_bucket_end
+                ))
+                if current_bucket_snapshot_count >= bucket_size:
+                    return trend_rows
+
         for row in trend_rows:
             row_date_from = fields.Date.from_string(row['date_from']) if row.get('date_from') else False
             row_date_to = fields.Date.from_string(row['date_to']) if row.get('date_to') else False
@@ -124,6 +153,7 @@ class InternDashboard(http.Controller):
             timeliness_responsiveness_trend = self._append_current_week_live_point(
                 timeliness_responsiveness_trend,
                 employee,
+                evaluations,
             )
 
         average_score = round(employee.average_score or 0.0, 2)
