@@ -59,3 +59,12 @@ document.addEventListener('DOMContentLoaded', function () {
     attendanceFilter.addEventListener('change', filterEvents);
     orderSelect.addEventListener('change', filterEvents);
 });
+
+// Animation
+document.addEventListener("DOMContentLoaded", function () {
+    AOS.init({
+        duration: 400,
+        once: true,
+        easing: 'ease-out-quad'
+    });
+});

@@ -12,20 +12,24 @@
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
             <link href="/famtech_intern_dashboard/static/src/website/css/global.css" rel="stylesheet"/>
             <link href="/famtech_intern_dashboard/static/src/website/css/onboarding.css" rel="stylesheet"/>
+            <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet"/>
         </head>
 
         <div class="w-100 main-bg" style="min-height: 100vh; font-family: 'Poppins', sans-serif;">
             <div class="container py-5">
-                <div class="d-flex flex-sm-row">
-                   <h4 class="text-center text-sm-start" style="text-transform: uppercase">
+                <div class="d-flex flex-column" data-aos="fade-down" data-aos-duration="700">
+                   <h4 class="text-start" style="text-transform: uppercase">
                         Welcome,
                         <span style="color: var(--color-gold-500);">
                             <t t-out="employee.name and employee.name.split(' ')[0] or 'Intern'"/>!
                         </span>
                     </h4>
+                    <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                        Complete your onboarding steps to get everything set up and ready.
+                    </p>
                 </div>
                 
-                <hr class="brand-divider mb-4" />
+                <hr class="brand-divider mb-4" data-aos="fade-in" data-aos-duration="1000" data-aos-delay="200" />
                 
                <t t-if="progress == 100 and not employee.onboarding_modal_seen">
                     <div class="modal fade" id="completionModal" tabindex="-1">
@@ -77,7 +81,7 @@
 
                     <!-- Onboarding Steps -->
                     <div class="col-lg-8">
-                        <div class="card border-0 shadow-sm dashboard-card">
+                        <div class="card border-0 shadow-sm dashboard-card" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="150">
                             <div class="dashboard-header">
                                 <div class="dashboard-title">
                                     <span class="dashboard-icon">
@@ -182,8 +186,9 @@
 
                     <!-- Onboarding Information -->
                     <div class="col-lg-4 d-flex flex-column">
-                        <div class="card border-0 shadow-sm dashboard-card flex-fill d-flex flex-column" style="border-radius: 12px; overflow: hidden;">
-
+                        <div class="card border-0 shadow-sm dashboard-card flex-fill d-flex flex-column" 
+                            style="border-radius: 12px; overflow: hidden;"
+                            data-aos="fade-up" data-aos-duration="1000" data-aos-delay="150">
                             <div class="dashboard-header">
                                 <div class="dashboard-title">
                                     <span class="dashboard-icon">
@@ -282,6 +287,7 @@
                 </div>
             </div>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const modalEl = document.getElementById("completionModal");
@@ -307,6 +313,13 @@
                 if (btn) {
                     btn.addEventListener("click", markSeen);
                 }
+            });
+            window.addEventListener("load", function () {
+                AOS.init({
+                    duration: 400,
+                    once: true,
+                    easing: 'ease-out-quad'
+                });
             });
         </script>
     </template>
