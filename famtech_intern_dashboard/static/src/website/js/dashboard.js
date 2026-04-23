@@ -242,3 +242,12 @@
         renderTimelinessResponsivenessChart();
     }
 })();
+
+// Animation
+document.addEventListener("DOMContentLoaded", function () {
+    AOS.init({
+        duration: 400,
+        once: true,
+        easing: 'ease-out-quad'
+    });
+});
