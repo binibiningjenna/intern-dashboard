@@ -11,3 +11,4 @@ access_intern_contract_hours_user,intern.contract.hours user,model_intern_contra
 access_intern_contract_hours_manager,intern.contract.hours manager,model_intern_contract_hours,hr.group_hr_manager,1,1,1,1
 access_hr_kpi_dashboard_user,hr.kpi.dashboard user,model_hr_kpi_dashboard,hr.group_hr_user,1,1,1,1
 access_hr_kpi_dashboard_manager,hr.kpi.dashboard manager,model_hr_kpi_dashboard,hr.group_hr_manager,1,1,1,1
+access_intern_voucher_user,access.intern.voucher.user,model_intern_voucher,base.group_user,1,1,1,1

@@ -46,19 +46,23 @@
             <field name="arch" type="xml">
                 <xpath expr="//sheet/notebook" position="inside">
                     <page string="Rewards" invisible="not is_intern">
-                        <group>
-                            <group string="Weekly Games Winner">
-                                <field name="is_weekly_winner"/>
-                                <field name="weekly_winner_week_start" invisible="not is_weekly_winner"/>
-                                <field name="weekly_winner_voucher_claimed" invisible="not is_weekly_winner"/>
-                            </group>
 
-                            <group string="Voucher Eligibility">
-                                <field name="reward_webinar_raffle_voucher"/>
-                                <field name="reward_placeholder_1_voucher"/>
-                                <field name="reward_placeholder_2_voucher"/>
-                            </group>
+                        <group string="Weekly Games Winner">
+                            <field name="is_weekly_winner"/>
+                            <field name="weekly_winner_week_start" invisible="not is_weekly_winner"/>
+                            <field name="weekly_winner_voucher_claimed" invisible="not is_weekly_winner"/>
                         </group>
+
+                        <group string="Dynamic Vouchers">
+                            <field name="voucher_ids">
+                                <list editable="bottom">
+                                    <field name="title"/>
+                                    <field name="state"/>
+                                    <field name="claimed_at" readonly="1"/>
+                                </list>
+                            </field>
+                        </group>
+
                     </page>
                 </xpath>
             </field>

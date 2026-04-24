@@ -1,4 +1,32 @@
 <odoo>
+    <!-- REUSABLE STEPS TO CLAIM BLOCK -->
+    <template id="claim_steps" name="Reward Claim Steps">
+        <div class="reward-claim-steps">
+            <ol>
+                <li>Open the <strong>Approvals</strong> app.</li>
+                <li>Click <strong>New Request</strong>.</li>
+                <li>Enter the <strong>Approval Subject</strong> or payment request name.</li>
+                <li>Set <strong>Request Owner</strong> to <strong>FAMTECH INNOVATIVE EMPLOYEES</strong>.</li>
+                <li>Select <strong>Category: Payment Application</strong>.</li>
+                <li>Choose the <strong>filing date</strong>.</li>
+                <li>Select your name under <strong>Contact</strong>.</li>
+                <li>Enter the <strong>amount requested</strong>.</li>
+                <li>Add your <strong>payment details</strong> in the description.</li>
+                <li>Under <strong>Approver</strong>, add <strong>FAMTECH INNOVATIVE</strong>.</li>
+                <li>Send a message tagging <strong>@FAMTECH INNOVATIVE</strong>, such as “For approval”.</li>
+                <li>Attach your <strong>receipt or supporting document</strong>.</li>
+                <li>Click <strong>Submit</strong>.</li>
+            </ol>
+
+            <p class="reward-claim-note">
+                <strong>Note:</strong> Do not create duplicate requests to correct a filing.
+                To make changes, open your request, click <strong>Cancel</strong>, select
+                <strong>Back to Draft</strong>, update the necessary fields, then
+                <strong>resubmit</strong>.
+            </p>
+        </div>
+    </template>
+
     <template id="intern_rewards" name="Intern Rewards">
         <t t-call="famtech_intern_dashboard.intern_navbar"/>
         <head>
@@ -19,13 +47,11 @@
                 <div class="container py-5">
 
                     <div>
-                            <h4 class="mb-1 fw-bold" style="text-transform: uppercase;">
-                                Rewards
-                            </h4>
-                            <p class="text-muted mb-0" style="font-size: 0.9rem;">
-                                Track your achievements, unlock badges, and claim vouchers based on your internship progress and performance.
-                            </p>
-                        </div>
+                        <h4 class="mb-1 fw-bold" style="text-transform: uppercase;">Rewards</h4>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                            Track your achievements, unlock badges, and claim vouchers based on your internship progress and performance.
+                        </p>
+                    </div>
 
                     <hr class="brand-divider mb-4"/>
 
@@ -34,7 +60,7 @@
 
                         <!-- WEEKLY GAMES WINNER -->
                         <div class="col-xl-4 col-lg-6 d-flex">
-                            <div class="reward-highlight-card reward-highlight-card--winner reward-equal-card w-100">
+                            <div class="card reward-highlight-card reward-highlight-card--winner reward-equal-card w-100">
                                 <div class="dashboard-header">
                                     <span class="dashboard-title">
                                         <span class="dashboard-icon">
@@ -76,12 +102,13 @@
                                             No weekly winner has been selected for the current week yet.
                                         </t>
                                     </div>
+
                                     <div class="mt-3 text-center">
                                         <button type="button"
-                                                class="reward-claim-btn reward-claim-btn--primary"
+                                                class="btn btn-primary reward-claim-btn"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#weeklyWinnerHistoryModal">
-                                            View Winner History
+                                            <i class="bi bi-clock-history me-2"></i>View Winner History
                                         </button>
                                     </div>
                                 </div>
@@ -90,7 +117,7 @@
 
                         <!-- TOP INTERNS THIS WEEK -->
                         <div class="col-xl-4 col-lg-6 d-flex">
-                            <div class="reward-highlight-card reward-equal-card w-100">
+                            <div class="card reward-highlight-card reward-equal-card w-100">
                                 <div class="dashboard-header">
                                     <span class="dashboard-title">
                                         <span class="dashboard-icon">
@@ -105,14 +132,12 @@
                                         <t t-if="top_interns">
                                             <t t-foreach="top_interns" t-as="top_emp">
                                                 <div class="reward-top-item d-flex justify-content-between align-items-center">
-
                                                     <div class="d-flex align-items-center gap-3">
                                                         <div class="reward-top-avatar">
                                                             <img t-att-src="'/web/image/hr.employee/%s/avatar_1920' % top_emp['id']"
-                                                                t-att-alt="top_emp['name']"
-                                                                class="reward-top-avatar-img"/>
+                                                                 t-att-alt="top_emp['name']"
+                                                                 class="reward-top-avatar-img"/>
                                                         </div>
-
                                                         <div class="reward-top-name">
                                                             <t t-esc="top_emp['name']"/>
                                                         </div>
@@ -140,7 +165,7 @@
 
                         <!-- PROGRESS SUMMARY -->
                         <div class="col-xl-4 col-lg-12 d-flex">
-                            <div class="reward-side-card reward-equal-card w-100">
+                            <div class="card reward-side-card reward-equal-card w-100">
                                 <div class="dashboard-header">
                                     <span class="dashboard-title">
                                         <span class="dashboard-icon">
@@ -206,7 +231,7 @@
 
                         <!-- BADGES -->
                         <div class="col-12 d-flex">
-                            <div class="reward-section-card w-100">
+                            <div class="card reward-section-card w-100">
                                 <div class="dashboard-header">
                                     <span class="dashboard-title">
                                         <span class="dashboard-icon">
@@ -220,12 +245,9 @@
                                     <div class="row g-3 badges-row-horizontal">
                                         <t t-foreach="badges" t-as="badge">
                                             <div class="col-12 col-sm-6 col-lg-3">
-                                                <div t-attf-class="reward-item-card reward-item-card--badge #{'reward-item-card--unlocked reward-item-card--active reward-badge-card--animated' if badge['unlocked'] else 'reward-item-card--locked'}">
-
+                                                <div t-attf-class="card reward-item-card reward-item-card--badge #{'reward-item-card--unlocked reward-item-card--active' if badge['unlocked'] else 'reward-item-card--locked'}">
                                                     <t t-if="badge['unlocked']">
-                                                        <div class="reward-status-badge reward-status-badge--unlocked">
-                                                            Unlocked
-                                                        </div>
+                                                        <div class="reward-status-badge reward-status-badge--unlocked">Unlocked</div>
                                                     </t>
                                                     <t t-else="">
                                                         <div class="reward-lock-badge">
@@ -249,7 +271,7 @@
 
                         <!-- VOUCHERS -->
                         <div class="col-12 d-flex">
-                            <div class="reward-section-card w-100">
+                            <div class="card reward-section-card w-100">
                                 <div class="dashboard-header">
                                     <span class="dashboard-title">
                                         <span class="dashboard-icon">
@@ -260,51 +282,53 @@
                                 </div>
 
                                 <div class="reward-section-body">
+                                    <!-- AVAILABLE VOUCHERS -->
                                     <div id="voucher-empty-state"
-                                        class="reward-empty-state"
-                                        t-attf-style="#{'display:flex;' if not available_vouchers_count else 'display:none;'}">
-                                        Sorry, No Vouchers Available
+                                         class="reward-empty-state"
+                                         t-attf-style="#{'display:flex;' if not available_vouchers_count else 'display:none;'}">
+                                        Sorry, no vouchers available.
                                     </div>
 
                                     <div class="row g-3 vouchers-grid"
-                                        id="voucher-grid"
-                                        t-attf-style="#{'display:none;' if not available_vouchers_count else ''}">
-                                        <t t-foreach="vouchers" t-as="voucher">
+                                         id="voucher-grid"
+                                         t-attf-style="#{'display:none;' if not available_vouchers_count else ''}">
+                                        <t t-foreach="available_vouchers" t-as="voucher">
                                             <div class="col-12 col-sm-6 col-lg-3">
-                                                <div t-attf-class="reward-item-card reward-item-card--voucher h-100 #{'reward-item-card--unlocked reward-item-card--claimable voucher-card' if voucher['available'] else 'reward-item-card--locked'}"
-                                                    t-att-data-voucher-key="voucher['key']"
-                                                    t-att-data-voucher-state="'available' if voucher['available'] else 'locked'">
+                                                <div class="card reward-item-card reward-item-card--voucher h-100 reward-item-card--unlocked reward-item-card--claimable voucher-card"
+                                                     t-att-data-voucher-key="voucher['key']"
+                                                     data-voucher-state="available">
 
-                                                    <t t-if="voucher['available']">
-                                                        <div class="reward-status-badge reward-status-badge--available voucher-status">
-                                                            Available
-                                                        </div>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <div class="reward-lock-badge">
-                                                            <i class="bi bi-lock-fill"></i>
-                                                        </div>
-                                                    </t>
+                                                    <div class="reward-status-badge reward-status-badge--available voucher-status">Available</div>
 
                                                     <div class="reward-item-icon reward-item-icon--plain">
                                                         <i t-attf-class="bi bi-#{voucher['icon']}"></i>
                                                     </div>
 
                                                     <div class="reward-item-title" t-esc="voucher['name']"/>
-                                                    <div class="reward-item-desc voucher-desc" t-esc="voucher['description']"/>
 
-                                                    <t t-if="voucher['available'] and voucher['modal_target']">
+                                                    <t t-if="voucher['modal_target']">
                                                         <button type="button"
-                                                                class="btn reward-claim-btn reward-claim-btn--primary mt-2 voucher-open-btn"
+                                                                class="btn btn-primary reward-claim-btn mt-2 voucher-open-btn"
                                                                 data-bs-toggle="modal"
-                                                                t-att-data-bs-target="voucher['modal_target']">
-                                                            Steps to Claim
+                                                                t-att-data-bs-target="voucher['modal_target']"
+                                                                t-att-data-voucher-name="voucher['name']">
+                                                            <i class="bi bi-list-check me-2"></i>Steps to Claim
                                                         </button>
                                                     </t>
                                                 </div>
                                             </div>
                                         </t>
                                     </div>
+
+                                    <div class="mt-3 text-center">
+                                        <button type="button"
+                                                class="btn btn-primary reward-claim-btn"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#voucherHistoryModal">
+                                            <i class="bi bi-clock-history me-2"></i>View Voucher History
+                                        </button>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -329,20 +353,13 @@
                                 <i class="bi bi-trophy-fill"></i>
                             </div>
 
-                            <div class="reward-claim-heading">Weekly Games Winner</div>
-                            <p class="reward-claim-subtext">Follow these steps to claim your weekly winner voucher.</p>
+                            <div class="reward-claim-heading">Weekly Game Prize</div>
+                            <p class="reward-claim-subtext">Follow these steps to submit your claim request.</p>
 
-                            <div class="reward-claim-steps">
-                                <ol>
-                                    <li>Confirm with HR or your supervisor that you were selected for the current week.</li>
-                                    <li>Take a screenshot of the voucher from your rewards page.</li>
-                                    <li>Send the screenshot to HR or your assigned contact.</li>
-                                    <li>Wait for the redemption instructions or confirmation.</li>
-                                </ol>
-                            </div>
+                            <t t-call="famtech_intern_dashboard.claim_steps"/>
 
                             <button type="button"
-                                    class="btn reward-claim-action-btn"
+                                    class="btn btn-primary reward-claim-action-btn"
                                     data-bs-dismiss="modal">
                                 <i class="bi bi-check2-circle me-2"></i>Got it
                             </button>
@@ -351,12 +368,12 @@
                 </div>
             </div>
 
-            <!-- WEBINAR RAFFLE WINNER MODAL -->
-            <div class="modal fade reward-modal-wrapper" id="webinarRaffleVoucherModal" tabindex="-1" aria-labelledby="webinarRaffleVoucherModalLabel" aria-hidden="true">
+            <!-- DYNAMIC VOUCHER MODAL -->
+            <div class="modal fade reward-modal-wrapper" id="dynamicVoucherModal" tabindex="-1" aria-labelledby="dynamicVoucherModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
                     <div class="modal-content reward-claim-modal">
                         <div class="reward-claim-header">
-                            <h5 class="reward-claim-title" id="webinarRaffleVoucherModalLabel">STEPS TO CLAIM</h5>
+                            <h5 class="reward-claim-title" id="dynamicVoucherModalLabel">STEPS TO CLAIM</h5>
                             <button type="button" class="reward-claim-close" data-bs-dismiss="modal" aria-label="Close">
                                 <i class="bi bi-x-lg"></i>
                             </button>
@@ -364,23 +381,16 @@
 
                         <div class="reward-claim-body">
                             <div class="reward-claim-icon">
-                                <i class="bi bi-ticket-detailed-fill"></i>
+                                <i class="bi bi-gift-fill"></i>
                             </div>
 
-                            <div class="reward-claim-heading">Webinar Raffle Winner</div>
-                            <p class="reward-claim-subtext">Follow these steps to claim your webinar raffle reward.</p>
+                            <div class="reward-claim-heading" id="dynamicVoucherTitle">Voucher Claim Request</div>
+                            <p class="reward-claim-subtext">Follow these steps to submit your claim request.</p>
 
-                            <div class="reward-claim-steps">
-                                <ol>
-                                    <li>Check that HR has marked the voucher as available in your rewards page.</li>
-                                    <li>Take a screenshot of the voucher details.</li>
-                                    <li>Send the screenshot to HR or your supervisor.</li>
-                                    <li>Wait for the final claim and redemption instructions.</li>
-                                </ol>
-                            </div>
+                            <t t-call="famtech_intern_dashboard.claim_steps"/>
 
                             <button type="button"
-                                    class="btn reward-claim-action-btn"
+                                    class="btn btn-primary reward-claim-action-btn"
                                     data-bs-dismiss="modal">
                                 <i class="bi bi-check2-circle me-2"></i>Got it
                             </button>
@@ -389,10 +399,10 @@
                 </div>
             </div>
 
+            <!-- WEEKLY WINNER HISTORY MODAL -->
             <div class="modal fade" id="weeklyWinnerHistoryModal" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
                     <div class="modal-content reward-claim-modal">
-
                         <div class="reward-claim-header">
                             <h5 class="reward-claim-title">WINNER HISTORY</h5>
                             <button type="button" class="reward-claim-close" data-bs-dismiss="modal">
@@ -401,18 +411,12 @@
                         </div>
 
                         <div class="reward-claim-body">
-
                             <div class="reward-claim-icon reward-claim-icon--gold">
                                 <i class="bi bi-trophy-fill"></i>
                             </div>
 
-                            <div class="reward-claim-heading">
-                                Weekly Winners
-                            </div>
-
-                            <div class="reward-claim-subtext">
-                                Here are the most recent Weekly Games Winners.
-                            </div>
+                            <div class="reward-claim-heading">Weekly Winners</div>
+                            <div class="reward-claim-subtext">Here are the most recent Weekly Games Winners.</div>
 
                             <div class="reward-claim-steps">
                                 <t t-if="winner_history">
@@ -425,12 +429,81 @@
                                         </t>
                                     </ol>
                                 </t>
-
                                 <t t-else="">
                                     <div class="text-center text-muted" style="padding: 0.5rem 0;">
                                         No winner history available yet.
                                     </div>
                                 </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VOUCHER HISTORY MODAL -->
+            <div class="modal fade" id="voucherHistoryModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
+                    <div class="modal-content reward-claim-modal">
+
+                        <div class="reward-claim-header">
+                            <h5 class="reward-claim-title">VOUCHER HISTORY</h5>
+                            <button type="button" class="reward-claim-close" data-bs-dismiss="modal">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+
+                        <div class="reward-claim-body">
+                            <div class="reward-claim-icon">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+
+                            <div class="reward-claim-heading">
+                                Claimed Vouchers
+                            </div>
+
+                            <div class="reward-claim-subtext">
+                                View all vouchers assigned and claimed.
+                            </div>
+
+                            <div class="reward-claim-steps">
+
+                                <t t-if="claimed_vouchers">
+                                    <ol>
+                                        <t t-foreach="claimed_vouchers" t-as="voucher">
+                                            <li>
+                                                <strong t-esc="voucher['name']"/>
+
+                                                <t t-if="voucher['key'] == 'weekly_game_prize'">
+                                                    <br/>
+                                                    <span>
+                                                        Winning Week:
+                                                        <strong t-esc="current_week_label"/>
+                                                    </span>
+                                                </t>
+
+                                                <t t-else="">
+                                                    <br/>
+                                                    <span>
+                                                        Claimed:
+                                                        <t t-if="voucher.get('claimed_at')">
+                                                            <strong t-esc="voucher['claimed_at'].strftime('%B %d, %Y %I:%M %p')"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            Not yet claimed
+                                                        </t>
+                                                    </span>
+                                                </t>
+                                            </li>
+                                        </t>
+                                    </ol>
+                                </t>
+
+                                <t t-else="">
+                                    <div class="text-center text-muted" style="padding: 0.5rem 0;">
+                                        No voucher history available yet.
+                                    </div>
+                                </t>
+
                             </div>
 
                         </div>
@@ -439,176 +512,17 @@
                 </div>
             </div>
 
-            <canvas id="reward-confetti-canvas" class="reward-confetti-canvas"></canvas>
-
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
             <script><![CDATA[
                 document.addEventListener('DOMContentLoaded', function () {
-                    function updateAvailableVoucherCount() {
-                        const availableCards = document.querySelectorAll('.voucher-card[data-voucher-state="available"]').length;
-                        const countTarget = document.getElementById('voucher-available-count');
-                        const voucherGrid = document.getElementById('voucher-grid');
-                        const emptyState = document.getElementById('voucher-empty-state');
-
-                        if (countTarget) {
-                            countTarget.textContent = availableCards;
-                        }
-
-                        if (voucherGrid && emptyState) {
-                            if (availableCards === 0) {
-                                voucherGrid.style.display = 'none';
-                                emptyState.style.display = 'flex';
-                            } else {
-                                voucherGrid.style.display = '';
-                                emptyState.style.display = 'none';
-                            }
-                        }
-                    }
-
-                    updateAvailableVoucherCount();
-
-                    /* =========================
-                       SCROLL REVEAL
-                    ========================= */
-                        const revealTargets = [
-                            ...document.querySelectorAll('.reward-highlight-card'),
-                            ...document.querySelectorAll('.reward-side-card'),
-                            ...document.querySelectorAll('.reward-section-card'),
-                            ...document.querySelectorAll('.reward-item-card'),
-                            ...document.querySelectorAll('.reward-top-item')
-                        ];
-
-                        revealTargets.forEach(function (el, index) {
-                            el.classList.add('reveal-on-scroll');
-                            el.classList.add('reveal-delay-' + ((index % 6) + 1));
-                        });
-
-                    const revealObserver = new IntersectionObserver(function (entries, observer) {
-                        entries.forEach(function (entry) {
-                            if (entry.isIntersecting) {
-                                entry.target.classList.add('is-visible');
-                                observer.unobserve(entry.target);
-                            }
-                        });
-                    }, {
-                        threshold: 0.12,
-                        rootMargin: '0px 0px -40px 0px'
-                    });
-
-                    revealTargets.forEach(function (el) {
-                        revealObserver.observe(el);
-                    });
-
-                    const canvas = document.getElementById('reward-confetti-canvas');
-                    if (!canvas) {
-                        console.error('Confetti canvas not found.');
-                        return;
-                    }
-
-                    const ctx = canvas.getContext('2d');
-                    let confettiPieces = [];
-                    let animationFrameId = null;
-
-                    function resizeCanvas() {
-                        canvas.width = window.innerWidth;
-                        canvas.height = window.innerHeight;
-                    }
-
-                    function random(min, max) {
-                        return Math.random() * (max - min) + min;
-                    }
-
-                    function createConfettiBurst(x, y) {
-                        const colors = [
-                            '#0e4174',
-                            '#052348',
-                            '#bf9e3c',
-                            '#937A40',
-                            '#CFDEEB',
-                            '#FFD285'
-                        ];
-
-                        for (let i = 0; i < 140; i++) {
-                            confettiPieces.push({
-                                x: x,
-                                y: y,
-                                size: random(6, 12),
-                                color: colors[Math.floor(Math.random() * colors.length)],
-                                speedX: random(-7, 7),
-                                speedY: random(-11, -4),
-                                gravity: 0.2,
-                                rotation: random(0, 360),
-                                rotationSpeed: random(-10, 10),
-                                alpha: 1
-                            });
-                        }
-
-                        if (!animationFrameId) {
-                            animateConfetti();
-                        }
-                    }
-
-                    function animateConfetti() {
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                        confettiPieces.forEach(function (piece) {
-                            piece.x += piece.speedX;
-                            piece.y += piece.speedY;
-                            piece.speedY += piece.gravity;
-                            piece.rotation += piece.rotationSpeed;
-                            piece.alpha -= 0.008;
-                        });
-
-                        confettiPieces = confettiPieces.filter(function (piece) {
-                            return piece.alpha > 0;
-                        });
-
-                        confettiPieces.forEach(function (piece) {
-                            ctx.save();
-                            ctx.globalAlpha = piece.alpha;
-                            ctx.translate(piece.x, piece.y);
-                            ctx.rotate(piece.rotation * Math.PI / 180);
-                            ctx.fillStyle = piece.color;
-                            ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size * 0.6);
-                            ctx.restore();
-                        });
-
-                        if (confettiPieces.length > 0) {
-                            animationFrameId = requestAnimationFrame(animateConfetti);
-                        } else {
-                            animationFrameId = null;
-                            ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        }
-                    }
-
-                    resizeCanvas();
-                    window.addEventListener('resize', resizeCanvas);
+                    const dynamicVoucherTitle = document.getElementById('dynamicVoucherTitle');
 
                     document.querySelectorAll('.voucher-open-btn').forEach(function (button) {
                         button.addEventListener('click', function () {
-                            const targetModalSelector = button.getAttribute('data-bs-target');
-                            if (!targetModalSelector) return;
-
-                            const modalEl = document.querySelector(targetModalSelector);
-                            if (!modalEl) return;
-
-                            modalEl.addEventListener('shown.bs.modal', function handler() {
-                                const centerX = window.innerWidth / 2;
-                                const centerY = window.innerHeight / 2;
-
-                                createConfettiBurst(centerX, centerY);
-
-                                setTimeout(function () {
-                                    createConfettiBurst(centerX - 150, centerY);
-                                }, 250);
-
-                                setTimeout(function () {
-                                    createConfettiBurst(centerX + 150, centerY);
-                                }, 500);
-
-                                modalEl.removeEventListener('shown.bs.modal', handler);
-                            });
+                            const voucherName = button.getAttribute('data-voucher-name');
+                            if (dynamicVoucherTitle && voucherName) {
+                                dynamicVoucherTitle.textContent = voucherName;
+                            }
                         });
                     });
                 });

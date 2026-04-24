@@ -374,6 +374,12 @@ class HrEmployee(models.Model):
     weekly_winner_week_start = fields.Date(string="Winner Week Start")
     weekly_winner_voucher_claimed = fields.Boolean(string="Weekly Winner Voucher Claimed")
 
+    voucher_ids = fields.One2many(
+        'intern.voucher',
+        'employee_id',
+        string='Vouchers'
+    )
+
     reward_webinar_raffle_voucher = fields.Boolean(string="Webinar Raffle Winner")
     reward_placeholder_1_voucher = fields.Boolean(string="Placeholder Voucher 1")
     reward_placeholder_2_voucher = fields.Boolean(string="Placeholder Voucher 2")
