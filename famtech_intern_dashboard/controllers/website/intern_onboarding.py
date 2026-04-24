@@ -19,7 +19,7 @@ class InternOnboarding(http.Controller):
             'error_code': code,
             'error_title': title,
             'error_message': message,
-            'primary_url': '/my/intern_dashboard',
+            'primary_url': '/dashboard',
             'primary_label': 'Go to Dashboard',
             'secondary_url': 'javascript:history.back()',
             'secondary_label': 'Go Back',

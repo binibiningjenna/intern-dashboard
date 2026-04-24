@@ -1,0 +1,1056 @@
+.intern-rewards-page {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top left, rgba(207, 222, 235, 0.55) 0%, transparent 28%),
+        radial-gradient(circle at top right, rgba(255, 242, 209, 0.22) 0%, transparent 24%),
+        #eaf4fb;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* =========================
+   MAIN SECTION CARDS
+========================= */
+.reward-section-card,
+.reward-side-card,
+.reward-highlight-card {
+    background: var(--color-white);
+    border: 1px solid rgba(193, 201, 214, 0.85);
+    border-radius: 24px;
+    box-shadow: 0 6px 22px rgba(5, 35, 72, 0.04);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.reward-equal-card {
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.rewards-top-row,
+.rewards-bottom-row {
+    align-items: stretch;
+}
+
+.rewards-top-row > div,
+.rewards-bottom-row > div {
+    display: flex;
+}
+
+.reward-section-body,
+.reward-highlight-card__body,
+.reward-side-card__body {
+    padding: 1.1rem 1.2rem 1.2rem;
+    flex: 1;
+}
+
+.reward-highlight-card__body,
+.reward-side-card__body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* works with your existing global classes */
+.dashboard-title {
+    align-items: center;
+    color: var(--color-navy-700);
+    display: inline-flex;
+    font-size: 0.95rem;
+    font-weight: 700;
+    gap: 0.55rem;
+}
+
+.dashboard-icon {
+    align-items: center;
+    background-color: var(--color-navy-100);
+    border-radius: 10px;
+    color: var(--color-navy-700);
+    display: inline-flex;
+    height: 2rem;
+    justify-content: center;
+    font-size: 1rem;
+    width: 2rem;
+}
+
+/* =========================
+   WEEKLY GAMES WINNER
+========================= */
+.reward-highlight-card--winner {
+    position: relative;
+    border-color: rgba(193, 201, 214, 0.85);
+    box-shadow: 0 6px 22px rgba(5, 35, 72, 0.04);
+}
+
+.reward-highlight-card--winner::before {
+    display: none;
+}
+
+.reward-highlight-card__body--winner {
+    padding: 1.25rem 1.25rem 1.2rem;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.reward-winner-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    align-self: center;
+    text-align: center;
+    min-height: 34px;
+    padding: 0.32rem 0.85rem;
+    border-radius: 12px;
+    background: #f3ead0; /* original color kept */
+    color: var(--color-gold-700);
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 2px 8px rgba(5, 35, 72, 0.04);
+}
+
+.reward-winner-pill i {
+    font-size: 0.72rem;
+}
+
+.reward-winner-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.95rem;
+    text-align: center;
+    padding: 0.25rem 0 0.35rem;
+}
+
+.reward-winner-photo-wrap {
+    display: flex;
+    justify-content: center;
+}
+
+.reward-winner-photo-frame {
+    width: 156px;
+    height: 156px;
+    padding: 5px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #eef4fa 0%, #dfe9f4 100%);
+    box-shadow: 0 8px 18px rgba(5, 35, 72, 0.08);
+}
+
+.reward-winner-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 18px;
+    display: block;
+    background: #e9eff6;
+}
+
+.reward-winner-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.reward-winner-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-gold-700);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.reward-winner-name {
+    color: var(--color-navy-700);
+    font-size: 1.55rem;
+    font-weight: 800;
+    line-height: 1.08;
+    margin: 0;
+}
+
+.reward-winner-note {
+    margin-top: auto;
+    padding-top: 0.95rem;
+    border-top: 1px solid rgba(207, 214, 224, 0.9);
+    color: #607086;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    text-align: center;
+    width: 100%;
+}
+
+/* =========================
+   TOP INTERNS
+========================= */
+.reward-top-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin-bottom: 0;
+}
+
+.reward-top-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.8rem 0.9rem;
+    background: linear-gradient(180deg, #fbfdff 0%, #f7faff 100%);
+    border: 1px solid rgba(193, 201, 214, 0.85);
+    border-radius: 20px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    min-height: 82px;
+}
+
+.reward-top-rank {
+    min-width: 54px;
+    height: 54px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #d9e7f3 0%, #cfe0ef 100%);
+    color: var(--color-navy-700);
+    font-size: 1rem;
+    font-weight: 800;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.reward-top-name {
+    color: var(--color-gray-900);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.reward-highlight-note {
+    color: #607086;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    text-align: center;
+}
+
+.reward-highlight-note--left {
+    text-align: left;
+    margin-top: auto;
+    padding-top: 0.15rem;
+}
+
+/* =========================
+   PROGRESS SUMMARY
+========================= */
+.reward-side-card {
+    position: relative;
+}
+
+.reward-side-card__body {
+    gap: 1rem;
+}
+
+.reward-side-progress {
+    padding: 1rem 1rem 0.95rem;
+    background: linear-gradient(180deg, #fbfdff 0%, #f6faff 100%);
+    border: 1px solid rgba(193, 201, 214, 0.8);
+    border-radius: 22px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.reward-side-progress__label {
+    margin-bottom: 0.6rem;
+    color: var(--color-gray-700);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.reward-side-progress__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+}
+
+.reward-side-progress__score {
+    color: var(--color-navy-700);
+    font-size: 1.85rem;
+    font-weight: 800;
+    line-height: 1.04;
+}
+
+.reward-side-progress__percent {
+    color: var(--color-gold-700);
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.reward-side-progress__track {
+    width: 100%;
+    height: 12px;
+    margin-bottom: 0.75rem;
+    background: #e7edf4;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(5, 35, 72, 0.05);
+}
+
+.reward-side-progress__fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-gold-500) 0%, var(--color-gold-700) 100%);
+    border-radius: inherit;
+    box-shadow: 0 0 14px rgba(191, 158, 60, 0.16);
+}
+
+.reward-side-progress__meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    color: #607086;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.reward-side-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 0.1rem;
+}
+
+.reward-side-detail-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.95rem 1rem;
+    border: 1px solid rgba(193, 201, 214, 0.8);
+    border-radius: 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.reward-side-detail-row--last {
+    margin-bottom: 0;
+}
+
+.reward-side-detail-label {
+    color: #607086;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.reward-side-detail-value {
+    color: var(--color-navy-700);
+    font-size: 1.05rem;
+    font-weight: 800;
+    text-align: right;
+}
+
+.reward-side-detail-value--highlight {
+    color: var(--color-navy-500);
+}
+
+/* =========================
+   BADGES + VOUCHERS SECTIONS
+========================= */
+.rewards-bottom-row .reward-section-card {
+    width: 100%;
+    min-height: 100%;
+}
+
+.badges-row-horizontal,
+.vouchers-grid {
+    row-gap: 1rem;
+}
+
+/* =========================
+   ITEM CARDS
+========================= */
+.reward-item-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 1.15rem 0.9rem 1.05rem;
+    text-align: center;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    border: 1px solid rgba(193, 201, 214, 0.85);
+    border-radius: 22px;
+    box-shadow: 0 4px 14px rgba(5, 35, 72, 0.03);
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.reward-item-card:hover {
+    transform: translateY(-2px);
+    border-color: #c6d4e4;
+    box-shadow: 0 8px 18px rgba(5, 35, 72, 0.06);
+}
+
+.reward-item-card--badge,
+.reward-item-card--voucher {
+    min-height: 255px;
+}
+
+.reward-item-card--badge {
+    padding-top: 3.5rem;
+}
+
+.reward-item-card--voucher {
+    padding-top: 3.4rem;
+}
+
+.reward-item-card--unlocked {
+    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+}
+
+.reward-item-card--claimable:hover {
+    transform: translateY(-2px);
+    border-color: rgba(14, 65, 116, 0.24);
+    box-shadow: 0 10px 20px rgba(5, 35, 72, 0.08);
+}
+
+.reward-item-card--locked {
+    background: linear-gradient(180deg, #fafbfc 0%, #f3f6f9 100%);
+    opacity: 0.62;
+    filter: grayscale(20%);
+}
+
+.reward-item-card--locked .reward-claim-btn {
+    pointer-events: none;
+}
+
+/* =========================
+   STATUS BADGES / POINT PILLS
+========================= */
+.reward-status-badge,
+.reward-badge-points {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 22px;
+    padding: 0.15rem 0.55rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    border: 1px solid transparent;
+    box-shadow: none;
+    white-space: nowrap;
+}
+
+.reward-status-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.reward-status-badge i {
+    display: none;
+}
+
+.reward-status-badge--unlocked {
+    background: #dff3e5;
+    border-color: #9fd3ad;
+    color: #0a8f3d;
+}
+
+.reward-status-badge--available {
+    background: #dce8f7;
+    border-color: #b4c8e4;
+    color: var(--color-navy-500);
+}
+
+.reward-lock-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef2f6;
+    border: 1px solid #d3d9e2;
+    border-radius: 50%;
+    color: #8b95a3;
+    font-size: 0.66rem;
+    z-index: 2;
+}
+
+.reward-badge-points {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    margin-bottom: 0;
+    background: rgba(191, 158, 60, 0.14);
+    border-color: rgba(191, 158, 60, 0.22);
+    color: var(--color-gold-700);
+}
+
+.reward-item-icon--plain {
+    width: 66px;
+    height: 66px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.1rem;
+    background: linear-gradient(180deg, #edf4fb 0%, #e6eef7 100%);
+    border-radius: 20px;
+    color: var(--color-navy-700);
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.reward-item-title {
+    color: var(--color-navy-700);
+    font-size: 0.95rem;
+    font-weight: 800;
+    line-height: 1.25;
+    min-height: 2.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reward-item-desc {
+    max-width: 220px;
+    color: #607086;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    min-height: 4rem;
+}
+
+.reward-claim-btn {
+    min-width: 130px;
+    padding: 0.48rem 0.85rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.reward-claim-btn--primary {
+    background: var(--color-navy-500);
+    color: var(--color-white);
+    box-shadow: 0 6px 14px rgba(14, 65, 116, 0.16);
+}
+
+.reward-claim-btn--primary:hover {
+    background: var(--color-navy-700);
+    color: var(--color-white);
+    box-shadow: 0 8px 18px rgba(5, 35, 72, 0.2);
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+.reward-empty-state {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    min-height: 180px;
+    border: 1px dashed rgba(193, 201, 214, 0.95);
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(248, 250, 252, 0.7) 0%, rgba(242, 245, 249, 0.92) 100%);
+    color: var(--color-gray-500);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 1.5rem;
+}
+
+/* =========================
+   MODAL
+========================= */
+.reward-modal {
+    border: 1px solid rgba(193, 201, 214, 0.85);
+    border-radius: 22px;
+    box-shadow: 0 16px 40px rgba(15, 46, 80, 0.16);
+    overflow: hidden;
+}
+
+.reward-modal-header {
+    padding: 1rem 1.25rem;
+    background: linear-gradient(180deg, #f9fafb 0%, #f3f4f6 100%);
+    border-bottom: 1px solid rgba(207, 214, 224, 0.9);
+}
+
+.reward-modal-title {
+    color: var(--color-navy-700);
+    font-size: 1.08rem;
+    font-weight: 700;
+}
+
+.reward-modal-body {
+    padding: 1.5rem 1.4rem 1rem;
+    text-align: center;
+}
+
+.reward-modal-icon {
+    margin-bottom: 0.75rem;
+    color: var(--color-navy-700);
+    font-size: 2.5rem;
+}
+
+.reward-modal-text {
+    margin-bottom: 1rem;
+    color: var(--color-gray-700);
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.reward-modal-steps {
+    padding: 1rem 1rem 0.85rem;
+    background: #f8fbff;
+    border: 1px solid rgba(193, 201, 214, 0.85);
+    border-radius: 16px;
+    text-align: left;
+}
+
+.reward-modal-steps-title {
+    margin-bottom: 0.6rem;
+    color: var(--color-navy-700);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.reward-modal-steps ol {
+    margin: 0;
+    padding-left: 1.15rem;
+    color: var(--color-gray-700);
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.reward-modal-footer {
+    justify-content: center;
+    padding: 0 1.4rem 1.4rem;
+    border-top: 0;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 1199.98px) {
+    .reward-item-card--badge,
+    .reward-item-card--voucher {
+        min-height: 238px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .reward-side-progress__score,
+    .reward-side-progress__percent {
+        font-size: 1.5rem;
+    }
+
+    .reward-winner-photo-frame {
+        width: 148px;
+        height: 148px;
+    }
+
+    .reward-winner-name {
+        font-size: 1.45rem;
+    }
+
+    .reward-top-item {
+        min-height: 76px;
+        padding: 0.75rem 0.85rem;
+    }
+
+    .reward-top-rank {
+        min-width: 50px;
+        height: 50px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .reward-highlight-note--left {
+        text-align: left;
+    }
+
+    .reward-item-card--badge,
+    .reward-item-card--voucher {
+        min-height: 220px;
+    }
+
+    .reward-section-body,
+    .reward-highlight-card__body,
+    .reward-side-card__body {
+        padding: 1.1rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .reward-side-progress__top,
+    .reward-side-progress__meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .reward-side-detail-row {
+        grid-template-columns: 1fr;
+    }
+
+    .reward-side-detail-value {
+        text-align: left;
+    }
+
+    .reward-modal-body {
+        padding: 1.25rem 1rem 0.85rem;
+    }
+
+    .reward-modal-footer {
+        padding: 0 1rem 1rem;
+    }
+
+    .reward-winner-photo-frame {
+        width: 132px;
+        height: 132px;
+    }
+
+    .reward-item-card--badge,
+    .reward-item-card--voucher {
+        min-height: 208px;
+    }
+
+    .reward-winner-pill {
+        min-height: 32px;
+        padding: 0.28rem 0.7rem;
+        font-size: 0.75rem;
+    }
+
+    .reward-status-badge,
+    .reward-badge-points {
+        min-height: 28px;
+        padding: 0.24rem 0.62rem;
+        font-size: 0.68rem;
+    }
+
+    .reward-status-badge {
+        top: 10px;
+        right: 10px;
+    }
+
+    .reward-badge-points {
+        top: 12px;
+        left: 12px;
+    }
+
+    .reward-item-card--badge {
+        padding-top: 3.3rem;
+    }
+
+    .reward-item-card--voucher {
+        padding-top: 3.2rem;
+    }
+
+    .reward-item-title {
+        font-size: 0.92rem;
+    }
+
+    .reward-item-desc {
+        font-size: 0.78rem;
+    }
+}
+
+.reward-confetti-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 2000;
+}
+
+/* =========================
+   BADGE ANIMATIONS
+========================= */
+.reward-badge-card--animated {
+    animation: rewardBadgeBounceIn 0.7s ease, rewardBadgeGlow 2.2s ease-in-out infinite alternate;
+    will-change: transform, box-shadow;
+}
+
+.reward-badge-card--animated .reward-item-icon--plain {
+    animation: rewardBadgeIconFloat 2.4s ease-in-out infinite;
+}
+
+@keyframes rewardBadgeBounceIn {
+    0% {
+        opacity: 0;
+        transform: translateY(14px) scale(0.96);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(-4px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes rewardBadgeGlow {
+    0% {
+        box-shadow: 0 4px 14px rgba(5, 35, 72, 0.03);
+        border-color: rgba(193, 201, 214, 0.85);
+    }
+    100% {
+        box-shadow: 0 10px 24px rgba(191, 158, 60, 0.18);
+        border-color: rgba(191, 158, 60, 0.42);
+    }
+}
+
+@keyframes rewardBadgeIconFloat {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-3px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* =========================
+   CLAIM MODAL - NEW LAYOUT
+========================= */
+.reward-claim-dialog {
+    max-width: 480px;
+}
+
+.reward-claim-modal {
+    border: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 18px 40px rgba(5, 35, 72, 0.18);
+    background: var(--color-white);
+}
+
+.reward-claim-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+    padding: 0.8rem 2.9rem;
+    background: #dbe8f3;
+    border-bottom: 1px solid rgba(193, 201, 214, 0.8);
+}
+
+.reward-claim-title {
+    margin: 0;
+    color: var(--color-navy-700);
+    font-size: 1.05rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+}
+
+.reward-claim-close {
+    position: absolute;
+    top: 50%;
+    right: 0.95rem;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    border: 0;
+    background: transparent;
+    color: #6f7d8f;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.95rem;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.reward-claim-close:hover {
+    background: rgba(5, 35, 72, 0.06);
+    color: var(--color-navy-700);
+}
+
+.reward-claim-body {
+    padding: 1.45rem 1.6rem 1.5rem;
+    text-align: center;
+}
+
+.reward-claim-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    background: #184f8c;
+    color: var(--color-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    box-shadow: 0 8px 20px rgba(14, 65, 116, 0.18);
+}
+
+.reward-claim-heading {
+    color: var(--color-navy-700);
+    font-size: 1.45rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+}
+
+.reward-claim-subtext {
+    margin-bottom: 1rem;
+    color: #6b7b8f;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.reward-claim-steps {
+    margin: 0 auto 1.25rem;
+    padding: 1rem 1rem 0.9rem;
+    background: #f7fbff;
+    border: 1px solid rgba(193, 201, 214, 0.85);
+    border-radius: 14px;
+    text-align: left;
+}
+
+.reward-claim-steps ol {
+    margin: 0;
+    padding-left: 1.15rem;
+    color: var(--color-gray-700);
+    font-size: 0.88rem;
+    line-height: 1.65;
+}
+
+.reward-claim-action-btn {
+    min-width: 170px;
+    padding: 0.62rem 1.15rem;
+    border: 0;
+    border-radius: 12px;
+    background: var(--color-navy-500);
+    color: var(--color-white);
+    font-size: 0.92rem;
+    font-weight: 700;
+    box-shadow: 0 6px 14px rgba(14, 65, 116, 0.16);
+    transition: all 0.2s ease;
+}
+
+.reward-claim-action-btn:hover {
+    background: var(--color-navy-700);
+    color: var(--color-white);
+    box-shadow: 0 8px 18px rgba(5, 35, 72, 0.2);
+}
+
+@media (max-width: 575.98px) {
+    .reward-claim-dialog {
+        max-width: calc(100vw - 1.5rem);
+        margin: 0.75rem auto;
+    }
+
+    .reward-claim-header {
+        min-height: 56px;
+        padding: 0.75rem 2.5rem;
+    }
+
+    .reward-claim-title {
+        font-size: 0.96rem;
+    }
+
+    .reward-claim-body {
+        padding: 1.2rem 1rem 1.2rem;
+    }
+
+    .reward-claim-icon {
+        width: 64px;
+        height: 64px;
+        font-size: 1.7rem;
+    }
+
+    .reward-claim-heading {
+        font-size: 1.2rem;
+    }
+
+    .reward-claim-subtext,
+    .reward-claim-steps ol {
+        font-size: 0.84rem;
+    }
+}
+
+/* =========================
+   SCROLL REVEAL ANIMATIONS
+========================= */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(32px);
+    transition:
+        opacity 0.65s ease,
+        transform 0.65s ease;
+    will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* staggered effect */
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.24s; }
+.reveal-delay-4 { transition-delay: 0.32s; }
+.reveal-delay-5 { transition-delay: 0.40s; }
+.reveal-delay-6 { transition-delay: 0.48s; }
+
+/* optional: softer entrance for small pills */
+.reward-status-badge.reveal-on-scroll,
+.reward-badge-points.reveal-on-scroll {
+    transform: translateY(18px);
+}
+
+/* accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .reveal-on-scroll,
+    .reveal-on-scroll.is-visible {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+.reward-highlight-card__body--winner .mt-3.text-center {
+    margin-top: 0.8rem !important;
+}
+
+.reward-top-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #e6eef7;
+    flex-shrink: 0;
+}
+
+.reward-top-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.reward-top-rank-text {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--color-navy-700);
+}

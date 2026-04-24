@@ -67,7 +67,7 @@
 
                                 <!-- Footer -->
                                 <div class="modal-footer border-0 justify-content-center pb-4 pt-0">
-                                    <a href="/my/intern_dashboard" class="btn btn-primary" id="goDashboardBtn">
+                                    <a href="/dashboard" class="btn btn-primary" id="goDashboardBtn">
                                         <i class="bi bi-speedometer2 me-2"></i>
                                         Go to Dashboard
                                     </a>

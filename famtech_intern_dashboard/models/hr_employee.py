@@ -1,6 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-from datetime import date
+from datetime import date, timedelta
 
 class HREmployee(models.Model):
     _inherit = 'hr.employee'
@@ -365,3 +365,48 @@ class HREmployee(models.Model):
                     if template:
                         template.sudo().send_mail(intern.id, force_send=True)
                         intern.sudo().write({'last_performance_alert_sent': today})
+
+# REWARDS
+class HrEmployee(models.Model):
+    _inherit = 'hr.employee'
+
+    is_weekly_winner = fields.Boolean(string="Weekly Winner")
+    weekly_winner_week_start = fields.Date(string="Winner Week Start")
+    weekly_winner_voucher_claimed = fields.Boolean(string="Weekly Winner Voucher Claimed")
+
+    reward_webinar_raffle_voucher = fields.Boolean(string="Webinar Raffle Winner")
+    reward_placeholder_1_voucher = fields.Boolean(string="Placeholder Voucher 1")
+    reward_placeholder_2_voucher = fields.Boolean(string="Placeholder Voucher 2")
+
+    @api.onchange('is_weekly_winner')
+    def _onchange_is_weekly_winner(self):
+        """Auto-fill current week's Monday when winner is checked."""
+        for rec in self:
+            if rec.is_weekly_winner and not rec.weekly_winner_week_start:
+                today = fields.Date.today()
+                rec.weekly_winner_week_start = today - timedelta(days=today.weekday())
+            elif not rec.is_weekly_winner:
+                rec.weekly_winner_week_start = False
+                rec.weekly_winner_voucher_claimed = False
+
+    @api.onchange('weekly_winner_week_start')
+    def _onchange_weekly_winner_week_start(self):
+        """Reset claimed state when HR changes the winner week."""
+        for rec in self:
+            if rec.is_weekly_winner:
+                rec.weekly_winner_voucher_claimed = False
+
+    @api.constrains('is_weekly_winner', 'weekly_winner_week_start', 'is_intern')
+    def _check_one_weekly_winner_per_week(self):
+        for rec in self:
+            if rec.is_intern and rec.is_weekly_winner and rec.weekly_winner_week_start:
+                duplicate = self.search([
+                    ('id', '!=', rec.id),
+                    ('is_intern', '=', True),
+                    ('is_weekly_winner', '=', True),
+                    ('weekly_winner_week_start', '=', rec.weekly_winner_week_start),
+                ], limit=1)
+                if duplicate:
+                    raise ValidationError(
+                        _("Only one Weekly Games Winner is allowed per week.")
+                    )
