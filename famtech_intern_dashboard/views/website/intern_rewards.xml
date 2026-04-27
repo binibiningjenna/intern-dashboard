@@ -73,7 +73,9 @@
             </style>
         </head>
 
-        <div class="intern-rewards-page">
+            <div class="intern-rewards-page"
+                 t-att-data-employee-id="employee_id"
+                 t-att-data-intern-first-name="intern_first_name">
             <div class="w-100 main-bg" style="min-height: 100vh; font-family: 'Poppins', sans-serif;">
                 <div class="container py-5">
 
@@ -276,7 +278,12 @@
                                     <div class="row g-3 badges-row-horizontal">
                                         <t t-foreach="badges" t-as="badge">
                                             <div class="col-12 col-sm-6 col-lg-3">
-                                                <div t-attf-class="card reward-item-card reward-item-card--badge #{'reward-item-card--unlocked reward-item-card--active' if badge['unlocked'] else 'reward-item-card--locked'}">
+                                                <div t-attf-class="card reward-item-card reward-item-card--badge #{'reward-item-card--unlocked reward-item-card--active' if badge['unlocked'] else 'reward-item-card--locked'}"
+                                                     t-att-data-badge-key="badge['key']"
+                                                     t-att-data-badge-name="badge['name']"
+                                                     t-att-data-badge-description="badge['description']"
+                                                     t-att-data-badge-icon="badge['icon']"
+                                                     t-att-data-badge-unlocked="'true' if badge['unlocked'] else 'false'">
                                                     <t t-if="badge['unlocked']">
                                                         <div class="reward-status-badge reward-status-badge--unlocked">Unlocked</div>
                                                     </t>
@@ -432,6 +439,48 @@
                 </div>
             </div>
 
+            <!-- BADGE UNLOCK MODAL -->
+            <div class="modal fade reward-modal-wrapper" id="badgeUnlockModal" tabindex="-1" aria-labelledby="badgeUnlockModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
+                    <div class="modal-content reward-claim-modal position-relative badge-unlock-modal-content">
+                        <div class="reward-confetti-layer" aria-hidden="true"></div>
+                        <div class="reward-claim-header">
+                            <h6 class="reward-claim-title fw-bold text-center w-100 m-0"
+                                id="badgeUnlockModalLabel"
+                                style="color: var(--color-navy-700); letter-spacing: 0.4px;">
+                                BADGE UNLOCKED
+                            </h6>
+                            <button type="button" class="reward-claim-close" data-bs-dismiss="modal" aria-label="Close">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+
+                        <div class="reward-claim-body text-center py-4">
+                            <div class="reward-claim-icon mb-3">
+                                <i id="badgeUnlockModalIcon" class="bi bi-award-fill"></i>
+                            </div>
+
+                            <h6 class="fw-semibold mb-2"
+                                id="badgeUnlockModalTitle"
+                                style="color: var(--color-navy-700);">
+                                You are a Rising Intern, <t t-esc="intern_first_name"/>!
+                            </h6>
+                            <p class="small mb-0 px-2"
+                               id="badgeUnlockModalDescription"
+                               style="color: var(--color-gray-500); line-height: 1.5;">
+                                You have completed onboarding and reached the first milestone. Keep going to unlock more badges and rewards!
+                            </p>
+
+                            <button type="button"
+                                    class="btn btn-primary reward-claim-action-btn mt-4"
+                                    data-bs-dismiss="modal">
+                                <i class="bi bi-check2-circle me-2"></i>Got It
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- WEEKLY WINNER HISTORY MODAL -->
             <div class="modal fade" id="weeklyWinnerHistoryModal" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
@@ -548,8 +597,23 @@
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
             <script><![CDATA[
                 document.addEventListener('DOMContentLoaded', function () {
+                    const rewardsPage = document.querySelector('.intern-rewards-page');
                     const dynamicVoucherTitle = document.getElementById('dynamicVoucherTitle');
+                    const badgeUnlockModalElement = document.getElementById('badgeUnlockModal');
+                    const badgeUnlockModalTitle = document.getElementById('badgeUnlockModalTitle');
+                    const badgeUnlockModalDescription = document.getElementById('badgeUnlockModalDescription');
+                    const badgeUnlockModalIcon = document.getElementById('badgeUnlockModalIcon');
                     const confettiColors = ['#FFD285', '#bf9e3c', '#0e4174', '#709ECB', '#FFF2D1'];
+                    const rewardSound = new Audio('/famtech_intern_dashboard/static/src/website/audio/Success_Sound-Effect.mp3');
+
+                    rewardSound.preload = 'auto';
+
+                    function playRewardSound() {
+                        rewardSound.currentTime = 0;
+                        rewardSound.play().catch(function () {
+                            // Ignore blocked autoplay errors; modal visuals still continue.
+                        });
+                    }
 
                     function launchRewardConfetti(modalElement) {
                         const confettiLayer = modalElement.querySelector('.reward-confetti-layer');
@@ -585,7 +649,6 @@
                             }
                         }
 
-                        // multiple bursts
                         createBurst();
                         setTimeout(createBurst, 300);
                         setTimeout(createBurst, 600);
@@ -604,14 +667,72 @@
                         });
                     });
 
-                    ['weeklyGamesVoucherModal', 'dynamicVoucherModal'].forEach(function (modalId) {
+                    ['weeklyGamesVoucherModal', 'dynamicVoucherModal', 'badgeUnlockModal'].forEach(function (modalId) {
                         const modalElement = document.getElementById(modalId);
                         if (modalElement) {
                             modalElement.addEventListener('shown.bs.modal', function () {
                                 launchRewardConfetti(modalElement);
+                                playRewardSound();
                             });
                         }
                     });
+
+                    if (rewardsPage && badgeUnlockModalElement && window.bootstrap && window.localStorage) {
+                        const employeeId = rewardsPage.getAttribute('data-employee-id');
+                        const internFirstName = rewardsPage.getAttribute('data-intern-first-name') || 'Intern';
+                        const storageKey = employeeId ? 'famtech_reward_badges_seen_' + employeeId : null;
+                        const unlockedBadges = Array.from(document.querySelectorAll('.reward-item-card--badge[data-badge-unlocked="true"]'));
+                        const currentBadgeKeys = unlockedBadges
+                            .map(function (badgeCard) { return badgeCard.getAttribute('data-badge-key'); })
+                            .filter(Boolean);
+
+                        let seenBadgeKeys = [];
+                        if (storageKey) {
+                            try {
+                                seenBadgeKeys = JSON.parse(window.localStorage.getItem(storageKey) || '[]');
+                            } catch (error) {
+                                seenBadgeKeys = [];
+                            }
+                        }
+
+                        const newlyUnlockedBadges = unlockedBadges.filter(function (badgeCard) {
+                            return !seenBadgeKeys.includes(badgeCard.getAttribute('data-badge-key'));
+                        });
+
+                        if (storageKey) {
+                            window.localStorage.setItem(storageKey, JSON.stringify(currentBadgeKeys));
+                        }
+
+                        if (newlyUnlockedBadges.length) {
+                            const badgeUnlockModal = bootstrap.Modal.getOrCreateInstance(badgeUnlockModalElement);
+                            let modalQueueIndex = 0;
+
+                            function showUnlockedBadge(index) {
+                                const badgeCard = newlyUnlockedBadges[index];
+                                if (!badgeCard) {
+                                    return;
+                                }
+
+                                const badgeName = badgeCard.getAttribute('data-badge-name') || 'New Badge Unlocked';
+                                const badgeDescription = badgeCard.getAttribute('data-badge-description') || 'You earned a new badge on your rewards journey.';
+                                const badgeIcon = badgeCard.getAttribute('data-badge-icon') || 'award-fill';
+
+                                badgeUnlockModalTitle.textContent = 'You are a ' + badgeName + ', ' + internFirstName + '!';
+                                badgeUnlockModalDescription.textContent = 'You have ' + badgeDescription.charAt(0).toLowerCase() + badgeDescription.slice(1) + ' Keep going to unlock more badges and rewards!';
+                                badgeUnlockModalIcon.className = 'bi bi-' + badgeIcon;
+                                badgeUnlockModal.show();
+                            }
+
+                            badgeUnlockModalElement.addEventListener('hidden.bs.modal', function () {
+                                modalQueueIndex += 1;
+                                if (modalQueueIndex < newlyUnlockedBadges.length) {
+                                    showUnlockedBadge(modalQueueIndex);
+                                }
+                            });
+
+                            showUnlockedBadge(modalQueueIndex);
+                        }
+                    }
                 });
             ]]></script>
         </div>

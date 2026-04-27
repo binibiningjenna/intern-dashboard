@@ -112,12 +112,22 @@ class InternOnboarding(http.Controller):
                 message='You do not have permission to access the onboarding page.',
             )
 
-        employee.write({
-            'handbook_reviewed': bool(kwargs.get('handbook_reviewed')),
-            'orientation_completed': bool(kwargs.get('orientation_completed')),
-            'odoo_access_granted': bool(kwargs.get('odoo_access_granted')),
-            'first_task_assigned': bool(kwargs.get('first_task_assigned')),
-        })
+        # The website onboarding page currently shows action buttons/status,
+        # not editable checkbox inputs for every step. Avoid resetting saved
+        # values to False when the POST payload omits those fields.
+        updates = {}
+        onboarding_fields = (
+            'handbook_reviewed',
+            'orientation_completed',
+            'odoo_access_granted',
+            'first_task_assigned',
+        )
+        for field_name in onboarding_fields:
+            if field_name in kwargs:
+                updates[field_name] = bool(kwargs.get(field_name))
+
+        if updates:
+            employee.write(updates)
 
         # Always stay on onboarding page after saving so user can review their progress
         return request.redirect('/onboarding')

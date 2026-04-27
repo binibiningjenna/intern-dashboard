@@ -84,6 +84,7 @@ class InternRewards(http.Controller):
 
         badges = [
             {
+                'key': 'rising_intern',
                 'name': 'Rising Intern',
                 'description': 'Completed onboarding and reached the first milestone.',
                 'icon': 'stars',
@@ -92,6 +93,7 @@ class InternRewards(http.Controller):
                 'unlocked': onboarding_done or badge_points >= 25,
             },
             {
+                'key': 'consistent_contributor',
                 'name': 'Consistent Contributor',
                 'description': 'Reached 50% of your required rendered hours.',
                 'icon': 'lightning-charge-fill',
@@ -100,6 +102,7 @@ class InternRewards(http.Controller):
                 'unlocked': badge_points >= 50,
             },
             {
+                'key': 'high_performer',
                 'name': 'High Performer',
                 'description': 'Reached 75% of your required rendered hours.',
                 'icon': 'graph-up-arrow',
@@ -108,6 +111,7 @@ class InternRewards(http.Controller):
                 'unlocked': badge_points >= 75,
             },
             {
+                'key': 'elite_intern',
                 'name': 'Elite Intern',
                 'description': 'Completed 100% of your required rendered hours.',
                 'icon': 'trophy',
@@ -309,7 +313,9 @@ class InternRewards(http.Controller):
 
         return request.render('famtech_intern_dashboard.intern_rewards', {
             'page_name': 'intern_rewards',
+            'employee_id': employee.id,
             'intern_name': employee.name,
+            'intern_first_name': (employee.name or '').split(' ')[0] if employee.name else 'Intern',
 
             # Weekly winner
             'current_week_label': current_week_label,

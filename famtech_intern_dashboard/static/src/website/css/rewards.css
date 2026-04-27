@@ -584,6 +584,11 @@
     box-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.12);
 }
 
+.badge-unlock-modal-content,
+.badge-unlock-modal-content * {
+    font-family: 'Poppins', sans-serif !important;
+}
+
 .reward-modal-header,
 .reward-claim-header {
     position: relative;
