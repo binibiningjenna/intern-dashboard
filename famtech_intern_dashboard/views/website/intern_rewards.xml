@@ -40,6 +40,37 @@
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
             <link href="/famtech_intern_dashboard/static/src/website/css/global.css" rel="stylesheet"/>
             <link href="/famtech_intern_dashboard/static/src/website/css/rewards.css" rel="stylesheet"/>
+
+            <style>
+                .reward-confetti-layer {
+                    position: absolute;
+                    inset: 0;
+                    pointer-events: none;
+                    overflow: hidden;
+                    border-radius: inherit;
+                    z-index: 5;
+                }
+
+                .reward-confetti-piece {
+                    position: absolute;
+                    top: -14px;
+                    width: 8px;
+                    height: 14px;
+                    opacity: 0;
+                    animation: rewardConfettiFall 1.8s ease-out forwards;
+                }
+
+                @keyframes rewardConfettiFall {
+                    0% {
+                        transform: translate3d(0, 0, 0) rotate(0deg);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translate3d(var(--confetti-drift), 430px, 0) rotate(var(--confetti-rotate));
+                        opacity: 0;
+                    }
+                }
+            </style>
         </head>
 
         <div class="intern-rewards-page">
@@ -340,7 +371,8 @@
             <!-- WEEKLY GAMES WINNER MODAL -->
             <div class="modal fade reward-modal-wrapper" id="weeklyGamesVoucherModal" tabindex="-1" aria-labelledby="weeklyGamesVoucherModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
-                    <div class="modal-content reward-claim-modal">
+                    <div class="modal-content reward-claim-modal position-relative">
+                        <div class="reward-confetti-layer" aria-hidden="true"></div>
                         <div class="reward-claim-header">
                             <h5 class="reward-claim-title" id="weeklyGamesVoucherModalLabel">STEPS TO CLAIM</h5>
                             <button type="button" class="reward-claim-close" data-bs-dismiss="modal" aria-label="Close">
@@ -371,7 +403,8 @@
             <!-- DYNAMIC VOUCHER MODAL -->
             <div class="modal fade reward-modal-wrapper" id="dynamicVoucherModal" tabindex="-1" aria-labelledby="dynamicVoucherModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
-                    <div class="modal-content reward-claim-modal">
+                    <div class="modal-content reward-claim-modal position-relative">
+                        <div class="reward-confetti-layer" aria-hidden="true"></div>
                         <div class="reward-claim-header">
                             <h5 class="reward-claim-title" id="dynamicVoucherModalLabel">STEPS TO CLAIM</h5>
                             <button type="button" class="reward-claim-close" data-bs-dismiss="modal" aria-label="Close">
@@ -516,6 +549,51 @@
             <script><![CDATA[
                 document.addEventListener('DOMContentLoaded', function () {
                     const dynamicVoucherTitle = document.getElementById('dynamicVoucherTitle');
+                    const confettiColors = ['#FFD285', '#bf9e3c', '#0e4174', '#709ECB', '#FFF2D1'];
+
+                    function launchRewardConfetti(modalElement) {
+                        const confettiLayer = modalElement.querySelector('.reward-confetti-layer');
+                        if (!confettiLayer) return;
+
+                        confettiLayer.innerHTML = '';
+
+                        function createBurst() {
+                            for (let i = 0; i < 40; i++) {
+                                const piece = document.createElement('span');
+                                const color = confettiColors[i % confettiColors.length];
+
+                                const left = Math.random() * 100;
+                                const delay = Math.random() * 0.3;
+                                const drift = (Math.random() * 300) - 150;
+                                const rotate = (Math.random() * 720) - 360;
+                                const size = Math.random() * 8 + 6;
+
+                                piece.className = 'reward-confetti-piece';
+                                piece.style.left = left + '%';
+                                piece.style.backgroundColor = color;
+                                piece.style.animationDelay = delay + 's';
+                                piece.style.setProperty('--confetti-drift', drift + 'px');
+                                piece.style.setProperty('--confetti-rotate', rotate + 'deg');
+                                piece.style.width = size + 'px';
+                                piece.style.height = size + 'px';
+
+                                if (Math.random() > 0.6) {
+                                    piece.style.borderRadius = '50%';
+                                }
+
+                                confettiLayer.appendChild(piece);
+                            }
+                        }
+
+                        // multiple bursts
+                        createBurst();
+                        setTimeout(createBurst, 300);
+                        setTimeout(createBurst, 600);
+
+                        setTimeout(function () {
+                            confettiLayer.innerHTML = '';
+                        }, 3500);
+                    }
 
                     document.querySelectorAll('.voucher-open-btn').forEach(function (button) {
                         button.addEventListener('click', function () {
@@ -524,6 +602,15 @@
                                 dynamicVoucherTitle.textContent = voucherName;
                             }
                         });
+                    });
+
+                    ['weeklyGamesVoucherModal', 'dynamicVoucherModal'].forEach(function (modalId) {
+                        const modalElement = document.getElementById(modalId);
+                        if (modalElement) {
+                            modalElement.addEventListener('shown.bs.modal', function () {
+                                launchRewardConfetti(modalElement);
+                            });
+                        }
                     });
                 });
             ]]></script>
