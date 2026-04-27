@@ -83,14 +83,6 @@
                     <field name="average_score"/>
                 </group>
 
-                <!-- Onboarding Checklist Details -->
-                <group string="Onboarding Checklist">
-                    <field name="handbook_reviewed"/>
-                    <field name="orientation_completed"/>
-                    <field name="odoo_access_granted"/>
-                    <field name="first_task_assigned"/>
-                </group>
-
                 <!-- Performance Metrics -->
                 <group string="Performance Metrics">
                     
