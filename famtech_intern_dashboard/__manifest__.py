@@ -53,6 +53,7 @@
             'famtech_intern_dashboard/static/src/website/css/global.css',
             'famtech_intern_dashboard/static/src/website/css/onboarding.css',
             'famtech_intern_dashboard/static/src/website/css/dashboard.css',
+            'famtech_intern_dashboard/static/src/website/css/rewards.css',
         ],
     },
     'installable': True,

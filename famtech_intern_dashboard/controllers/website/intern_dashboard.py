@@ -33,7 +33,7 @@ class InternDashboard(http.Controller):
             'error_code': code,
             'error_title': title,
             'error_message': message,
-            'primary_url': '/my/intern_dashboard',
+            'primary_url': '/dashboard',
             'primary_label': 'Go to Dashboard',
             'secondary_url': 'javascript:history.back()',
             'secondary_label': 'Go Back',
@@ -231,13 +231,13 @@ class InternDashboard(http.Controller):
                 ])
                 if not onboarding_done:
                     return request.redirect('/onboarding')
-                return request.redirect('/my/intern_dashboard')
+                return request.redirect('/dashboard')
 
             return request.redirect('/my/home')
 
         return request.redirect('/')
 
-    @http.route('/my/intern_dashboard', type='http', auth='user', website=True)
+    @http.route('/dashboard', type='http', auth='user', website=True)
     def intern_dashboard(self, **kwargs):
         employee = request.env.user.employee_id.sudo()
 
@@ -310,7 +310,7 @@ class InternDashboard(http.Controller):
 
         return request.render('famtech_intern_dashboard.intern_dashboard', values)
 
-    @http.route('/my/intern_dashboard/kpi_export', type='http', auth='user', website=True)
+    @http.route('/dashboard/kpi_export', type='http', auth='user', website=True)
     def intern_dashboard_kpi_export(self, **kwargs):
         employee = request.env.user.employee_id.sudo()
 

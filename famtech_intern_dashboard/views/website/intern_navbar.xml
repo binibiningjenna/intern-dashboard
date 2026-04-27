@@ -9,7 +9,7 @@
         <nav class="navbar navbar-expand-lg py-2 custom-navbar shadow-sm sticky-top">
             <div class="container-fluid px-3 px-lg-5">
                 
-                <a class="navbar-brand d-flex align-items-center" href="/my/intern_dashboard">
+                <a class="navbar-brand d-flex align-items-center" href="/dashboard">
                     <img src="/famtech_intern_dashboard/static/src/website/img/famtech_logo_no_bg.png"
                          alt="FAMTECH Logo"
                          height="50"
@@ -31,7 +31,7 @@
                         
                         <li class="nav-item w-100 w-lg-auto">
                             <a t-attf-class="nav-link nav-link-custom d-flex align-items-center gap-2 #{'active' if page_name == 'intern_dashboard' else ''}"
-                               href="/my/intern_dashboard">
+                               href="/dashboard">
                                 <i class="bi bi-house-door"></i>
                                 <span class="fw-bold text-uppercase">Dashboard</span>
                             </a>
@@ -47,7 +47,7 @@
 
                         <li class="nav-item w-100 w-lg-auto">
                             <a t-attf-class="nav-link nav-link-custom d-flex align-items-center gap-2 #{'active' if page_name == 'intern_rewards' else ''}"
-                               href="/my/intern/rewards">
+                               href="/rewards">
                                 <i class="bi bi-trophy"></i>
                                 <span class="fw-bold text-uppercase">Rewards</span>
                             </a>

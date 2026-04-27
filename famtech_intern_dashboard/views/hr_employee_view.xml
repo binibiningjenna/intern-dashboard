@@ -24,7 +24,6 @@
             </field>
         </record>
 
-
         <record id="hr_employee_form_intern_hr_contact" model="ir.ui.view">
             <field name="name">hr.employee.form.intern.hr.contact</field>
             <field name="model">hr.employee</field>
@@ -32,9 +31,39 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='parent_id']" position="after">
                     <field name="hr_contact_id"
-                        string="HR Contact"
-                        widget="many2one_avatar_employee"
-                        invisible="not is_intern"/>
+                           string="HR Contact"
+                           widget="many2one_avatar_employee"
+                           invisible="not is_intern"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Rewards Tab -->
+        <record id="hr_employee_form_inherit_rewards" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit.rewards</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/notebook" position="inside">
+                    <page string="Rewards" invisible="not is_intern">
+
+                        <group string="Weekly Games Winner">
+                            <field name="is_weekly_winner"/>
+                            <field name="weekly_winner_week_start" invisible="not is_weekly_winner"/>
+                            <field name="weekly_winner_voucher_claimed" invisible="not is_weekly_winner"/>
+                        </group>
+
+                        <group string="Dynamic Vouchers">
+                            <field name="voucher_ids">
+                                <list editable="bottom">
+                                    <field name="title"/>
+                                    <field name="state"/>
+                                    <field name="claimed_at" readonly="1"/>
+                                </list>
+                            </field>
+                        </group>
+
+                    </page>
                 </xpath>
             </field>
         </record>

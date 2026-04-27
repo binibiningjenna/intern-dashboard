@@ -1,4 +1,32 @@
 <odoo>
+    <!-- REUSABLE STEPS TO CLAIM BLOCK -->
+    <template id="claim_steps" name="Reward Claim Steps">
+        <div class="reward-claim-steps">
+            <ol>
+                <li>Open the <strong>Approvals</strong> app.</li>
+                <li>Click <strong>New Request</strong>.</li>
+                <li>Enter the <strong>Approval Subject</strong> or payment request name.</li>
+                <li>Set <strong>Request Owner</strong> to <strong>FAMTECH INNOVATIVE EMPLOYEES</strong>.</li>
+                <li>Select <strong>Category: Payment Application</strong>.</li>
+                <li>Choose the <strong>filing date</strong>.</li>
+                <li>Select your name under <strong>Contact</strong>.</li>
+                <li>Enter the <strong>amount requested</strong>.</li>
+                <li>Add your <strong>payment details</strong> in the description.</li>
+                <li>Under <strong>Approver</strong>, add <strong>FAMTECH INNOVATIVE</strong>.</li>
+                <li>Send a message tagging <strong>@FAMTECH INNOVATIVE</strong>, such as “For approval”.</li>
+                <li>Attach your <strong>receipt or supporting document</strong>.</li>
+                <li>Click <strong>Submit</strong>.</li>
+            </ol>
+
+            <p class="reward-claim-note">
+                <strong>Note:</strong> Do not create duplicate requests to correct a filing.
+                To make changes, open your request, click <strong>Cancel</strong>, select
+                <strong>Back to Draft</strong>, update the necessary fields, then
+                <strong>resubmit</strong>.
+            </p>
+        </div>
+    </template>
+
     <template id="intern_rewards" name="Intern Rewards">
         <t t-call="famtech_intern_dashboard.intern_navbar"/>
         <head>
@@ -11,236 +39,581 @@
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
             <link href="/famtech_intern_dashboard/static/src/website/css/global.css" rel="stylesheet"/>
+            <link href="/famtech_intern_dashboard/static/src/website/css/rewards.css" rel="stylesheet"/>
+
+            <style>
+                .reward-confetti-layer {
+                    position: absolute;
+                    inset: 0;
+                    pointer-events: none;
+                    overflow: hidden;
+                    border-radius: inherit;
+                    z-index: 5;
+                }
+
+                .reward-confetti-piece {
+                    position: absolute;
+                    top: -14px;
+                    width: 8px;
+                    height: 14px;
+                    opacity: 0;
+                    animation: rewardConfettiFall 1.8s ease-out forwards;
+                }
+
+                @keyframes rewardConfettiFall {
+                    0% {
+                        transform: translate3d(0, 0, 0) rotate(0deg);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translate3d(var(--confetti-drift), 430px, 0) rotate(var(--confetti-rotate));
+                        opacity: 0;
+                    }
+                }
+            </style>
         </head>
 
-        <div class="w-100 main-bg" style="min-height: 100vh; font-family: 'Poppins', sans-serif;">
-            <div class="container py-5">
-                
-                <div class="row mb-5">
-                    <div class="col-12">
-                        <div class="d-flex align-items-center gap-3 mb-3">
-                            <span class="badge rounded-pill px-3 py-2" style="background-color: var(--color-gold-100); color: var(--color-gold-900);">v1.0.0</span>
-                            <span class="text-muted fw-medium">Internal Documentation</span>
-                        </div>
-                        <h1 class="fw-bolder display-5 mb-3">Brand Design System</h1>
-                        <p class="lead" style="color: var(--color-gray-500); max-width: 600px;">The official component library and style guide for Intern Dashboard.</p>
-                    </div>
-                </div>
+        <div class="intern-rewards-page">
+            <div class="w-100 main-bg" style="min-height: 100vh; font-family: 'Poppins', sans-serif;">
+                <div class="container py-5">
 
-                <div class="row g-4">
-                    <div class="col-xl-8">
-                        
-                        <div class="card mb-4 border-0 shadow-sm" style="background-color: var(--color-white); border: 1px solid rgba(209, 213, 219, 0.4) !important;">
-                            <div class="card-body p-4 p-md-5">
-                                <h3 class="fw-bold mb-1"><i class="bi bi-palette2 me-2" style="color: var(--color-gold-500);"></i>Color Scales</h3>
-                                <p style="color: var(--color-gray-500);">The core 5-step tonal variations for the brand.</p>
-                                <hr class="brand-divider mb-5"/>
-                                
-                                <h6 class="mb-3 fw-bold text-uppercase" style="letter-spacing: 1px; color: var(--color-navy-500);">Navy (Primary)</h6>
-                                <div class="d-flex rounded-3 overflow-hidden border mb-5" style="height: 60px; border-color: var(--color-gray-300) !important;">
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-navy-100); color: var(--color-navy-900);">100</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-navy-300); color: var(--color-navy-900);">300</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-navy-500); color: var(--color-white);">500</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-navy-700); color: var(--color-white);">700</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-navy-900); color: var(--color-white);">900</div>
-                                </div>
-
-                                <h6 class="mb-3 fw-bold text-uppercase" style="letter-spacing: 1px; color: var(--color-gold-500);">Gold (Secondary)</h6>
-                                <div class="d-flex rounded-3 overflow-hidden border mb-5" style="height: 60px; border-color: var(--color-gray-300) !important;">
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gold-100); color: var(--color-gold-900);">100</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gold-300); color: var(--color-gold-900);">300</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gold-500); color: var(--color-white);">500</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gold-700); color: var(--color-white);">700</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gold-900); color: var(--color-white);">900</div>
-                                </div>
-
-                                <h6 class="mb-3 fw-bold text-uppercase" style="letter-spacing: 1px; color: var(--color-gray-900);">Neutrals</h6>
-                                <div class="d-flex rounded-3 overflow-hidden border mb-4" style="height: 60px; border-color: var(--color-gray-300) !important;">
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gray-100); color: var(--color-gray-900);">100</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gray-300); color: var(--color-gray-900);">300</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gray-500); color: var(--color-white);">500</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gray-700); color: var(--color-white);">700</div>
-                                    <div class="flex-fill d-flex align-items-end justify-content-center pb-2 font-monospace fw-semibold small" style="background-color: var(--color-gray-900); color: var(--color-white);">900</div>
-                                </div>
-
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <div class="rounded-3 p-3 border text-center" style="background-color: var(--color-white); border-color: var(--color-gray-300) !important;">
-                                            <span class="fw-bold mb-0" style="color: var(--color-black);">Pure White</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="rounded-3 p-3 text-center" style="background-color: var(--color-black);">
-                                            <span class="fw-bold mb-0" style="color: var(--color-white);">Pure Black</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card mb-4 border-0 shadow-sm" style="border: 1px solid rgba(209, 213, 219, 0.4) !important;">
-                            <div class="card-body p-4 p-md-5">
-                                <h3 class="fw-bold mb-1"><i class="bi bi-type me-2" style="color: var(--color-gold-500);"></i>Typography</h3>
-                                <p style="color: var(--color-gray-500);">Headings automatically inherit Primary Navy.</p>
-                                <hr class="brand-divider mb-4"/>
-
-                                <div class="row align-items-center mb-4 pb-4 border-bottom mx-0">
-                                    <div class="col-md-5 px-0"><h1>Heading 1</h1></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;h1&gt;</code> - Main Page Titles</p></div>
-                                </div>
-                                <div class="row align-items-center mb-4 pb-4 border-bottom mx-0">
-                                    <div class="col-md-5 px-0"><h2>Heading 2</h2></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;h2&gt;</code> - Major Section Headers</p></div>
-                                </div>
-                                <div class="row align-items-center mb-4 pb-4 border-bottom mx-0">
-                                    <div class="col-md-5 px-0"><h3>Heading 3</h3></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;h3&gt;</code> - Sub-sections / Modals</p></div>
-                                </div>
-                                <div class="row align-items-center mb-4 pb-4 border-bottom mx-0">
-                                    <div class="col-md-5 px-0"><h4>Heading 4</h4></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;h4&gt;</code> - Card Titles</p></div>
-                                </div>
-                                <div class="row align-items-center mb-4 pb-4 border-bottom mx-0">
-                                    <div class="col-md-5 px-0"><h5>Heading 5</h5></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;h5&gt;</code> - Small Blocks / Widgets</p></div>
-                                </div>
-                                <div class="row align-items-center mb-4 pb-4 border-bottom mx-0">
-                                    <div class="col-md-5 px-0"><h6>Heading 6</h6></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;h6&gt;</code> - Labels / Meta Data</p></div>
-                                </div>
-                                <div class="row align-items-center mb-4 pb-4 border-bottom mx-0">
-                                    <div class="col-md-5 px-0"><p class="lead fw-medium mb-0" style="color: var(--color-gray-900);">Subheading (Lead)</p></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;p class="lead"&gt;</code> - Introductory text.</p></div>
-                                </div>
-                                <div class="row align-items-center mx-0">
-                                    <div class="col-md-5 px-0"><p class="mb-0" style="color: var(--color-gray-700);">Standard Body Text. This is what long-form paragraphs look like.</p></div>
-                                    <div class="col-md-7 px-0"><p class="mb-0 small" style="color: var(--color-gray-500);"><code>&lt;p&gt;</code> - Default reading text.</p></div>
-                                </div>
-                            </div>
-                        </div>
-
+                    <div>
+                        <h4 class="mb-1 fw-bold" style="text-transform: uppercase;">Rewards</h4>
+                        <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                            Track your achievements, unlock badges, and claim vouchers based on your internship progress and performance.
+                        </p>
                     </div>
 
-                    <div class="col-xl-4">
-                        
-                        <div class="card mb-4 border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <h4 class="fw-bold mb-1"><i class="bi bi-hand-index-thumb me-2" style="color: var(--color-gold-500);"></i>Buttons</h4>
-                                <hr class="brand-divider mb-4"/>
+                    <hr class="brand-divider mb-4"/>
 
-                                <div class="mb-5">
-                                    <button class="btn btn-primary px-4 py-2 w-100 mb-3">Primary Action</button>
-                                    <p class="mb-0 small fw-bold" style="color: var(--color-navy-500);">Navy Button</p>
-                                    <p class="mb-0 small" style="color: var(--color-gray-500);">Use <code>.btn-primary</code> for the main action (Submit, Save).</p>
+                    <!-- TOP SECTION -->
+                    <div class="row g-4 rewards-top-row align-items-stretch">
+
+                        <!-- WEEKLY GAMES WINNER -->
+                        <div class="col-xl-4 col-lg-6 d-flex">
+                            <div class="card reward-highlight-card reward-highlight-card--winner reward-equal-card w-100">
+                                <div class="dashboard-header">
+                                    <span class="dashboard-title">
+                                        <span class="dashboard-icon">
+                                            <i class="bi bi-trophy-fill"></i>
+                                        </span>
+                                        Weekly Games Winner
+                                    </span>
                                 </div>
 
-                                <div class="mb-5">
-                                    <button class="btn btn-secondary px-4 py-2 w-100 mb-3">Secondary Action</button>
-                                    <p class="mb-0 small fw-bold" style="color: var(--color-gold-700);">Gold Button</p>
-                                    <p class="mb-0 small" style="color: var(--color-gray-500);">Use <code>.btn-secondary</code> for alternative actions.</p>
-                                </div>
-
-                                <div>
-                                    <h6 class="fw-bold mb-3" style="color: var(--color-navy-500);">Size Variations</h6>
-                                    <div class="d-flex flex-column gap-3 align-items-start">
-                                        <button class="btn btn-primary btn-lg px-4 shadow-sm"><i class="bi bi-rocket-takeoff me-2"></i>Large Button</button>
-                                        <button class="btn btn-primary px-4 shadow-sm">Default Size</button>
-                                        <button class="btn btn-primary btn-sm px-3 shadow-sm">Small</button>
+                                <div class="reward-highlight-card__body reward-highlight-card__body--winner">
+                                    <div class="reward-winner-pill">
+                                        <i class="bi bi-calendar-week"></i>
+                                        <span t-esc="current_week_label"/>
                                     </div>
-                                    <p class="mt-3 mb-0 small" style="color: var(--color-gray-500);">Add <code>.btn-lg</code> or <code>.btn-sm</code> to adjust sizes while retaining brand styling.</p>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="card mb-4 border-0 shadow-sm" style="border: 1px solid rgba(209, 213, 219, 0.4) !important;">
-                            <div class="card-body p-4">
-                                <h4 class="fw-bold mb-1"><i class="bi bi-stars me-2" style="color: var(--color-gold-500);"></i>Icons</h4>
-                                <p class="small" style="color: var(--color-gray-500);">Use Bootstrap Icons (Outline).</p>
-                                <hr class="brand-divider mb-4"/>
-                                
-                                <div class="d-flex gap-3 flex-wrap justify-content-between mb-4" style="font-size: 1.5rem; color: var(--color-navy-500);">
-                                    <div class="text-center p-3 rounded-3 border" style="background-color: var(--color-white); border-color: var(--color-gray-300) !important;"><i class="bi bi-house"></i></div>
-                                    <div class="text-center p-3 rounded-3 border" style="background-color: var(--color-white); border-color: var(--color-gray-300) !important;"><i class="bi bi-gear"></i></div>
-                                    <div class="text-center p-3 rounded-3 border" style="background-color: var(--color-white); border-color: var(--color-gray-300) !important;"><i class="bi bi-envelope"></i></div>
-                                    <div class="text-center p-3 rounded-3 border" style="background-color: var(--color-white); border-color: var(--color-gray-300) !important;"><i class="bi bi-shield-check"></i></div>
-                                </div>
-
-                                <a href="https://icons.getbootstrap.com/" target="_blank" class="btn btn-secondary w-100"><i class="bi bi-box-arrow-up-right me-2"></i>Browse Library</a>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <h4 class="fw-bold mb-4" style="color: var(--color-navy-500);"><i class="bi bi-layout-text-window-reverse me-2"></i>Application Examples</h4>
-                    </div>
-                </div>
-                
-                <div class="row g-4">
-                    <div class="col-lg-6">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body p-4 p-md-5">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h3 class="fw-bold mb-0">Welcome back, Username!</h3>
-                                    <i class="bi bi-buildings fs-1 opacity-25" style="color: var(--color-navy-500);"></i>
-                                </div>
-                                <p class="lead" style="color: var(--color-gray-700);">This is a sample layout utilizing the custom <code>.card</code> class.</p>
-                                <hr class="brand-divider mb-4"/>
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-primary px-4"><i class="bi bi-calendar-event me-2"></i>View Schedule</button>
-                                    <button class="btn btn-secondary px-4"><i class="bi bi-download me-2"></i>Export</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-6">
-                        <div class="row g-4">
-                            <div class="col-sm-6">
-                                <div class="card border-0 shadow-sm" style="background-color: var(--color-navy-500);">
-                                    <div class="card-body p-4">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <h6 class="fw-bold text-white mb-0">Active Projects</h6>
-                                            <i class="bi bi-kanban fs-4" style="color: var(--color-gold-500);"></i>
-                                        </div>
-                                        <h1 class="display-4 fw-bolder text-white mb-0">12</h1>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="card border-0 shadow-sm" style="border: 1px solid rgba(209, 213, 219, 0.4) !important;">
-                                    <div class="card-body p-4">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <h6 class="fw-bold mb-0" style="color: var(--color-navy-500);">Pending</h6>
-                                            <i class="bi bi-clock-history fs-4" style="color: var(--color-gray-500);"></i>
-                                        </div>
-                                        <h1 class="display-4 fw-bolder mb-0" style="color: var(--color-gold-500);">4</h1>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="card border-0 shadow-sm" style="border: 1px solid rgba(209, 213, 219, 0.4) !important;">
-                                    <div class="card-body p-4 d-flex align-items-center justify-content-between">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <div class="rounded-circle p-3 d-flex align-items-center justify-content-center" style="background-color: var(--color-navy-100); color: var(--color-navy-700);">
-                                                <i class="bi bi-file-earmark-check fs-4"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="fw-bold mb-0" style="color: var(--color-gray-900);">System Report generated</h6>
-                                                <p class="mb-0 small" style="color: var(--color-gray-500);">10 minutes ago</p>
+                                    <div class="reward-winner-profile">
+                                        <div class="reward-winner-photo-wrap">
+                                            <div class="reward-winner-photo-frame">
+                                                <img t-att-src="weekly_winner_image_url"
+                                                     alt="Weekly Winner"
+                                                     class="reward-winner-photo"/>
                                             </div>
                                         </div>
-                                        <button class="btn btn-secondary btn-sm px-3">View</button>
+
+                                        <div class="reward-winner-content">
+                                            <div class="reward-winner-label">
+                                                <i class="bi bi-trophy-fill"></i>
+                                                Weekly Winner
+                                            </div>
+                                            <div class="reward-winner-name" t-esc="weekly_winner_name"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="reward-winner-note">
+                                        <t t-if="weekly_winner_name != 'No winner selected this week'">
+                                            This section is visible to all interns and updates weekly.
+                                        </t>
+                                        <t t-else="">
+                                            No weekly winner has been selected for the current week yet.
+                                        </t>
+                                    </div>
+
+                                    <div class="mt-3 text-center">
+                                        <button type="button"
+                                                class="btn btn-primary reward-claim-btn"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#weeklyWinnerHistoryModal">
+                                            <i class="bi bi-clock-history me-2"></i>View Winner History
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TOP INTERNS THIS WEEK -->
+                        <div class="col-xl-4 col-lg-6 d-flex">
+                            <div class="card reward-highlight-card reward-equal-card w-100">
+                                <div class="dashboard-header">
+                                    <span class="dashboard-title">
+                                        <span class="dashboard-icon">
+                                            <i class="bi bi-bar-chart-line-fill"></i>
+                                        </span>
+                                        Top Interns This Week
+                                    </span>
+                                </div>
+
+                                <div class="reward-highlight-card__body">
+                                    <div class="reward-top-list">
+                                        <t t-if="top_interns">
+                                            <t t-foreach="top_interns" t-as="top_emp">
+                                                <div class="reward-top-item d-flex justify-content-between align-items-center">
+                                                    <div class="d-flex align-items-center gap-3">
+                                                        <div class="reward-top-avatar">
+                                                            <img t-att-src="'/web/image/hr.employee/%s/avatar_1920' % top_emp['id']"
+                                                                 t-att-alt="top_emp['name']"
+                                                                 class="reward-top-avatar-img"/>
+                                                        </div>
+                                                        <div class="reward-top-name">
+                                                            <t t-esc="top_emp['name']"/>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="reward-top-rank-text">
+                                                        #<t t-esc="top_emp['rank']"/>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="reward-highlight-note reward-highlight-note--left">
+                                                No intern rankings available for this week yet.
+                                            </div>
+                                        </t>
+                                    </div>
+
+                                    <div class="reward-highlight-note reward-highlight-note--left">
+                                        Based on weekly performance metrics of interns in the employee app.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PROGRESS SUMMARY -->
+                        <div class="col-xl-4 col-lg-12 d-flex">
+                            <div class="card reward-side-card reward-equal-card w-100">
+                                <div class="dashboard-header">
+                                    <span class="dashboard-title">
+                                        <span class="dashboard-icon">
+                                            <i class="bi bi-gift"></i>
+                                        </span>
+                                        Progress Summary
+                                    </span>
+                                </div>
+
+                                <div class="reward-side-card__body">
+                                    <div class="reward-side-progress">
+                                        <div class="reward-side-progress__label">Level Progress</div>
+
+                                        <div class="reward-side-progress__top">
+                                            <div class="reward-side-progress__score">
+                                                <t t-esc="'%.2f' % rendered_hours"/> / <t t-esc="'%.2f' % contracted_hours"/> hrs
+                                            </div>
+                                            <div class="reward-side-progress__percent">
+                                                <t t-esc="progress_percent"/>%
+                                            </div>
+                                        </div>
+
+                                        <div class="reward-side-progress__track">
+                                            <div class="reward-side-progress__fill"
+                                                 t-attf-style="width: #{progress_percent}%"></div>
+                                        </div>
+
+                                        <div class="reward-side-progress__meta">
+                                            <span>Rendered: <t t-esc="'%.2f' % rendered_hours"/> hrs</span>
+                                            <span>Contract: <t t-esc="'%.2f' % contracted_hours"/> hrs</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="reward-side-details">
+                                        <div class="reward-side-detail-row">
+                                            <div class="reward-side-detail-label">RANK #</div>
+                                            <div class="reward-side-detail-value">
+                                                <t t-esc="rank"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="reward-side-detail-row">
+                                            <div class="reward-side-detail-label">BADGES</div>
+                                            <div class="reward-side-detail-value">
+                                                <t t-esc="badges_count"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="reward-side-detail-row reward-side-detail-row--last">
+                                            <div class="reward-side-detail-label">VOUCHERS AVAILABLE</div>
+                                            <div class="reward-side-detail-value reward-side-detail-value--highlight" id="voucher-available-count">
+                                                <t t-esc="available_vouchers_count"/>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
+                    <!-- BADGES + VOUCHERS -->
+                    <div class="row g-4 mt-1 rewards-bottom-row align-items-stretch">
+
+                        <!-- BADGES -->
+                        <div class="col-12 d-flex">
+                            <div class="card reward-section-card w-100">
+                                <div class="dashboard-header">
+                                    <span class="dashboard-title">
+                                        <span class="dashboard-icon">
+                                            <i class="bi bi-award"></i>
+                                        </span>
+                                        Badges
+                                    </span>
+                                </div>
+
+                                <div class="reward-section-body">
+                                    <div class="row g-3 badges-row-horizontal">
+                                        <t t-foreach="badges" t-as="badge">
+                                            <div class="col-12 col-sm-6 col-lg-3">
+                                                <div t-attf-class="card reward-item-card reward-item-card--badge #{'reward-item-card--unlocked reward-item-card--active' if badge['unlocked'] else 'reward-item-card--locked'}">
+                                                    <t t-if="badge['unlocked']">
+                                                        <div class="reward-status-badge reward-status-badge--unlocked">Unlocked</div>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <div class="reward-lock-badge">
+                                                            <i class="bi bi-lock-fill"></i>
+                                                        </div>
+                                                    </t>
+
+                                                    <div class="reward-item-icon reward-item-icon--plain">
+                                                        <i t-attf-class="bi bi-#{badge['icon']}"></i>
+                                                    </div>
+
+                                                    <div class="reward-item-title" t-esc="badge['name']"/>
+                                                    <div class="reward-item-desc" t-esc="badge['description']"/>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- VOUCHERS -->
+                        <div class="col-12 d-flex">
+                            <div class="card reward-section-card w-100">
+                                <div class="dashboard-header">
+                                    <span class="dashboard-title">
+                                        <span class="dashboard-icon">
+                                            <i class="bi bi-ticket-perforated"></i>
+                                        </span>
+                                        Vouchers
+                                    </span>
+                                </div>
+
+                                <div class="reward-section-body">
+                                    <!-- AVAILABLE VOUCHERS -->
+                                    <div id="voucher-empty-state"
+                                         class="reward-empty-state"
+                                         t-attf-style="#{'display:flex;' if not available_vouchers_count else 'display:none;'}">
+                                        Sorry, no vouchers available.
+                                    </div>
+
+                                    <div class="row g-3 vouchers-grid"
+                                         id="voucher-grid"
+                                         t-attf-style="#{'display:none;' if not available_vouchers_count else ''}">
+                                        <t t-foreach="available_vouchers" t-as="voucher">
+                                            <div class="col-12 col-sm-6 col-lg-3">
+                                                <div class="card reward-item-card reward-item-card--voucher h-100 reward-item-card--unlocked reward-item-card--claimable voucher-card"
+                                                     t-att-data-voucher-key="voucher['key']"
+                                                     data-voucher-state="available">
+
+                                                    <div class="reward-status-badge reward-status-badge--available voucher-status">Available</div>
+
+                                                    <div class="reward-item-icon reward-item-icon--plain">
+                                                        <i t-attf-class="bi bi-#{voucher['icon']}"></i>
+                                                    </div>
+
+                                                    <div class="reward-item-title" t-esc="voucher['name']"/>
+
+                                                    <t t-if="voucher['modal_target']">
+                                                        <button type="button"
+                                                                class="btn btn-primary reward-claim-btn mt-2 voucher-open-btn"
+                                                                data-bs-toggle="modal"
+                                                                t-att-data-bs-target="voucher['modal_target']"
+                                                                t-att-data-voucher-name="voucher['name']">
+                                                            <i class="bi bi-list-check me-2"></i>Steps to Claim
+                                                        </button>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+
+                                    <div class="mt-3 text-center">
+                                        <button type="button"
+                                                class="btn btn-primary reward-claim-btn"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#voucherHistoryModal">
+                                            <i class="bi bi-clock-history me-2"></i>View Voucher History
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
+
+            <!-- WEEKLY GAMES WINNER MODAL -->
+            <div class="modal fade reward-modal-wrapper" id="weeklyGamesVoucherModal" tabindex="-1" aria-labelledby="weeklyGamesVoucherModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
+                    <div class="modal-content reward-claim-modal position-relative">
+                        <div class="reward-confetti-layer" aria-hidden="true"></div>
+                        <div class="reward-claim-header">
+                            <h5 class="reward-claim-title" id="weeklyGamesVoucherModalLabel">STEPS TO CLAIM</h5>
+                            <button type="button" class="reward-claim-close" data-bs-dismiss="modal" aria-label="Close">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+
+                        <div class="reward-claim-body">
+                            <div class="reward-claim-icon">
+                                <i class="bi bi-trophy-fill"></i>
+                            </div>
+
+                            <div class="reward-claim-heading">Weekly Game Prize</div>
+                            <p class="reward-claim-subtext">Follow these steps to submit your claim request.</p>
+
+                            <t t-call="famtech_intern_dashboard.claim_steps"/>
+
+                            <button type="button"
+                                    class="btn btn-primary reward-claim-action-btn"
+                                    data-bs-dismiss="modal">
+                                <i class="bi bi-check2-circle me-2"></i>Got it
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DYNAMIC VOUCHER MODAL -->
+            <div class="modal fade reward-modal-wrapper" id="dynamicVoucherModal" tabindex="-1" aria-labelledby="dynamicVoucherModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
+                    <div class="modal-content reward-claim-modal position-relative">
+                        <div class="reward-confetti-layer" aria-hidden="true"></div>
+                        <div class="reward-claim-header">
+                            <h5 class="reward-claim-title" id="dynamicVoucherModalLabel">STEPS TO CLAIM</h5>
+                            <button type="button" class="reward-claim-close" data-bs-dismiss="modal" aria-label="Close">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+
+                        <div class="reward-claim-body">
+                            <div class="reward-claim-icon">
+                                <i class="bi bi-gift-fill"></i>
+                            </div>
+
+                            <div class="reward-claim-heading" id="dynamicVoucherTitle">Voucher Claim Request</div>
+                            <p class="reward-claim-subtext">Follow these steps to submit your claim request.</p>
+
+                            <t t-call="famtech_intern_dashboard.claim_steps"/>
+
+                            <button type="button"
+                                    class="btn btn-primary reward-claim-action-btn"
+                                    data-bs-dismiss="modal">
+                                <i class="bi bi-check2-circle me-2"></i>Got it
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WEEKLY WINNER HISTORY MODAL -->
+            <div class="modal fade" id="weeklyWinnerHistoryModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
+                    <div class="modal-content reward-claim-modal">
+                        <div class="reward-claim-header">
+                            <h5 class="reward-claim-title">WINNER HISTORY</h5>
+                            <button type="button" class="reward-claim-close" data-bs-dismiss="modal">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+
+                        <div class="reward-claim-body">
+                            <div class="reward-claim-icon reward-claim-icon--gold">
+                                <i class="bi bi-trophy-fill"></i>
+                            </div>
+
+                            <div class="reward-claim-heading">Weekly Winners</div>
+                            <div class="reward-claim-subtext">Here are the most recent Weekly Games Winners.</div>
+
+                            <div class="reward-claim-steps">
+                                <t t-if="winner_history">
+                                    <ol>
+                                        <t t-foreach="winner_history" t-as="winner">
+                                            <li>
+                                                <strong t-esc="winner['name']"/> –
+                                                <span t-esc="winner['week_start']"/>
+                                            </li>
+                                        </t>
+                                    </ol>
+                                </t>
+                                <t t-else="">
+                                    <div class="text-center text-muted" style="padding: 0.5rem 0;">
+                                        No winner history available yet.
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VOUCHER HISTORY MODAL -->
+            <div class="modal fade" id="voucherHistoryModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
+                    <div class="modal-content reward-claim-modal">
+
+                        <div class="reward-claim-header">
+                            <h5 class="reward-claim-title">VOUCHER HISTORY</h5>
+                            <button type="button" class="reward-claim-close" data-bs-dismiss="modal">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+
+                        <div class="reward-claim-body">
+                            <div class="reward-claim-icon">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+
+                            <div class="reward-claim-heading">
+                                Claimed Vouchers
+                            </div>
+
+                            <div class="reward-claim-subtext">
+                                View all vouchers assigned and claimed.
+                            </div>
+
+                            <div class="reward-claim-steps">
+
+                                <t t-if="claimed_vouchers">
+                                    <ol>
+                                        <t t-foreach="claimed_vouchers" t-as="voucher">
+                                            <li>
+                                                <strong t-esc="voucher['name']"/>
+
+                                                <t t-if="voucher['key'] == 'weekly_game_prize'">
+                                                    <br/>
+                                                    <span>
+                                                        Winning Week:
+                                                        <strong t-esc="current_week_label"/>
+                                                    </span>
+                                                </t>
+
+                                                <t t-else="">
+                                                    <br/>
+                                                    <span>
+                                                        Claimed:
+                                                        <t t-if="voucher.get('claimed_at')">
+                                                            <strong t-esc="voucher['claimed_at'].strftime('%B %d, %Y %I:%M %p')"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            Not yet claimed
+                                                        </t>
+                                                    </span>
+                                                </t>
+                                            </li>
+                                        </t>
+                                    </ol>
+                                </t>
+
+                                <t t-else="">
+                                    <div class="text-center text-muted" style="padding: 0.5rem 0;">
+                                        No voucher history available yet.
+                                    </div>
+                                </t>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+            <script><![CDATA[
+                document.addEventListener('DOMContentLoaded', function () {
+                    const dynamicVoucherTitle = document.getElementById('dynamicVoucherTitle');
+                    const confettiColors = ['#FFD285', '#bf9e3c', '#0e4174', '#709ECB', '#FFF2D1'];
+
+                    function launchRewardConfetti(modalElement) {
+                        const confettiLayer = modalElement.querySelector('.reward-confetti-layer');
+                        if (!confettiLayer) return;
+
+                        confettiLayer.innerHTML = '';
+
+                        function createBurst() {
+                            for (let i = 0; i < 40; i++) {
+                                const piece = document.createElement('span');
+                                const color = confettiColors[i % confettiColors.length];
+
+                                const left = Math.random() * 100;
+                                const delay = Math.random() * 0.3;
+                                const drift = (Math.random() * 300) - 150;
+                                const rotate = (Math.random() * 720) - 360;
+                                const size = Math.random() * 8 + 6;
+
+                                piece.className = 'reward-confetti-piece';
+                                piece.style.left = left + '%';
+                                piece.style.backgroundColor = color;
+                                piece.style.animationDelay = delay + 's';
+                                piece.style.setProperty('--confetti-drift', drift + 'px');
+                                piece.style.setProperty('--confetti-rotate', rotate + 'deg');
+                                piece.style.width = size + 'px';
+                                piece.style.height = size + 'px';
+
+                                if (Math.random() > 0.6) {
+                                    piece.style.borderRadius = '50%';
+                                }
+
+                                confettiLayer.appendChild(piece);
+                            }
+                        }
+
+                        // multiple bursts
+                        createBurst();
+                        setTimeout(createBurst, 300);
+                        setTimeout(createBurst, 600);
+
+                        setTimeout(function () {
+                            confettiLayer.innerHTML = '';
+                        }, 3500);
+                    }
+
+                    document.querySelectorAll('.voucher-open-btn').forEach(function (button) {
+                        button.addEventListener('click', function () {
+                            const voucherName = button.getAttribute('data-voucher-name');
+                            if (dynamicVoucherTitle && voucherName) {
+                                dynamicVoucherTitle.textContent = voucherName;
+                            }
+                        });
+                    });
+
+                    ['weeklyGamesVoucherModal', 'dynamicVoucherModal'].forEach(function (modalId) {
+                        const modalElement = document.getElementById(modalId);
+                        if (modalElement) {
+                            modalElement.addEventListener('shown.bs.modal', function () {
+                                launchRewardConfetti(modalElement);
+                            });
+                        }
+                    });
+                });
+            ]]></script>
         </div>
     </template>
 </odoo>
