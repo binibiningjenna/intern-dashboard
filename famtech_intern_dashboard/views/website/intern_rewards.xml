@@ -1,29 +1,55 @@
 <odoo>
-    <!-- REUSABLE STEPS TO CLAIM BLOCK -->
+    <!-- STEPS TO CLAIM BLOCK -->
     <template id="claim_steps" name="Reward Claim Steps">
-        <div class="reward-claim-steps">
-            <ol>
-                <li>Open the <strong>Approvals</strong> app.</li>
-                <li>Click <strong>New Request</strong>.</li>
-                <li>Enter the <strong>Approval Subject</strong> or payment request name.</li>
-                <li>Set <strong>Request Owner</strong> to <strong>FAMTECH INNOVATIVE EMPLOYEES</strong>.</li>
-                <li>Select <strong>Category: Payment Application</strong>.</li>
-                <li>Choose the <strong>filing date</strong>.</li>
-                <li>Select your name under <strong>Contact</strong>.</li>
-                <li>Enter the <strong>amount requested</strong>.</li>
-                <li>Add your <strong>payment details</strong> in the description.</li>
-                <li>Under <strong>Approver</strong>, add <strong>FAMTECH INNOVATIVE</strong>.</li>
-                <li>Send a message tagging <strong>@FAMTECH INNOVATIVE</strong>, such as “For approval”.</li>
-                <li>Attach your <strong>receipt or supporting document</strong>.</li>
-                <li>Click <strong>Submit</strong>.</li>
-            </ol>
+        <t t-set="claim_steps"
+        t-value="[
+                ['Approvals', 'Open the app and click New Request.'],
+                ['Approval Subject', 'Enter the payment request name.'],
+                ['Request Owner', 'Set to FAMTECH INNOVATIVE EMPLOYEES.'],
+                ['Category', 'Select Payment Application and choose the filing date.'],
+                ['Contact', 'Select your name and enter the amount requested.'],
+                ['Payment Details', 'Add payment details in the description section.'],
+                ['Approver', 'Add FAMTECH INNOVATIVE and tag @FAMTECH INNOVATIVE for approval.'],
+                ['Submit', 'Attach your receipt or supporting document then click Submit.']
+        ]"/>
 
-            <p class="reward-claim-note">
-                <strong>Note:</strong> Do not create duplicate requests to correct a filing.
-                To make changes, open your request, click <strong>Cancel</strong>, select
-                <strong>Back to Draft</strong>, update the necessary fields, then
-                <strong>resubmit</strong>.
-            </p>
+        <div class="reward-claim-steps">
+            <div class="d-flex flex-column gap-2">
+                <t t-foreach="claim_steps" t-as="step" t-key="step_index">
+                    <div class="d-flex gap-2 gap-sm-3 align-items-start p-2 p-sm-3 rounded-3"
+                        style="background: var(--color-gray-100);">
+                        <div class="fw-bold rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                            style="width:28px; height:28px; background: var(--color-navy-500); color:white; font-size:0.75rem;">
+                            <t t-esc="step_index + 1"/>
+                        </div>
+                        <div class="small text-secondary lh-base" style="min-width:0;">
+                            <strong style="color: var(--color-navy-700);">
+                                <t t-esc="step[0]"/>
+                            </strong>
+                            —
+                            <t t-esc="step[1]"/>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <div class="mt-4 p-3 rounded-4 d-flex flex-column flex-sm-row gap-3 align-items-start" style="background:#fff8e1; border:1px solid rgba(191,158,60,0.25);">
+                <div class="flex-shrink-0 mx-auto mx-sm-0" style="color: var(--color-gold-700); font-size:1.2rem;">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                </div>
+
+                <div class="text-center text-sm-start">
+                    <div class="fw-semibold mb-1" style="color: var(--color-gold-700);">
+                        Important Reminder
+                    </div>
+                    <div class="small" style="color:#7a6010; line-height:1.55;">
+                        Do not create duplicate requests to correct a filing.
+                        To make changes, open your request, click <strong>Cancel</strong>,
+                        select <strong>Back to Draft</strong>, update the necessary fields,
+                        then <strong>resubmit</strong>.
+                    </div>
+                </div>
+            </div>
         </div>
     </template>
 
@@ -40,701 +66,644 @@
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
             <link href="/famtech_intern_dashboard/static/src/website/css/global.css" rel="stylesheet"/>
             <link href="/famtech_intern_dashboard/static/src/website/css/rewards.css" rel="stylesheet"/>
-
-            <style>
-                .reward-confetti-layer {
-                    position: absolute;
-                    inset: 0;
-                    pointer-events: none;
-                    overflow: hidden;
-                    border-radius: inherit;
-                    z-index: 5;
-                }
-
-                .reward-confetti-piece {
-                    position: absolute;
-                    top: -14px;
-                    width: 8px;
-                    height: 14px;
-                    opacity: 0;
-                    animation: rewardConfettiFall 1.8s ease-out forwards;
-                }
-
-                @keyframes rewardConfettiFall {
-                    0% {
-                        transform: translate3d(0, 0, 0) rotate(0deg);
-                        opacity: 1;
-                    }
-                    100% {
-                        transform: translate3d(var(--confetti-drift), 430px, 0) rotate(var(--confetti-rotate));
-                        opacity: 0;
-                    }
-                }
-            </style>
+            <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet"/>
         </head>
 
-            <div class="intern-rewards-page"
-                 t-att-data-employee-id="employee_id"
-                 t-att-data-intern-first-name="intern_first_name">
-            <div class="w-100 main-bg" style="min-height: 100vh; font-family: 'Poppins', sans-serif;">
-                <div class="container py-5">
+        <div class="w-100 intern-dashboard-page main-bg intern-rewards-page"  t-att-data-employee-id="employee_id" t-att-data-intern-first-name="intern_first_name" style="min-height: 100vh; font-family: 'Poppins', sans-serif;">
+            <div class="container py-5">
+                <div class="mb-2" data-aos="fade-down" data-aos-duration="700">
+                    <h4 class="mb-1 fw-bold" style="text-transform: uppercase;">
+                       Rewards
+                    </h4>
+                    <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                        Track your achievements, unlock badges, and claim vouchers based on your internship progress and performance.
+                    </p>
+                </div>
+                <hr class="brand-divider mb-4" data-aos="fade-in" data-aos-duration="1000" data-aos-delay="200"/>
 
-                    <div>
-                        <h4 class="mb-1 fw-bold" style="text-transform: uppercase;">Rewards</h4>
-                        <p class="text-muted mb-0" style="font-size: 0.9rem;">
-                            Track your achievements, unlock badges, and claim vouchers based on your internship progress and performance.
-                        </p>
-                    </div>
-
-                    <hr class="brand-divider mb-4"/>
-
-                    <!-- TOP SECTION -->
-                    <div class="row g-4 rewards-top-row align-items-stretch">
-
-                        <!-- WEEKLY GAMES WINNER -->
-                        <div class="col-xl-4 col-lg-6 d-flex">
-                            <div class="card reward-highlight-card reward-highlight-card--winner reward-equal-card w-100">
-                                <div class="dashboard-header">
-                                    <span class="dashboard-title">
-                                        <span class="dashboard-icon">
-                                            <i class="bi bi-trophy-fill"></i>
-                                        </span>
-                                        Weekly Games Winner
+                <div class="row g-4 align-items-stretch">
+                    <div class="col-xl-4 col-lg-6 d-flex">
+                        <div class="card h-100 w-100 border-0 shadow-sm dashboard-card d-flex flex-column" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="150">
+                            <div class="dashboard-header d-flex align-items-center justify-content-between p-3">
+                                <div class="dashboard-title d-flex align-items-center">
+                                    <span class="dashboard-icon"><i class="bi bi-trophy"></i></span>
+                                    <span class="ms-2">Weekly Games Winner</span>
+                                </div>
+                                <button type="button" class="btn btn-sm d-inline-flex align-items-center gap-1 fw-semibold rounded-2"
+                                        style="font-size:0.75rem; color:#0e4174; background:rgba(14,65,116,0.06); border:1px solid rgba(14,65,116,0.14); padding:0.25rem 0.7rem; white-space:nowrap;"
+                                        data-bs-toggle="modal" data-bs-target="#weeklyWinnerHistoryModal">
+                                    <i class="bi bi-clock-history" style="font-size:0.7rem;"></i>History
+                                </button>
+                            </div>
+                            
+                            <div class="card-body flex-grow-1 d-flex flex-column justify-content-center px-4 py-5">
+                                <div class="d-flex justify-content-center mb-4"> <span class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3 fw-medium"
+                                        style="background: var(--color-navy-100); color: var(--color-navy-500); font-size: 0.75rem; min-width: 220px; justify-content: center;">
+                                        <i class="bi bi-calendar3"></i>
+                                        <t t-esc="current_week_label"/>
                                     </span>
                                 </div>
-
-                                <div class="reward-highlight-card__body reward-highlight-card__body--winner">
-                                    <div class="reward-winner-pill">
-                                        <i class="bi bi-calendar-week"></i>
-                                        <span t-esc="current_week_label"/>
-                                    </div>
-
-                                    <div class="reward-winner-profile">
-                                        <div class="reward-winner-photo-wrap">
-                                            <div class="reward-winner-photo-frame">
-                                                <img t-att-src="weekly_winner_image_url"
-                                                     alt="Weekly Winner"
-                                                     class="reward-winner-photo"/>
-                                            </div>
-                                        </div>
-
-                                        <div class="reward-winner-content">
-                                            <div class="reward-winner-label">
-                                                <i class="bi bi-trophy-fill"></i>
-                                                Weekly Winner
-                                            </div>
-                                            <div class="reward-winner-name" t-esc="weekly_winner_name"/>
+                                <div class="d-flex flex-column align-items-center text-center">
+                                    <div class="position-relative d-flex justify-content-center align-items-center mb-4"> <div class="shadow-sm overflow-hidden"
+                                            style="width:140px; height:140px; border-radius:50%; border:4px solid var(--color-navy-500); background:#fff;">
+                                            <img t-att-src="weekly_winner_image_url" alt="Weekly Winner" class="w-100 h-100" style="object-fit: cover; display: block;"/>
                                         </div>
                                     </div>
-
-                                    <div class="reward-winner-note">
-                                        <t t-if="weekly_winner_name != 'No winner selected this week'">
-                                            This section is visible to all interns and updates weekly.
-                                        </t>
-                                        <t t-else="">
-                                            No weekly winner has been selected for the current week yet.
-                                        </t>
-                                    </div>
-
-                                    <div class="mt-3 text-center">
-                                        <button type="button"
-                                                class="btn btn-primary reward-claim-btn"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#weeklyWinnerHistoryModal">
-                                            <i class="bi bi-clock-history me-2"></i>View Winner History
-                                        </button>
+                                    <div class="d-flex flex-column align-items-center">
+                                        <span class="text-uppercase fw-bold mb-1" style="color: var(--color-navy-500); font-size: 0.7rem; letter-spacing: 3px; opacity: 0.8;">
+                                            Weekly MVP
+                                        </span>
+                                        <h2 class="fw-bolder mb-0" style="color: var(--color-navy-700); font-size: 1.6rem; letter-spacing: -0.5px;">
+                                            <t t-esc="weekly_winner_name"/>
+                                        </h2>
+                                        <div class="mt-3" style="width: 50px; height: 3px; background: var(--color-navy-500); border-radius: 2px; opacity: 0.3;"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- TOP INTERNS THIS WEEK -->
-                        <div class="col-xl-4 col-lg-6 d-flex">
-                            <div class="card reward-highlight-card reward-equal-card w-100">
-                                <div class="dashboard-header">
-                                    <span class="dashboard-title">
-                                        <span class="dashboard-icon">
-                                            <i class="bi bi-bar-chart-line-fill"></i>
-                                        </span>
-                                        Top Interns This Week
-                                    </span>
+                    <div class="col-xl-4 col-lg-6 d-flex">
+                        <div class="card h-100 w-100 border-0 shadow-sm dashboard-card d-flex flex-column" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="150">
+                            <div class="dashboard-header p-3">
+                                <div class="dashboard-title">
+                                    <span class="dashboard-icon"><i class="bi bi-bar-chart-line"></i></span>
+                                    <span>Top Interns This Week</span>
                                 </div>
-
-                                <div class="reward-highlight-card__body">
-                                    <div class="reward-top-list">
-                                        <t t-if="top_interns">
-                                            <t t-foreach="top_interns" t-as="top_emp">
-                                                <div class="reward-top-item d-flex justify-content-between align-items-center">
-                                                    <div class="d-flex align-items-center gap-3">
-                                                        <div class="reward-top-avatar">
-                                                            <img t-att-src="'/web/image/hr.employee/%s/avatar_1920' % top_emp['id']"
-                                                                 t-att-alt="top_emp['name']"
-                                                                 class="reward-top-avatar-img"/>
-                                                        </div>
-                                                        <div class="reward-top-name">
-                                                            <t t-esc="top_emp['name']"/>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="reward-top-rank-text">
-                                                        #<t t-esc="top_emp['rank']"/>
-                                                    </div>
-                                                </div>
+                            </div>
+                            <div class="card-body flex-grow-1 d-flex flex-column p-3 gap-2">
+                                <t t-if="top_interns">
+                                    <t t-foreach="top_interns" t-as="top_emp">
+                                        <div class="rank-item d-flex align-items-center gap-3 px-3 py-2 rounded-4 border flex-grow-1"
+                                            style="background: linear-gradient(180deg,#fff 0%,#f7fbff 100%);">
+                                            <span class="rank-number fw-bold"><t t-esc="top_emp['rank']"/></span>
+                                            <div class="overflow-hidden rounded-circle d-flex align-items-center justify-content-center"
+                                                style="width:40px; height:40px; background:#dce8f5; flex-shrink:0;">
+                                                <img t-att-src="'/web/image/hr.employee/%s/avatar_1920' % top_emp['id']" class="w-100 h-100" style="object-fit: cover;"/>
+                                            </div>
+                                            <span class="fw-semibold flex-grow-1 text-truncate" style="font-size:0.9rem; color:#222;">
+                                                <t t-esc="top_emp['name']"/>
+                                            </span>
+                                            <t t-if="top_emp['rank'] == 1">
+                                                <i class="bi bi-trophy-fill" style="color:#bf9e3c; font-size:0.85rem;"></i>
                                             </t>
-                                        </t>
-                                        <t t-else="">
-                                            <div class="reward-highlight-note reward-highlight-note--left">
-                                                No intern rankings available for this week yet.
-                                            </div>
-                                        </t>
+                                        </div>
+                                    </t>
+                                </t>
+                                <t t-else="">
+                                    <div class="h-100 d-flex align-items-center justify-content-center flex-grow-1">
+                                        <p class="text-muted small mb-0">No intern rankings available.</p>
                                     </div>
-
-                                    <div class="reward-highlight-note reward-highlight-note--left">
-                                        Based on weekly performance metrics of interns in the employee app.
-                                    </div>
-                                </div>
+                                </t>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- PROGRESS SUMMARY -->
-                        <div class="col-xl-4 col-lg-12 d-flex">
-                            <div class="card reward-side-card reward-equal-card w-100">
-                                <div class="dashboard-header">
-                                    <span class="dashboard-title">
-                                        <span class="dashboard-icon">
-                                            <i class="bi bi-gift"></i>
+                    <div class="col-xl-4 col-lg-12 d-flex">
+                        <div class="card h-100 w-100 border-0 shadow-sm dashboard-card d-flex flex-column" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="150">
+                            <div class="dashboard-header p-3">
+                                <div class="dashboard-title">
+                                    <span class="dashboard-icon"><i class="bi bi-gift"></i></span>
+                                    <span>Progress Summary</span>
+                                </div>
+                            </div>
+
+                            <div class="card-body flex-grow-1 d-flex flex-column p-3 gap-3">
+                                <div class="rounded-4 border p-3 flex-grow-1 d-flex flex-column justify-content-center" 
+                                    style="background: linear-gradient(180deg,#fff 0%,#f7fbff 100%); min-height: 120px;">
+                                    <p class="fw-bold mb-2 small text-secondary">Level Progress</p>
+                                    <div class="d-flex justify-content-between align-items-end gap-2 mb-2">
+                                        <span class="fw-bolder lh-1" style="font-size:1.4rem; color:#0e4174;">
+                                            <t t-esc="int(rendered_hours)"/> / <t t-esc="int(contracted_hours)"/> hrs
                                         </span>
-                                        Progress Summary
-                                    </span>
+                                        <span class="fw-bolder lh-1" style="font-size:1.4rem; color:#bf9e3c;">
+                                            <t t-esc="progress_percent"/>%
+                                        </span>
+                                    </div>
+                                    <div class="rounded-pill overflow-hidden mb-2" style="height:10px; background:#e7edf4;">
+                                        <div class="progress-fill-gold" t-attf-style="width: #{progress_percent}%;"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between flex-wrap gap-1 small text-secondary" style="font-size: 0.75rem;">
+                                        <span>Rendered: <t t-esc="int(rendered_hours)"/> hrs</span>
+                                        <span>Contract: <t t-esc="int(contracted_hours)"/> hrs</span>
+                                    </div>
                                 </div>
 
-                                <div class="reward-side-card__body">
-                                    <div class="reward-side-progress">
-                                        <div class="reward-side-progress__label">Level Progress</div>
-
-                                        <div class="reward-side-progress__top">
-                                            <div class="reward-side-progress__score">
-                                                <t t-esc="'%.2f' % rendered_hours"/> / <t t-esc="'%.2f' % contracted_hours"/> hrs
-                                            </div>
-                                            <div class="reward-side-progress__percent">
-                                                <t t-esc="progress_percent"/>%
-                                            </div>
-                                        </div>
-
-                                        <div class="reward-side-progress__track">
-                                            <div class="reward-side-progress__fill"
-                                                 t-attf-style="width: #{progress_percent}%"></div>
-                                        </div>
-
-                                        <div class="reward-side-progress__meta">
-                                            <span>Rendered: <t t-esc="'%.2f' % rendered_hours"/> hrs</span>
-                                            <span>Contract: <t t-esc="'%.2f' % contracted_hours"/> hrs</span>
-                                        </div>
+                                <div class="d-flex flex-column gap-2 flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center rounded-4 border px-3 py-2 flex-grow-1"
+                                        style="background: linear-gradient(180deg,#fff 0%,#fafcff 100%);">
+                                        <span class="fw-bold text-uppercase small text-secondary" style="letter-spacing:.05em; font-size: 0.7rem;">Rank</span>
+                                        <span class="fw-bolder" style="color:#0e4174;"><t t-esc="rank"/></span>
                                     </div>
-
-                                    <div class="reward-side-details">
-                                        <div class="reward-side-detail-row">
-                                            <div class="reward-side-detail-label">RANK #</div>
-                                            <div class="reward-side-detail-value">
-                                                <t t-esc="rank"/>
-                                            </div>
-                                        </div>
-
-                                        <div class="reward-side-detail-row">
-                                            <div class="reward-side-detail-label">BADGES</div>
-                                            <div class="reward-side-detail-value">
-                                                <t t-esc="badges_count"/>
-                                            </div>
-                                        </div>
-
-                                        <div class="reward-side-detail-row reward-side-detail-row--last">
-                                            <div class="reward-side-detail-label">VOUCHERS AVAILABLE</div>
-                                            <div class="reward-side-detail-value reward-side-detail-value--highlight" id="voucher-available-count">
-                                                <t t-esc="available_vouchers_count"/>
-                                            </div>
-                                        </div>
+                                    <div class="d-flex justify-content-between align-items-center rounded-4 border px-3 py-2 flex-grow-1"
+                                        style="background: linear-gradient(180deg,#fff 0%,#fafcff 100%);">
+                                        <span class="fw-bold text-uppercase small text-secondary" style="letter-spacing:.05em; font-size: 0.7rem;">Badges</span>
+                                        <span class="fw-bolder" style="color:#0e4174;"><t t-esc="badges_count"/></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center rounded-4 border px-3 py-2 flex-grow-1"
+                                        style="background: linear-gradient(180deg,#fff 0%,#fafcff 100%);">
+                                        <span class="fw-bold text-uppercase small text-secondary" style="letter-spacing:.05em; font-size: 0.7rem;">Vouchers</span>
+                                        <span class="fw-bolder" style="color:#1a6bbf;" id="voucher-available-count">
+                                            <t t-esc="available_vouchers_count"/>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- BADGES + VOUCHERS -->
-                    <div class="row g-4 mt-1 rewards-bottom-row align-items-stretch">
-
-                        <!-- BADGES -->
-                        <div class="col-12 d-flex">
-                            <div class="card reward-section-card w-100">
-                                <div class="dashboard-header">
-                                    <span class="dashboard-title">
-                                        <span class="dashboard-icon">
-                                            <i class="bi bi-award"></i>
-                                        </span>
-                                        Badges
-                                    </span>
+                <div class="row g-4 mt-1 align-items-stretch">
+                    <div class="col-12 d-flex">
+                     <div class="card h-100 w-100 border-0 shadow-sm dashboard-card d-flex flex-column" data-aos="fade-up" data-aos-duration="1000">
+                            <div class="dashboard-header">
+                                <div class="dashboard-title">
+                                    <span class="dashboard-icon"><i class="bi bi-award"></i></span>
+                                    <span>Badges</span>
                                 </div>
-
-                                <div class="reward-section-body">
-                                    <div class="row g-3 badges-row-horizontal">
-                                        <t t-foreach="badges" t-as="badge">
-                                            <div class="col-12 col-sm-6 col-lg-3">
-                                                <div t-attf-class="card reward-item-card reward-item-card--badge #{'reward-item-card--unlocked reward-item-card--active' if badge['unlocked'] else 'reward-item-card--locked'}"
-                                                     t-att-data-badge-key="badge['key']"
-                                                     t-att-data-badge-name="badge['name']"
-                                                     t-att-data-badge-description="badge['description']"
-                                                     t-att-data-badge-icon="badge['icon']"
-                                                     t-att-data-badge-unlocked="'true' if badge['unlocked'] else 'false'">
+                            </div>
+                            <div class="p-3">
+                                <div class="row g-3">
+                                    <t t-foreach="badges" t-as="badge">
+                                       <div class="col-12 col-sm-6 col-lg-3 mb-4">
+                                            <div t-attf-class="card border rounded-4 h-100 position-relative d-flex flex-column align-items-center justify-content-start gap-2 text-center pt-5 pb-4 px-3 shadow-sm badge-card-base #{'card-unlocked-hover' if badge['unlocked'] else 'locked-style'}"
+                                                    t-att-data-badge-key="badge['key']"
+                                                    t-att-data-badge-name="badge['name']"
+                                                    t-att-data-badge-description="badge['description']"
+                                                    t-att-data-badge-icon="badge['icon']"
+                                                    t-att-data-badge-unlocked="'true' if badge['unlocked'] else 'false'">
+                                                <div class="position-absolute top-0 end-0 mt-3 me-3">
                                                     <t t-if="badge['unlocked']">
-                                                        <div class="reward-status-badge reward-status-badge--unlocked">Unlocked</div>
+                                                        <span class="badge rounded-3 px-2 py-1 small fw-semibold bg-primary-subtle text-primary-emphasis border-primary-subtle" style="font-size: 0.75rem;">
+                                                            Unlocked
+                                                        </span>
                                                     </t>
                                                     <t t-else="">
-                                                        <div class="reward-lock-badge">
-                                                            <i class="bi bi-lock-fill"></i>
+                                                        <span class="badge rounded-3 px-2 py-1 small fw-semibold bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle" style="font-size: 0.75rem;">
+                                                            Locked
+                                                        </span>
+                                                    </t>
+                                                </div>
+                                               <t t-if="badge['unlocked']">
+                                                    <div class="rounded-3 d-flex align-items-center justify-content-center mb-2 flex-shrink-0 shadow-sm" 
+                                                        style="background-color: var(--color-navy-100); color: var(--color-navy-700); width: 66px; height: 66px; font-size: 1.65rem">
+                                                        <i t-attf-class="bi bi-#{badge['icon'].replace('-fill', '')}"></i>
+                                                    </div>
+                                                </t>
+                                                <t t-else="">
+                                                    <div class="rounded-3 d-flex align-items-center justify-content-center mb-2 flex-shrink-0" 
+                                                        style="background-color: #f1f5f9; color: #cbd5e1; width: 66px; height: 66px; font-size: 1.65rem; border: 1px dashed #cbd5e1;">
+                                                        <i t-attf-class="bi bi-#{badge['icon'].replace('-fill', '')}"></i>
+                                                    </div>
+                                                </t>
+                                                <div class="fw-bolder d-flex align-items-center justify-content-center lh-sm mt-1"
+                                                    style="min-height:2.35rem; font-size:0.96rem; color:#0e4174;">
+                                                    <t t-esc="badge['name']"/>
+                                                </div>
+                                                <div class="text-muted small lh-base px-1"
+                                                    style="max-width:230px; min-height:3.5rem; font-size:0.82rem; opacity: 0.85;">
+                                                    <t t-esc="badge['description']"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 d-flex">
+                        <div class="card h-100 w-100 border-0 shadow-sm dashboard-card d-flex flex-column" data-aos="fade-up" data-aos-duration="1000">
+                            <div class="dashboard-header d-flex align-items-center justify-content-between">
+                                <div class="dashboard-title d-flex align-items-center">
+                                    <span class="dashboard-icon"><i class="bi bi-ticket-perforated"></i></span>
+                                    <span class="ms-2">Vouchers</span>
+                                </div>
+                                <button type="button" class="btn btn-sm d-inline-flex align-items-center gap-1 fw-semibold rounded-2"
+                                        style="font-size:0.75rem; color:#0e4174; background:rgba(14,65,116,0.06); border:1px solid rgba(14,65,116,0.14); padding:0.25rem 0.7rem; white-space:nowrap;"
+                                        data-bs-toggle="modal" data-bs-target="#voucherHistoryModal">
+                                    <i class="bi bi-clock-history" style="font-size:0.7rem;"></i>History
+                                </button>
+                            </div>
+
+                            <div class="p-3">
+                                <div id="voucher-empty-state" class="col-12 text-center py-5 bg-white border shadow-sm mt-3"  style="border-radius: 12px; border-color: var(--color-gray-100) !important;" t-attf-style="#{'display:block !important;' if not available_vouchers_count else 'display:none !important;'}">
+                                    <i class="bi bi-ticket-perforated mb-2 d-block" 
+                                    style="font-size: 2.5rem; color: var(--color-gray-300);"></i>
+                                    <div class="text-uppercase fw-bold text-muted mb-1" 
+                                        style="font-size: 0.65rem; letter-spacing: 1px;">
+                                        Voucher Inventory
+                                    </div>
+                                    <p class="text-muted mb-0 small px-3">
+                                        No vouchers available at this time.
+                                    </p>
+                                </div>
+
+                                <div class="row g-3"
+                                    id="voucher-grid"
+                                    t-attf-style="#{'display:none !important;' if not available_vouchers_count else ''}">
+                                    <t t-foreach="available_vouchers" t-as="voucher">
+                                        <div class="col-12 col-sm-6 col-lg-3">
+                                            <div class="card border rounded-4 h-100 position-relative d-flex flex-column align-items-center justify-content-start gap-2 text-center pt-5 pb-3 px-3 shadow-sm badge-card-base card-unlocked-hover"
+                                                 t-att-data-voucher-key="voucher['key']"
+                                                 data-voucher-state="available">
+
+                                                <span class="position-absolute top-0 end-0 mt-3 me-3 badge rounded-3 px-2 py-1 small fw-semibold bg-primary-subtle text-primary-emphasis border-primary-subtle" style="font-size: 0.75rem;">
+                                                    Available
+                                                </span>
+
+                                                <div class="rounded-3 d-flex align-items-center justify-content-center mb-2 flex-shrink-0 shadow-sm" 
+                                                    style="background-color: var(--color-navy-100); color: var(--color-navy-700); width: 66px; height: 66px; font-size: 1.65rem">
+                                                    <i t-attf-class="bi bi-#{voucher['icon'].replace('-fill', '')}"></i>
+                                                </div>
+
+                                                <div class="fw-bolder d-flex align-items-center justify-content-center lh-sm" style="min-height:2.35rem;font-size:0.96rem;color:#0e4174;">
+                                                    <t t-esc="voucher['name']"/>
+                                                </div>
+
+                                                <t t-if="voucher['modal_target']">
+                                                    <button type="button" class="btn btn-primary voucher-open-btn" data-bs-toggle="modal" t-att-data-bs-target="voucher['modal_target']" t-att-data-voucher-name="voucher['name']">
+                                                        <i class="bi bi-list-check me-2"></i>Steps to Claim
+                                                    </button>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════ MODALS ═══════════════ -->
+        <!-- Badge Unlocked  -->
+        <div class="modal fade" id="badgeUnlockModal" tabindex="-1" aria-labelledby="badgeUnlockModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" style="max-width:440px;">
+                <div class="modal-content rounded-4 overflow-hidden border-0 shadow position-relative">
+                    <div class="reward-confetti-layer" aria-hidden="true"></div>
+                    <div class="d-flex align-items-center justify-content-center position-relative px-5 py-3" 
+                        style="background-color: var(--color-navy-100); min-height:56px;">
+                        <h6 class="mb-0 fw-bold text-center" 
+                            style="color: var(--color-navy-500); letter-spacing: 0.4px;" 
+                            id="badgeUnlockModalLabel">
+                            BADGE UNLOCKED
+                        </h6>
+                         <button type="button" class="position-absolute end-0 me-2 rounded-circle d-flex align-items-center justify-content-center" style="width:30px; height:30px; color:#0e4174; border:none; background:transparent; outline:none; box-shadow:none;"  onfocus="this.style.boxShadow='none'; this.style.outline='none';" onmousedown="this.style.outline='none'; this.style.boxShadow='none';" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                    <div class="p-4 text-center">
+                        <div class="mb-4" style="color: var(--color-navy-500); font-size: 3rem;">
+                            <i id="badgeUnlockModalIcon" class="bi bi-award"></i>
+                        </div>
+                        <h6 class="fw-semibold mb-2" id="badgeUnlockModalTitle" style="color: var(--color-navy-500);">
+                            You are a Rising Intern, <t t-esc="intern_first_name"/>!
+                        </h6>
+                        <p class="text-muted small mb-4 px-2" id="badgeUnlockModalDescription" style="line-height: 1.5;">
+                            You have completed onboarding and reached the first milestone. Keep going to unlock more badges and rewards!
+                        </p>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                            <i class="bi bi-check2-circle me-2"></i>Got it
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Games Winner Modal -->
+        <div class="modal fade" id="weeklyGamesVoucherModal" tabindex="-1" aria-labelledby="weeklyGamesVoucherModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" style="max-width:440px;">
+                <div class="modal-content rounded-4 overflow-hidden border-0 shadow position-relative">
+                    <div class="reward-confetti-layer" aria-hidden="true"></div>
+                    <div class="d-flex align-items-center justify-content-center position-relative px-5 py-3" style="background-color: var(--color-navy-100); min-height:56px;">
+                        <h6 class="mb-0 fw-bold text-center" style="color: var(--color-navy-500); letter-spacing: 0.4px;" id="weeklyGamesVoucherModalLabel">
+                            STEPS TO CLAIM
+                        </h6>
+                        <button type="button" class="position-absolute end-0 me-2 rounded-circle d-flex align-items-center justify-content-center" style="width:30px; height:30px; color:#0e4174; border:none; background:transparent; outline:none; box-shadow:none;"  onfocus="this.style.boxShadow='none'; this.style.outline='none';" onmousedown="this.style.outline='none'; this.style.boxShadow='none';" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                    <div class="p-4 text-center">
+                        <div class="mb-2" style="color: var(--color-navy-500); font-size: 3.2rem;">
+                            <i class="bi bi-trophy-fill"></i>
+                        </div>
+                        <h6 class="fw-semibold mb-2" style="color: var(--color-navy-500);">Weekly Game Prize</h6>
+                        <p class="text-muted small mb-3">Follow these steps to submit your claim request.</p>
+                        <div class="rounded-3 border p-3 mb-3 text-start claim-steps-box" style="background: var(--color-gray-100);">
+                            <t t-call="famtech_intern_dashboard.claim_steps"/>
+                        </div>
+                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                            <i class="bi bi-check2-circle me-2"></i>Got it
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Voucher Modal -->
+        <div class="modal fade" id="dynamicVoucherModal" tabindex="-1" aria-labelledby="dynamicVoucherModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" style="max-width:440px;">
+                <div class="modal-content rounded-4 overflow-hidden border-0 shadow position-relative">
+                    <div class="reward-confetti-layer" aria-hidden="true"></div>
+                    <div class="d-flex align-items-center justify-content-center position-relative px-5 py-3" style="background-color: var(--color-navy-100); min-height:56px;">
+                        <h6 class="mb-0 fw-bold text-center" style="color: var(--color-navy-500); letter-spacing: 0.4px;" id="weeklyGamesVoucherModalLabel">
+                            STEPS TO CLAIM
+                        </h6>
+                        <button type="button" class="position-absolute end-0 me-2 rounded-circle d-flex align-items-center justify-content-center" style="width:30px; height:30px; color:#0e4174; border:none; background:transparent; outline:none; box-shadow:none;"  onfocus="this.style.boxShadow='none'; this.style.outline='none';" onmousedown="this.style.outline='none'; this.style.boxShadow='none';" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                    <div class="p-4 text-center">
+                        <div class="mb-2" style="color: var(--color-navy-500); font-size: 3.2rem;">
+                            <i class="bi bi-gift-fill"></i>
+                        </div>
+                        <h6 class="fw-bold mb-1" id="dynamicVoucherTitle" style="color: var(--color-navy-500)">Voucher Claim Request</h6>
+                        <p class="text-muted small mb-3">Follow these steps to submit your claim request.</p>
+                        <div class="rounded-3 border p-3 mb-3 text-start claim-steps-box" style="background: var(--color-gray-100);">
+                            <t t-call="famtech_intern_dashboard.claim_steps"/>
+                        </div>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                            <i class="bi bi-check2-circle me-2"></i>Got it
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Winner History Modal -->
+        <div class="modal fade" id="weeklyWinnerHistoryModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered" style="max-width:440px;">
+                <div class="modal-content rounded-4 overflow-hidden border-0 shadow">
+                    <div class="d-flex align-items-center justify-content-center position-relative px-5 py-3" style="background-color: var(--color-navy-100); min-height:56px;">
+                        <h6 class="mb-0 fw-bold text-center" style="color: var(--color-navy-500); letter-spacing: 0.4px;">
+                            WINNER HISTORY
+                        </h6>
+                        <button type="button" class="position-absolute end-0 me-2 rounded-circle d-flex align-items-center justify-content-center" style="width:30px; height:30px; color:#0e4174; border:none; background:transparent; outline:none; box-shadow:none;"  onfocus="this.style.boxShadow='none'; this.style.outline='none';" onmousedown="this.style.outline='none'; this.style.boxShadow='none';" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                    <div class="p-4 text-center">
+                        <div class="mb-2" style="font-size:2.25rem; color: var(--color-navy-500);">
+                            <i class="bi bi-trophy-fill"></i>
+                        </div>
+                        <h6 class="fw-bold mb-1" style="color: var(--color-navy-500);">Weekly Winners</h6>
+                        <p class="text-muted small mb-3">Here are the most recent Weekly Games Winners.</p>
+                        <div class="rounded-3 border p-3 text-start claim-steps-box" style="background:#f8fbff;">
+                            <t t-if="winner_history">
+                                <t t-foreach="winner_history" t-as="winner">
+                                    <div class="d-flex align-items-center py-3 px-2 rounded-3 mb-1">
+                                        <div class="rounded-3 d-flex align-items-center justify-content-center me-3 flex-shrink-0" 
+                                            style="width: 42px; height: 42px; background: rgba(26, 107, 191, 0.08); color: #1a6bbf; border: 1px dashed rgba(26, 107, 191, 0.3);">
+                                            <i class="bi bi-trophy" style="font-size: 1.1rem;"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="d-flex flex-column">
+                                                    <span class="fw-bold text-dark" style="font-size: 0.95rem; letter-spacing: -0.2px;">
+                                                        <t t-esc="winner['name']"/>
+                                                    </span>
+                                                    <span class="text-muted small mt-1" style="font-size: 0.7rem; text-uppercase: uppercase; letter-spacing: 0.5px;">
+                                                        Game Winner
+                                                    </span>
+                                                </div>
+                                                <div class="text-end">
+                                                    <span class="badge rounded-pill fw-medium" 
+                                                        style="font-size: 0.7rem; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; padding: 0.4rem 0.75rem;">
+                                                        <i class="bi bi-calendar3 me-1"></i>
+                                                        <t t-esc="winner['week_start']"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <t t-if="not winner_last">
+                                        <hr class="my-0 opacity-5" style="border-top: 1px solid #000;"/>
+                                    </t>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <div class="text-center py-5 bg-light rounded-4 border border-dashed mt-2">
+                                    <i class="bi bi-clock-history text-muted mb-2 d-block" style="font-size: 2rem; opacity: 0.5;"></i>
+                                    <p class="text-muted small mb-0">No winner history available yet.</p>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Voucher History Modal -->
+        <div class="modal fade" id="voucherHistoryModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered" style="max-width:440px;">
+                <div class="modal-content rounded-4 overflow-hidden border-0 shadow">
+                    <div class="d-flex align-items-center justify-content-center position-relative px-5 py-3" style="background-color: var(--color-navy-100); min-height:56px;">
+                        <h6 class="mb-0 fw-bold text-center"  style="color: var(--color-navy-500); letter-spacing: 0.4px;">
+                            VOUCHER HISTORY
+                        </h6>
+                        <button type="button" class="position-absolute end-0 me-2 rounded-circle d-flex align-items-center justify-content-center" style="width:30px; height:30px; color:#0e4174; border:none; background:transparent; outline:none; box-shadow:none;"  onfocus="this.style.boxShadow='none'; this.style.outline='none';" onmousedown="this.style.outline='none'; this.style.boxShadow='none';" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                    <div class="p-4 text-center">
+                        <div class="mb-2" style="font-size:2.25rem; color: var(--color-navy-500);">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <h6 class="fw-bold mb-1" style="color: var(--color-navy-500);">Claimed Vouchers</h6>
+                        <p class="text-muted small mb-3">View all vouchers assigned and claimed.</p>
+                        <div class="rounded-3 border p-3 text-start claim-steps-box" style="background:#f8fbff;">
+                            <t t-if="claimed_vouchers">
+                               <t t-foreach="claimed_vouchers" t-as="voucher">
+                                    <div class="d-flex align-items-center py-3 px-2 rounded-3 mb-1">
+                                        <div class="rounded-3 d-flex align-items-center justify-content-center me-3 flex-shrink-0" 
+                                            style="width: 42px; height: 42px; background: rgba(26, 107, 191, 0.08); color: #1a6bbf; border: 1px dashed rgba(26, 107, 191, 0.3);">
+                                            <i class="bi bi-ticket-detailed" style="font-size: 1.2rem;"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="d-flex flex-column">
+                                                    <span class="fw-bold text-dark" style="font-size: 0.95rem;">
+                                                        <t t-esc="voucher['name']"/>
+                                                    </span>
+                                                    
+                                                    <t t-if="voucher['key'] == 'weekly_game_prize'">
+                                                        <div class="text-muted small d-flex align-items-center mt-1" style="font-size: 0.75rem;">
+                                                            <i class="bi bi-trophy me-1 text-warning"></i>
+                                                            <span>Winner: <strong class="text-secondary" t-esc="current_week_label"/></span>
                                                         </div>
                                                     </t>
-
-                                                    <div class="reward-item-icon reward-item-icon--plain">
-                                                        <i t-attf-class="bi bi-#{badge['icon']}"></i>
-                                                    </div>
-
-                                                    <div class="reward-item-title" t-esc="badge['name']"/>
-                                                    <div class="reward-item-desc" t-esc="badge['description']"/>
                                                 </div>
-                                            </div>
-                                        </t>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- VOUCHERS -->
-                        <div class="col-12 d-flex">
-                            <div class="card reward-section-card w-100">
-                                <div class="dashboard-header">
-                                    <span class="dashboard-title">
-                                        <span class="dashboard-icon">
-                                            <i class="bi bi-ticket-perforated"></i>
-                                        </span>
-                                        Vouchers
-                                    </span>
-                                </div>
-
-                                <div class="reward-section-body">
-                                    <!-- AVAILABLE VOUCHERS -->
-                                    <div id="voucher-empty-state"
-                                         class="reward-empty-state"
-                                         t-attf-style="#{'display:flex;' if not available_vouchers_count else 'display:none;'}">
-                                        Sorry, no vouchers available.
-                                    </div>
-
-                                    <div class="row g-3 vouchers-grid"
-                                         id="voucher-grid"
-                                         t-attf-style="#{'display:none;' if not available_vouchers_count else ''}">
-                                        <t t-foreach="available_vouchers" t-as="voucher">
-                                            <div class="col-12 col-sm-6 col-lg-3">
-                                                <div class="card reward-item-card reward-item-card--voucher h-100 reward-item-card--unlocked reward-item-card--claimable voucher-card"
-                                                     t-att-data-voucher-key="voucher['key']"
-                                                     data-voucher-state="available">
-
-                                                    <div class="reward-status-badge reward-status-badge--available voucher-status">Available</div>
-
-                                                    <div class="reward-item-icon reward-item-icon--plain">
-                                                        <i t-attf-class="bi bi-#{voucher['icon']}"></i>
-                                                    </div>
-
-                                                    <div class="reward-item-title" t-esc="voucher['name']"/>
-
-                                                    <t t-if="voucher['modal_target']">
-                                                        <button type="button"
-                                                                class="btn btn-primary reward-claim-btn mt-2 voucher-open-btn"
-                                                                data-bs-toggle="modal"
-                                                                t-att-data-bs-target="voucher['modal_target']"
-                                                                t-att-data-voucher-name="voucher['name']">
-                                                            <i class="bi bi-list-check me-2"></i>Steps to Claim
-                                                        </button>
+                                                <div class="text-end">
+                                                    <t t-if="voucher.get('claimed_at')">
+                                                        <span class="badge rounded-pill fw-medium" 
+                                                            style="font-size: 0.7rem; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; padding: 0.4rem 0.75rem;">
+                                                            <i class="bi bi-calendar-check me-1"></i>
+                                                            <t t-esc="voucher['claimed_at'].strftime('%b %d, %Y')"/>
+                                                        </span>
                                                     </t>
                                                 </div>
                                             </div>
-                                        </t>
+                                        </div>
                                     </div>
-
-                                    <div class="mt-3 text-center">
-                                        <button type="button"
-                                                class="btn btn-primary reward-claim-btn"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#voucherHistoryModal">
-                                            <i class="bi bi-clock-history me-2"></i>View Voucher History
-                                        </button>
-                                    </div>
-
+                                    <t t-if="not voucher_last">
+                                        <hr class="my-0 opacity-5" style="border-top: 1px solid #000;"/>
+                                    </t>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <div class="text-center py-5 bg-light rounded-4 border border-dashed mt-2">
+                                    <i class="bi bi-ticket-perforated text-muted mb-2 d-block" style="font-size: 2rem; opacity: 0.5;"></i>
+                                    <p class="text-muted small mb-0">No vouchers claimed yet.</p>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- WEEKLY GAMES WINNER MODAL -->
-            <div class="modal fade reward-modal-wrapper" id="weeklyGamesVoucherModal" tabindex="-1" aria-labelledby="weeklyGamesVoucherModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
-                    <div class="modal-content reward-claim-modal position-relative">
-                        <div class="reward-confetti-layer" aria-hidden="true"></div>
-                        <div class="reward-claim-header">
-                            <h5 class="reward-claim-title" id="weeklyGamesVoucherModalLabel">STEPS TO CLAIM</h5>
-                            <button type="button" class="reward-claim-close" data-bs-dismiss="modal" aria-label="Close">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
-                        </div>
-
-                        <div class="reward-claim-body">
-                            <div class="reward-claim-icon">
-                                <i class="bi bi-trophy-fill"></i>
-                            </div>
-
-                            <div class="reward-claim-heading">Weekly Game Prize</div>
-                            <p class="reward-claim-subtext">Follow these steps to submit your claim request.</p>
-
-                            <t t-call="famtech_intern_dashboard.claim_steps"/>
-
-                            <button type="button"
-                                    class="btn btn-primary reward-claim-action-btn"
-                                    data-bs-dismiss="modal">
-                                <i class="bi bi-check2-circle me-2"></i>Got it
-                            </button>
+                            </t>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- DYNAMIC VOUCHER MODAL -->
-            <div class="modal fade reward-modal-wrapper" id="dynamicVoucherModal" tabindex="-1" aria-labelledby="dynamicVoucherModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
-                    <div class="modal-content reward-claim-modal position-relative">
-                        <div class="reward-confetti-layer" aria-hidden="true"></div>
-                        <div class="reward-claim-header">
-                            <h5 class="reward-claim-title" id="dynamicVoucherModalLabel">STEPS TO CLAIM</h5>
-                            <button type="button" class="reward-claim-close" data-bs-dismiss="modal" aria-label="Close">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
-                        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+        <script><![CDATA[
+            document.addEventListener('DOMContentLoaded', function () {
+                const rewardsPage = document.querySelector('.intern-rewards-page');
+                const dynamicVoucherTitle = document.getElementById('dynamicVoucherTitle');
+                const badgeUnlockModalElement = document.getElementById('badgeUnlockModal');
+                const badgeUnlockModalTitle = document.getElementById('badgeUnlockModalTitle');
+                const badgeUnlockModalDescription = document.getElementById('badgeUnlockModalDescription');
+                const badgeUnlockModalIcon = document.getElementById('badgeUnlockModalIcon');
+                const confettiColors = ['#FFD285', '#bf9e3c', '#0e4174', '#709ECB', '#FFF2D1'];
+                const rewardSound = new Audio('/famtech_intern_dashboard/static/src/website/audio/Success_Sound-Effect.mp3');
 
-                        <div class="reward-claim-body">
-                            <div class="reward-claim-icon">
-                                <i class="bi bi-gift-fill"></i>
-                            </div>
+                rewardSound.preload = 'auto';
 
-                            <div class="reward-claim-heading" id="dynamicVoucherTitle">Voucher Claim Request</div>
-                            <p class="reward-claim-subtext">Follow these steps to submit your claim request.</p>
+                function playRewardSound() {
+                    rewardSound.currentTime = 0;
+                    rewardSound.play().catch(function () {
+                        // Ignore blocked autoplay errors; modal visuals still continue.
+                    });
+                }
 
-                            <t t-call="famtech_intern_dashboard.claim_steps"/>
+                function launchRewardConfetti(modalElement) {
+                    const confettiLayer = modalElement.querySelector('.reward-confetti-layer');
+                    if (!confettiLayer) return;
+                    confettiLayer.innerHTML = '';
 
-                            <button type="button"
-                                    class="btn btn-primary reward-claim-action-btn"
-                                    data-bs-dismiss="modal">
-                                <i class="bi bi-check2-circle me-2"></i>Got it
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    function createBurst() {
+                        for (let i = 0; i < 40; i++) {
+                            const piece = document.createElement('span');
+                            const color = confettiColors[i % confettiColors.length];
+                            const left = Math.random() * 100;
+                            const delay = Math.random() * 0.3;
+                            const drift = (Math.random() * 300) - 150;
+                            const rotate = (Math.random() * 720) - 360;
+                            const size = Math.random() * 8 + 6;
 
-            <!-- BADGE UNLOCK MODAL -->
-            <div class="modal fade reward-modal-wrapper" id="badgeUnlockModal" tabindex="-1" aria-labelledby="badgeUnlockModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
-                    <div class="modal-content reward-claim-modal position-relative badge-unlock-modal-content">
-                        <div class="reward-confetti-layer" aria-hidden="true"></div>
-                        <div class="reward-claim-header">
-                            <h6 class="reward-claim-title fw-bold text-center w-100 m-0"
-                                id="badgeUnlockModalLabel"
-                                style="color: var(--color-navy-700); letter-spacing: 0.4px;">
-                                BADGE UNLOCKED
-                            </h6>
-                            <button type="button" class="reward-claim-close" data-bs-dismiss="modal" aria-label="Close">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
-                        </div>
-
-                        <div class="reward-claim-body text-center py-4">
-                            <div class="reward-claim-icon mb-3">
-                                <i id="badgeUnlockModalIcon" class="bi bi-award-fill"></i>
-                            </div>
-
-                            <h6 class="fw-semibold mb-2"
-                                id="badgeUnlockModalTitle"
-                                style="color: var(--color-navy-700);">
-                                You are a Rising Intern, <t t-esc="intern_first_name"/>!
-                            </h6>
-                            <p class="small mb-0 px-2"
-                               id="badgeUnlockModalDescription"
-                               style="color: var(--color-gray-500); line-height: 1.5;">
-                                You have completed onboarding and reached the first milestone. Keep going to unlock more badges and rewards!
-                            </p>
-
-                            <button type="button"
-                                    class="btn btn-primary reward-claim-action-btn mt-4"
-                                    data-bs-dismiss="modal">
-                                <i class="bi bi-check2-circle me-2"></i>Got It
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- WEEKLY WINNER HISTORY MODAL -->
-            <div class="modal fade" id="weeklyWinnerHistoryModal" tabindex="-1">
-                <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
-                    <div class="modal-content reward-claim-modal">
-                        <div class="reward-claim-header">
-                            <h5 class="reward-claim-title">WINNER HISTORY</h5>
-                            <button type="button" class="reward-claim-close" data-bs-dismiss="modal">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
-                        </div>
-
-                        <div class="reward-claim-body">
-                            <div class="reward-claim-icon reward-claim-icon--gold">
-                                <i class="bi bi-trophy-fill"></i>
-                            </div>
-
-                            <div class="reward-claim-heading">Weekly Winners</div>
-                            <div class="reward-claim-subtext">Here are the most recent Weekly Games Winners.</div>
-
-                            <div class="reward-claim-steps">
-                                <t t-if="winner_history">
-                                    <ol>
-                                        <t t-foreach="winner_history" t-as="winner">
-                                            <li>
-                                                <strong t-esc="winner['name']"/> –
-                                                <span t-esc="winner['week_start']"/>
-                                            </li>
-                                        </t>
-                                    </ol>
-                                </t>
-                                <t t-else="">
-                                    <div class="text-center text-muted" style="padding: 0.5rem 0;">
-                                        No winner history available yet.
-                                    </div>
-                                </t>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- VOUCHER HISTORY MODAL -->
-            <div class="modal fade" id="voucherHistoryModal" tabindex="-1">
-                <div class="modal-dialog modal-dialog-centered reward-claim-dialog">
-                    <div class="modal-content reward-claim-modal">
-
-                        <div class="reward-claim-header">
-                            <h5 class="reward-claim-title">VOUCHER HISTORY</h5>
-                            <button type="button" class="reward-claim-close" data-bs-dismiss="modal">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
-                        </div>
-
-                        <div class="reward-claim-body">
-                            <div class="reward-claim-icon">
-                                <i class="bi bi-clock-history"></i>
-                            </div>
-
-                            <div class="reward-claim-heading">
-                                Claimed Vouchers
-                            </div>
-
-                            <div class="reward-claim-subtext">
-                                View all vouchers assigned and claimed.
-                            </div>
-
-                            <div class="reward-claim-steps">
-
-                                <t t-if="claimed_vouchers">
-                                    <ol>
-                                        <t t-foreach="claimed_vouchers" t-as="voucher">
-                                            <li>
-                                                <strong t-esc="voucher['name']"/>
-
-                                                <t t-if="voucher['key'] == 'weekly_game_prize'">
-                                                    <br/>
-                                                    <span>
-                                                        Winning Week:
-                                                        <strong t-esc="current_week_label"/>
-                                                    </span>
-                                                </t>
-
-                                                <t t-else="">
-                                                    <br/>
-                                                    <span>
-                                                        Claimed:
-                                                        <t t-if="voucher.get('claimed_at')">
-                                                            <strong t-esc="voucher['claimed_at'].strftime('%B %d, %Y %I:%M %p')"/>
-                                                        </t>
-                                                        <t t-else="">
-                                                            Not yet claimed
-                                                        </t>
-                                                    </span>
-                                                </t>
-                                            </li>
-                                        </t>
-                                    </ol>
-                                </t>
-
-                                <t t-else="">
-                                    <div class="text-center text-muted" style="padding: 0.5rem 0;">
-                                        No voucher history available yet.
-                                    </div>
-                                </t>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-            <script><![CDATA[
-                document.addEventListener('DOMContentLoaded', function () {
-                    const rewardsPage = document.querySelector('.intern-rewards-page');
-                    const dynamicVoucherTitle = document.getElementById('dynamicVoucherTitle');
-                    const badgeUnlockModalElement = document.getElementById('badgeUnlockModal');
-                    const badgeUnlockModalTitle = document.getElementById('badgeUnlockModalTitle');
-                    const badgeUnlockModalDescription = document.getElementById('badgeUnlockModalDescription');
-                    const badgeUnlockModalIcon = document.getElementById('badgeUnlockModalIcon');
-                    const confettiColors = ['#FFD285', '#bf9e3c', '#0e4174', '#709ECB', '#FFF2D1'];
-                    const rewardSound = new Audio('/famtech_intern_dashboard/static/src/website/audio/Success_Sound-Effect.mp3');
-
-                    rewardSound.preload = 'auto';
-
-                    function playRewardSound() {
-                        rewardSound.currentTime = 0;
-                        rewardSound.play().catch(function () {
-                            // Ignore blocked autoplay errors; modal visuals still continue.
-                        });
+                            piece.className = 'reward-confetti-piece';
+                            piece.style.left = left + '%';
+                            piece.style.backgroundColor = color;
+                            piece.style.animationDelay = delay + 's';
+                            piece.style.setProperty('--confetti-drift', drift + 'px');
+                            piece.style.setProperty('--confetti-rotate', rotate + 'deg');
+                            piece.style.width = size + 'px';
+                            piece.style.height = size + 'px';
+                            if (Math.random() > 0.6) piece.style.borderRadius = '50%';
+                            confettiLayer.appendChild(piece);
+                        }
                     }
 
-                    function launchRewardConfetti(modalElement) {
-                        const confettiLayer = modalElement.querySelector('.reward-confetti-layer');
-                        if (!confettiLayer) return;
+                    createBurst();
+                    setTimeout(createBurst, 300);
+                    setTimeout(createBurst, 600);
+                    setTimeout(function () { confettiLayer.innerHTML = ''; }, 3500);
+                }
 
-                        confettiLayer.innerHTML = '';
-
-                        function createBurst() {
-                            for (let i = 0; i < 40; i++) {
-                                const piece = document.createElement('span');
-                                const color = confettiColors[i % confettiColors.length];
-
-                                const left = Math.random() * 100;
-                                const delay = Math.random() * 0.3;
-                                const drift = (Math.random() * 300) - 150;
-                                const rotate = (Math.random() * 720) - 360;
-                                const size = Math.random() * 8 + 6;
-
-                                piece.className = 'reward-confetti-piece';
-                                piece.style.left = left + '%';
-                                piece.style.backgroundColor = color;
-                                piece.style.animationDelay = delay + 's';
-                                piece.style.setProperty('--confetti-drift', drift + 'px');
-                                piece.style.setProperty('--confetti-rotate', rotate + 'deg');
-                                piece.style.width = size + 'px';
-                                piece.style.height = size + 'px';
-
-                                if (Math.random() > 0.6) {
-                                    piece.style.borderRadius = '50%';
-                                }
-
-                                confettiLayer.appendChild(piece);
-                            }
-                        }
-
-                        createBurst();
-                        setTimeout(createBurst, 300);
-                        setTimeout(createBurst, 600);
-
-                        setTimeout(function () {
-                            confettiLayer.innerHTML = '';
-                        }, 3500);
-                    }
-
-                    document.querySelectorAll('.voucher-open-btn').forEach(function (button) {
-                        button.addEventListener('click', function () {
-                            const voucherName = button.getAttribute('data-voucher-name');
-                            if (dynamicVoucherTitle && voucherName) {
-                                dynamicVoucherTitle.textContent = voucherName;
-                            }
-                        });
-                    });
-
-                    ['weeklyGamesVoucherModal', 'dynamicVoucherModal', 'badgeUnlockModal'].forEach(function (modalId) {
-                        const modalElement = document.getElementById(modalId);
-                        if (modalElement) {
-                            modalElement.addEventListener('shown.bs.modal', function () {
-                                launchRewardConfetti(modalElement);
-                                playRewardSound();
-                            });
+                document.querySelectorAll('.voucher-open-btn').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        const voucherName = button.getAttribute('data-voucher-name');
+                        if (dynamicVoucherTitle && voucherName) {
+                            dynamicVoucherTitle.textContent = voucherName;
                         }
                     });
+                });
 
-                    if (rewardsPage && badgeUnlockModalElement && window.bootstrap && window.localStorage) {
-                        const employeeId = rewardsPage.getAttribute('data-employee-id');
-                        const internFirstName = rewardsPage.getAttribute('data-intern-first-name') || 'Intern';
-                        const storageKey = employeeId ? 'famtech_reward_badges_seen_' + employeeId : null;
-                        const unlockedBadges = Array.from(document.querySelectorAll('.reward-item-card--badge[data-badge-unlocked="true"]'));
-                        const currentBadgeKeys = unlockedBadges
-                            .map(function (badgeCard) { return badgeCard.getAttribute('data-badge-key'); })
-                            .filter(Boolean);
-
-                        let seenBadgeKeys = [];
-                        if (storageKey) {
-                            try {
-                                seenBadgeKeys = JSON.parse(window.localStorage.getItem(storageKey) || '[]');
-                            } catch (error) {
-                                seenBadgeKeys = [];
-                            }
-                        }
-
-                        const newlyUnlockedBadges = unlockedBadges.filter(function (badgeCard) {
-                            return !seenBadgeKeys.includes(badgeCard.getAttribute('data-badge-key'));
+                ['weeklyGamesVoucherModal', 'dynamicVoucherModal', 'badgeUnlockModal'].forEach(function (modalId) {
+                    const modalElement = document.getElementById(modalId);
+                    if (modalElement) {
+                        modalElement.addEventListener('shown.bs.modal', function () {
+                            launchRewardConfetti(modalElement);
+                            playRewardSound();
                         });
-
-                        if (storageKey) {
-                            window.localStorage.setItem(storageKey, JSON.stringify(currentBadgeKeys));
-                        }
-
-                        if (newlyUnlockedBadges.length) {
-                            const badgeUnlockModal = bootstrap.Modal.getOrCreateInstance(badgeUnlockModalElement);
-                            let modalQueueIndex = 0;
-
-                            function showUnlockedBadge(index) {
-                                const badgeCard = newlyUnlockedBadges[index];
-                                if (!badgeCard) {
-                                    return;
-                                }
-
-                                const badgeName = badgeCard.getAttribute('data-badge-name') || 'New Badge Unlocked';
-                                const badgeDescription = badgeCard.getAttribute('data-badge-description') || 'You earned a new badge on your rewards journey.';
-                                const badgeIcon = badgeCard.getAttribute('data-badge-icon') || 'award-fill';
-
-                                badgeUnlockModalTitle.textContent = 'You are a ' + badgeName + ', ' + internFirstName + '!';
-                                badgeUnlockModalDescription.textContent = 'You have ' + badgeDescription.charAt(0).toLowerCase() + badgeDescription.slice(1) + ' Keep going to unlock more badges and rewards!';
-                                badgeUnlockModalIcon.className = 'bi bi-' + badgeIcon;
-                                badgeUnlockModal.show();
-                            }
-
-                            badgeUnlockModalElement.addEventListener('hidden.bs.modal', function () {
-                                modalQueueIndex += 1;
-                                if (modalQueueIndex < newlyUnlockedBadges.length) {
-                                    showUnlockedBadge(modalQueueIndex);
-                                }
-                            });
-
-                            showUnlockedBadge(modalQueueIndex);
-                        }
                     }
                 });
-            ]]></script>
-        </div>
+
+                if (rewardsPage && badgeUnlockModalElement && window.bootstrap && window.localStorage) {
+                    const employeeId = rewardsPage.getAttribute('data-employee-id');
+                    const internFirstName = rewardsPage.getAttribute('data-intern-first-name') || 'Intern';
+                    const storageKey = employeeId ? 'famtech_reward_badges_seen_' + employeeId : null;
+                    const unlockedBadges = Array.from(document.querySelectorAll('.badge-card-base[data-badge-unlocked="true"]'));
+                    const currentBadgeKeys = unlockedBadges
+                        .map(function (badgeCard) { return badgeCard.getAttribute('data-badge-key'); })
+                        .filter(Boolean);
+
+                    let seenBadgeKeys = [];
+                    if (storageKey) {
+                        try {
+                            seenBadgeKeys = JSON.parse(window.localStorage.getItem(storageKey) || '[]');
+                        } catch (error) {
+                            seenBadgeKeys = [];
+                        }
+                    }
+
+                    const newlyUnlockedBadges = unlockedBadges.filter(function (badgeCard) {
+                        return !seenBadgeKeys.includes(badgeCard.getAttribute('data-badge-key'));
+                    });
+
+                    if (storageKey) {
+                        window.localStorage.setItem(storageKey, JSON.stringify(currentBadgeKeys));
+                    }
+
+                    if (newlyUnlockedBadges.length) {
+                        const badgeUnlockModal = bootstrap.Modal.getOrCreateInstance(badgeUnlockModalElement);
+                        let modalQueueIndex = 0;
+
+                        function showUnlockedBadge(index) {
+                            const badgeCard = newlyUnlockedBadges[index];
+                            if (!badgeCard) {
+                                return;
+                            }
+
+                            const badgeName = badgeCard.getAttribute('data-badge-name') || 'New Badge Unlocked';
+                            const badgeDescription = badgeCard.getAttribute('data-badge-description') || 'You earned a new badge on your rewards journey.';
+                            const badgeIcon = badgeCard.getAttribute('data-badge-icon') || 'award-fill';
+
+                            badgeUnlockModalTitle.textContent = 'You are a ' + badgeName + ', ' + internFirstName + '!';
+                            badgeUnlockModalDescription.textContent = 'You have ' + badgeDescription.charAt(0).toLowerCase() + badgeDescription.slice(1) + ' Keep going to unlock more badges and rewards!';
+                            badgeUnlockModalIcon.className = 'bi bi-' + badgeIcon;
+                            badgeUnlockModal.show();
+                        }
+
+                        badgeUnlockModalElement.addEventListener('hidden.bs.modal', function () {
+                            modalQueueIndex += 1;
+                            if (modalQueueIndex < newlyUnlockedBadges.length) {
+                                showUnlockedBadge(modalQueueIndex);
+                            }
+                        });
+
+                        showUnlockedBadge(modalQueueIndex);
+                    }
+                }
+            });
+        // Animation
+        document.addEventListener("DOMContentLoaded", function () {
+            AOS.init({
+                duration: 400,
+                once: true,
+                easing: 'ease-out-quad'
+            });
+        });]]>
+        </script>
     </template>
 </odoo>

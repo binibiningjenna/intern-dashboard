@@ -107,7 +107,7 @@
                 canvas.style.display = "none";
             }
             if (emptyStateElement) {
-                emptyStateElement.style.display = "flex";
+                emptyStateElement.setAttribute("style", "display: flex !important;");
             }
             return;
         }
@@ -117,7 +117,7 @@
         }
 
         if (emptyStateElement) {
-            emptyStateElement.style.display = "none";
+            emptyStateElement.setAttribute("style", "display: none !important;");
         }
         canvas.style.display = "block";
 
