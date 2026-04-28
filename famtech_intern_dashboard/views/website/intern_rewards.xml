@@ -449,7 +449,8 @@
                             <i class="bi bi-trophy-fill"></i>
                         </div>
                         <h6 class="fw-bold mb-1" style="color: var(--color-navy-500);">Weekly Winners</h6>
-                        <p class="text-muted small mb-3">Here are the most recent Weekly Games Winners.</p>
+                        <p class="text-muted small mb-2">Here are the most recent Weekly Games Winners.</p>
+                        <p class="text-muted small mb-3">History entries are automatically deleted after 90 days.</p>
                         <div class="rounded-3 border p-3 text-start claim-steps-box" style="background:#f8fbff;">
                             <t t-if="winner_history">
                                 <t t-foreach="winner_history" t-as="winner">
@@ -512,7 +513,8 @@
                             <i class="bi bi-clock-history"></i>
                         </div>
                         <h6 class="fw-bold mb-1" style="color: var(--color-navy-500);">Claimed Vouchers</h6>
-                        <p class="text-muted small mb-3">View all vouchers assigned and claimed.</p>
+                        <p class="text-muted small mb-2">View all vouchers assigned and claimed.</p>
+                        <p class="text-muted small mb-3">History entries are automatically deleted after 90 days.</p>
                         <div class="rounded-3 border p-3 text-start claim-steps-box" style="background:#f8fbff;">
                             <t t-if="claimed_vouchers">
                                <t t-foreach="claimed_vouchers" t-as="voucher">
@@ -528,10 +530,10 @@
                                                         <t t-esc="voucher['name']"/>
                                                     </span>
                                                     
-                                                    <t t-if="voucher['key'] == 'weekly_game_prize'">
+                                                    <t t-if="voucher['key'].startswith('weekly_game_prize')">
                                                         <div class="text-muted small d-flex align-items-center mt-1" style="font-size: 0.75rem;">
                                                             <i class="bi bi-trophy me-1 text-warning"></i>
-                                                            <span>Winner: <strong class="text-secondary" t-esc="current_week_label"/></span>
+                                                            <span>Winner: <strong class="text-secondary" t-esc="voucher.get('week_label') or current_week_label"/></span>
                                                         </div>
                                                     </t>
                                                 </div>

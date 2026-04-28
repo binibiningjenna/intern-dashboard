@@ -51,6 +51,7 @@
                             <field name="is_weekly_winner"/>
                             <field name="weekly_winner_week_start" invisible="not is_weekly_winner"/>
                             <field name="weekly_winner_voucher_claimed" invisible="not is_weekly_winner"/>
+                            <field name="weekly_winner_voucher_claimed_at" readonly="1" invisible="not weekly_winner_voucher_claimed"/>
                         </group>
 
                         <group string="Vouchers">

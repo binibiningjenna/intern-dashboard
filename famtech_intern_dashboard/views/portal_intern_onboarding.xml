@@ -311,6 +311,9 @@
                     <p class="text-muted mb-0" style="font-size: 0.9rem;">
                         View and manage your scheduled meetings, attendance, and upcoming session.
                     </p>
+                    <p class="text-muted mb-0 mt-2" style="font-size: 0.85rem;">
+                        Only meetings tagged <span class="fw-semibold"><t t-out="onboarding_meeting_tag"/></span> count toward onboarding Step 2.
+                    </p>
                 </div>
                 <a href="/onboarding"
                 class="btn btn-primary d-flex align-items-center gap-2 mt-2 md-mt-0">
@@ -388,6 +391,7 @@
                         <t t-set="is_past" t-value="e.get('stop') and now &gt; e['stop']"/>
                         <t t-set="window_open" t-value="e.get('start') and (e['start'] - relativedelta(minutes=5)) &lt;= now"/>
                         <t t-set="session_error" t-value="session_errors.get(event.id, '')"/>
+                        <t t-set="is_onboarding_event" t-value="any(category.name == onboarding_meeting_tag for category in event.categ_ids)"/>
 
                         <div class="col-12 col-md-6 col-lg-4 col-xl-3 event-card-wrapper" 
                             data-aos="fade-up" 
@@ -401,7 +405,8 @@
                             <div class="card h-100 border shadow-sm d-flex flex-column" style="border-radius: 12px; border-color: var(--color-gray-300) !important;">
                                 <div class="px-3 pt-3 pb-2 d-flex justify-content-between align-items-center">
                                     <div class="text-uppercase fw-bold" style="font-size: 0.65rem; letter-spacing: 0.5px; color: var(--color-gray-500);">
-                                        Event Details
+                                        <t t-if="is_onboarding_event">Onboarding Details</t>
+                                        <t t-else="">Event Details</t>
                                     </div>
                                     <t t-if="is_ongoing">
                                         <span class="badge rounded-2 px-2 py-1" style="background-color: var(--color-navy-100); color: var(--color-navy-700); border: 1px solid var(--color-navy-300); font-size: 0.65rem;">LIVE</span>

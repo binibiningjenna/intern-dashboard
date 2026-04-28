@@ -55,6 +55,8 @@ class ContractVsRenderedHoursChart extends Component {
                 dayField: "rendered_days",
             },
         };
+        const formatHours = (value) => Number(value || 0).toFixed(0);
+        const formatDays = (value) => Number(value || 0).toFixed(2);
 
         this.chart = new Chart(this.canvasRef.el, {
             type: "bar",
@@ -89,7 +91,7 @@ class ContractVsRenderedHoursChart extends Component {
                             label: (context) => {
                                 const row = this.state.rows[context.dataIndex];
                                 const config = datasetConfig[context.dataset.label];
-                                return `${config.label}: ${row[config.hourField]} hrs (${row[config.dayField]} days)`;
+                                return `${config.label}: ${formatHours(row[config.hourField])} hrs (${formatDays(row[config.dayField])} days)`;
                             },
                         },
                     },

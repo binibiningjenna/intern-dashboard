@@ -4,6 +4,7 @@ from datetime import timedelta
 import logging
 
 _logger = logging.getLogger(__name__)
+ONBOARDING_MEETING_TAG = 'Onboarding'
 
 class MeetingAttendance(models.Model):
     """Tracks intern attendance and punctuality for meetings"""
@@ -33,6 +34,11 @@ class MeetingAttendance(models.Model):
     meeting_scheduled_start = fields.Datetime(string='Scheduled Start', related='calendar_event_id.start', store=True)
     meeting_scheduled_end = fields.Datetime(string='Scheduled End', related='calendar_event_id.stop', store=True)
     meeting_name = fields.Char(string='Meeting Name', related='calendar_event_id.name', store=True)
+    counts_for_orientation = fields.Boolean(
+        string='Counts For Orientation',
+        readonly=True,
+        help='Checked when the linked meeting had the Onboarding tag at the time attendance was recorded.',
+    )
     
     # Punctuality metrics
     minutes_late = fields.Integer(string='Minutes Late', compute='_compute_minutes_late', store=True)
@@ -44,6 +50,21 @@ class MeetingAttendance(models.Model):
     
     # Display name 
     display_name = fields.Char(string='Display Name', compute='_compute_display_name', store=True)
+
+    def init(self):
+        """Backfill the orientation flag once for pre-existing attendance rows."""
+        self.env.cr.execute("""
+            UPDATE famtech_meeting_attendance AS attendance
+               SET counts_for_orientation = EXISTS (
+                   SELECT 1
+                     FROM meeting_category_rel AS rel
+                     JOIN calendar_event_type AS category
+                       ON category.id = rel.type_id
+                    WHERE rel.event_id = attendance.calendar_event_id
+                      AND category.name = %s
+               )
+             WHERE attendance.counts_for_orientation IS NULL
+        """, [ONBOARDING_MEETING_TAG])
     
     @api.depends('join_time', 'meeting_scheduled_start')
     def _compute_minutes_late(self):
@@ -147,6 +168,10 @@ class MeetingAttendance(models.Model):
             
             # Force join_time to server timestamp 
             vals['join_time'] = server_now
+            vals['counts_for_orientation'] = any(
+                category.name == ONBOARDING_MEETING_TAG
+                for category in meeting.categ_ids
+            )
         
         return super().create(vals_list)
     

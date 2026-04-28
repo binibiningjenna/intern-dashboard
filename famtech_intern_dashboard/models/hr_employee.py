@@ -373,6 +373,7 @@ class HrEmployee(models.Model):
     is_weekly_winner = fields.Boolean(string="Weekly Winner")
     weekly_winner_week_start = fields.Date(string="Winner Week Start")
     weekly_winner_voucher_claimed = fields.Boolean(string="Weekly Winner Voucher Claimed")
+    weekly_winner_voucher_claimed_at = fields.Datetime(string="Weekly Winner Voucher Claimed At", readonly=True)
 
     voucher_ids = fields.One2many(
         'intern.voucher',
@@ -384,6 +385,72 @@ class HrEmployee(models.Model):
     reward_placeholder_1_voucher = fields.Boolean(string="Placeholder Voucher 1")
     reward_placeholder_2_voucher = fields.Boolean(string="Placeholder Voucher 2")
 
+    def _sync_weekly_winner_history(self):
+        history_model = self.env['intern.weekly.winner.history'].sudo()
+
+        for rec in self:
+            if not (rec.is_intern and rec.is_weekly_winner and rec.weekly_winner_week_start):
+                continue
+
+            history = history_model.search([
+                ('employee_id', '=', rec.id),
+                ('week_start', '=', rec.weekly_winner_week_start),
+            ], limit=1)
+
+            vals = {
+                'voucher_claimed': rec.weekly_winner_voucher_claimed,
+                'voucher_claimed_at': rec.weekly_winner_voucher_claimed_at,
+            }
+
+            if history:
+                history.write(vals)
+            else:
+                vals.update({
+                    'employee_id': rec.id,
+                    'week_start': rec.weekly_winner_week_start,
+                })
+                history_model.create(vals)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('weekly_winner_voucher_claimed') and not vals.get('weekly_winner_voucher_claimed_at'):
+                vals['weekly_winner_voucher_claimed_at'] = fields.Datetime.now()
+            if vals.get('weekly_winner_voucher_claimed') is False:
+                vals['weekly_winner_voucher_claimed_at'] = False
+
+        records = super().create(vals_list)
+        records._sync_weekly_winner_history()
+        return records
+
+    def write(self, vals):
+        previous_values = {
+            rec.id: {
+                'is_weekly_winner': rec.is_weekly_winner,
+                'week_start': rec.weekly_winner_week_start,
+            }
+            for rec in self
+        }
+
+        if vals.get('weekly_winner_voucher_claimed') and not vals.get('weekly_winner_voucher_claimed_at'):
+            vals['weekly_winner_voucher_claimed_at'] = fields.Datetime.now()
+        if vals.get('weekly_winner_voucher_claimed') is False:
+            vals['weekly_winner_voucher_claimed_at'] = False
+
+        result = super().write(vals)
+
+        if vals.get('is_weekly_winner') is False:
+            history_model = self.env['intern.weekly.winner.history'].sudo()
+            for rec_id, previous in previous_values.items():
+                if previous['is_weekly_winner'] and previous['week_start']:
+                    history_model.search([
+                        ('employee_id', '=', rec_id),
+                        ('week_start', '=', previous['week_start']),
+                    ]).unlink()
+
+        self._sync_weekly_winner_history()
+        return result
+
     @api.onchange('is_weekly_winner')
     def _onchange_is_weekly_winner(self):
         """Auto-fill current week's Monday when winner is checked."""
@@ -394,6 +461,7 @@ class HrEmployee(models.Model):
             elif not rec.is_weekly_winner:
                 rec.weekly_winner_week_start = False
                 rec.weekly_winner_voucher_claimed = False
+                rec.weekly_winner_voucher_claimed_at = False
 
     @api.onchange('weekly_winner_week_start')
     def _onchange_weekly_winner_week_start(self):
@@ -401,6 +469,7 @@ class HrEmployee(models.Model):
         for rec in self:
             if rec.is_weekly_winner:
                 rec.weekly_winner_voucher_claimed = False
+                rec.weekly_winner_voucher_claimed_at = False
 
     @api.constrains('is_weekly_winner', 'weekly_winner_week_start', 'is_intern')
     def _check_one_weekly_winner_per_week(self):

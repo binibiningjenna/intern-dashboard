@@ -22,6 +22,9 @@
         Chart.defaults.maintainAspectRatio = false;
     }
 
+    const formatHours = (value) => Number(value || 0).toFixed(0);
+    const formatDays = (value) => Number(value || 0).toFixed(2);
+
     function emptyState(element, messageText = "No data available yet.") {
         const parent = element && element.parentElement ? element.parentElement : element;
         if (parent && !parent.querySelector(".dashboard-empty-state")) {
@@ -84,7 +87,7 @@
         container.innerHTML = `
             <div class="dashboard-hours-progress__header">
                 <div>
-                    <div class="dashboard-hours-progress__value">${renderedHours.toFixed(2)} / ${contractHours.toFixed(2)} hrs</div>
+                    <div class="dashboard-hours-progress__value">${formatHours(renderedHours)} / ${formatHours(contractHours)} hrs</div>
                 </div>
                 <div class="dashboard-hours-progress__percent">${progress.toFixed(0)}%</div>
             </div>
@@ -92,8 +95,8 @@
                 <div class="dashboard-hours-progress__fill" style="width: ${progress}%;"></div>
             </div>
             <div class="dashboard-hours-progress__meta">
-                <span>Rendered: ${renderedHours.toFixed(2)} hrs (${renderedDays.toFixed(2)} days)</span>
-                <span>Contract: ${contractHours.toFixed(2)} hrs (${contractDays.toFixed(2)} days)</span>
+                <span>Rendered: ${formatHours(renderedHours)} hrs (${formatDays(renderedDays)} days)</span>
+                <span>Contract: ${formatHours(contractHours)} hrs (${formatDays(contractDays)} days)</span>
             </div>
         `;
     }

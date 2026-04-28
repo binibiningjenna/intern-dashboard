@@ -2,6 +2,7 @@ from odoo import http, fields
 from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from datetime import datetime
+from ..models.meeting_attendance import ONBOARDING_MEETING_TAG
 
 
 class InternPortal(CustomerPortal):
@@ -115,6 +116,7 @@ class InternPortal(CustomerPortal):
             'session_errors': session_errors,
             'url_error': error or '',
             'page_name': 'intern_calendar',
+            'onboarding_meeting_tag': ONBOARDING_MEETING_TAG,
         }
 
         return request.render(
