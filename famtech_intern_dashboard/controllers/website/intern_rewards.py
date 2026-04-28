@@ -69,6 +69,7 @@ class InternRewards(http.Controller):
             if field_name in employee._fields:
                 values.append(float(employee[field_name] or 0.0))
 
+
         if not values:
             return 0.0
 
@@ -150,7 +151,7 @@ class InternRewards(http.Controller):
                 'icon': 'gift-fill',
                 'available': state == 'available',
                 'claimed': state == 'claimed',
-                'created_at': voucher.create_date,   # ✅ ADD THIS
+                'created_at': voucher.create_date,   
                 'claimed_at': claimed_at,
                 'modal_target': '#dynamicVoucherModal' if state == 'available' else False,
             })
@@ -170,9 +171,6 @@ class InternRewards(http.Controller):
         if not employee:
             return request.render('famtech_intern_dashboard.intern_error_403')
 
-        # -----------------------------
-        # CURRENT WEEK
-        # -----------------------------
         today = fields.Date.context_today(request.env.user)
         week_start = today - timedelta(days=today.weekday())
         week_end = week_start + timedelta(days=6)
@@ -182,9 +180,6 @@ class InternRewards(http.Controller):
         else:
             current_week_label = f"Week of {week_start.strftime('%B %d').lstrip('0')} - {week_end.strftime('%B %d, %Y').lstrip('0')}"
 
-        # -----------------------------
-        # ALL INTERNS / RANKINGS
-        # -----------------------------
         all_interns = HrEmployee.search([('is_intern', '=', True)])
 
         ranked_interns = []
@@ -198,18 +193,44 @@ class InternRewards(http.Controller):
         ranked_interns.sort(key=lambda item: item['score'], reverse=True)
 
         top_interns = []
-        for index, item in enumerate(ranked_interns[:3], start=1):
+        current_rank = 0
+        prev_score = None
+        display_count = 0
+
+        for item in ranked_interns:
+            score = item['score']
+
+            if score != prev_score:
+                current_rank += 1
+
+            prev_score = score
+
+            if display_count >= 5:
+                break
+
             top_interns.append({
-                'rank': index,
+                'rank': current_rank,
                 'id': item['employee'].id,
                 'name': item['employee'].name,
-                'score': item['score'],
+                'score': score,
             })
 
+            display_count += 1
+
         rank = 0
-        for index, item in enumerate(ranked_interns, start=1):
+        current_rank = 0
+        prev_score = None
+
+        for item in ranked_interns:
+            score = item['score']
+
+            if score != prev_score:
+                current_rank += 1
+
+            prev_score = score
+
             if item['employee'].id == employee.id:
-                rank = index
+                rank = current_rank
                 break
 
         if not rank:
@@ -234,7 +255,7 @@ class InternRewards(http.Controller):
                 reverse=True
             )[0]
 
-        weekly_winner_name = weekly_winner.name if weekly_winner else "No winner selected this week"
+        weekly_winner_name = weekly_winner.name if weekly_winner else "Awaiting Results"
         weekly_winner_image_url = (
             "/web/image/hr.employee/%s/avatar_1920" % weekly_winner.id
             if weekly_winner else

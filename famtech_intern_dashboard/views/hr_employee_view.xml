@@ -53,7 +53,7 @@
                             <field name="weekly_winner_voucher_claimed" invisible="not is_weekly_winner"/>
                         </group>
 
-                        <group string="Dynamic Vouchers">
+                        <group string="Vouchers">
                             <field name="voucher_ids">
                                 <list editable="bottom">
                                     <field name="title"/>
