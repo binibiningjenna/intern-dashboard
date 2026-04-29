@@ -6,6 +6,10 @@ import logging
 _logger = logging.getLogger(__name__)
 ONBOARDING_MEETING_TAG = 'Onboarding'
 
+
+def _normalize_meeting_tag(tag_name):
+    return (tag_name or '').strip().casefold()
+
 class MeetingAttendance(models.Model):
     """Tracks intern attendance and punctuality for meetings"""
     _name = 'famtech.meeting.attendance'
@@ -61,10 +65,10 @@ class MeetingAttendance(models.Model):
                      JOIN calendar_event_type AS category
                        ON category.id = rel.type_id
                     WHERE rel.event_id = attendance.calendar_event_id
-                      AND category.name = %s
+                      AND LOWER(TRIM(category.name)) = %s
                )
              WHERE attendance.counts_for_orientation IS NULL
-        """, [ONBOARDING_MEETING_TAG])
+        """, [_normalize_meeting_tag(ONBOARDING_MEETING_TAG)])
     
     @api.depends('join_time', 'meeting_scheduled_start')
     def _compute_minutes_late(self):
@@ -169,7 +173,7 @@ class MeetingAttendance(models.Model):
             # Force join_time to server timestamp 
             vals['join_time'] = server_now
             vals['counts_for_orientation'] = any(
-                category.name == ONBOARDING_MEETING_TAG
+                _normalize_meeting_tag(category.name) == _normalize_meeting_tag(ONBOARDING_MEETING_TAG)
                 for category in meeting.categ_ids
             )
         
