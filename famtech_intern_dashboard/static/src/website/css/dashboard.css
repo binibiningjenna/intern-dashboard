@@ -102,7 +102,7 @@
 
 .dashboard-score-progress__value,
 .dashboard-hours-progress__value {
-    color: var(--color-navy-700);
+    color: var(--color-navy-500);
     font-size: 1.75rem;
     font-weight: 700;
     line-height: 1.05;
