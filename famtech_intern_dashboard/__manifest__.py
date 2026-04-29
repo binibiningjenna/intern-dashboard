@@ -31,6 +31,7 @@
         'data/cron_intern_hours_alert.xml',
         'data/cron_compute_intern_metrics.xml',
         'data/cron_daily_intern_score_snapshot.xml',
+        'data/cron_history_cleanup.xml',
         'views/portal_intern_onboarding.xml',
         'views/website/intern_dashboard.xml',
         'views/website/intern_navbar.xml',

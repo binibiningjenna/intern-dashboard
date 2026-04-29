@@ -158,6 +158,15 @@ class InternRewards(http.Controller):
 
         return vouchers
 
+    def _format_week_label(self, week_start):
+        if not week_start:
+            return ''
+
+        week_end = week_start + timedelta(days=6)
+        if week_start.month == week_end.month:
+            return f"Week of {week_start.strftime('%B %d').lstrip('0')} - {week_end.strftime('%d, %Y').lstrip('0')}"
+        return f"Week of {week_start.strftime('%B %d').lstrip('0')} - {week_end.strftime('%B %d, %Y').lstrip('0')}"
+
     @http.route(['/rewards'], type='http', auth='user', website=True)
     def intern_rewards(self, **kwargs):
         user = request.env.user
@@ -175,10 +184,7 @@ class InternRewards(http.Controller):
         week_start = today - timedelta(days=today.weekday())
         week_end = week_start + timedelta(days=6)
 
-        if week_start.month == week_end.month:
-            current_week_label = f"Week of {week_start.strftime('%B %d').lstrip('0')} - {week_end.strftime('%d, %Y').lstrip('0')}"
-        else:
-            current_week_label = f"Week of {week_start.strftime('%B %d').lstrip('0')} - {week_end.strftime('%B %d, %Y').lstrip('0')}"
+        current_week_label = self._format_week_label(week_start)
 
         all_interns = HrEmployee.search([('is_intern', '=', True)])
 
@@ -262,17 +268,17 @@ class InternRewards(http.Controller):
             "/web/static/img/placeholder.png"
         )
 
-        winner_history_records = HrEmployee.search([
-            ('is_intern', '=', True),
-            ('is_weekly_winner', '=', True),
-            ('weekly_winner_week_start', '!=', False),
-        ], order='weekly_winner_week_start desc, name asc', limit=10)
+        winner_history_records = request.env['intern.weekly.winner.history'].sudo().search(
+            [],
+            order='week_start desc, employee_id asc',
+            limit=10,
+        )
 
         winner_history = []
         for winner in winner_history_records:
             winner_history.append({
-                'name': winner.name,
-                'week_start': winner.weekly_winner_week_start.strftime('%B %d, %Y') if winner.weekly_winner_week_start else '',
+                'name': winner.employee_id.name,
+                'week_start': winner.week_start.strftime('%B %d, %Y') if winner.week_start else '',
             })
 
         # -----------------------------
@@ -305,7 +311,8 @@ class InternRewards(http.Controller):
         # -----------------------------
         # VOUCHERS
         # -----------------------------
-        vouchers = []
+        available_vouchers = []
+        claimed_vouchers = []
 
         is_current_week_winner = bool(
             self._get_bool_field(employee, ['is_weekly_winner']) and
@@ -316,20 +323,38 @@ class InternRewards(http.Controller):
         )
 
         if is_current_week_winner:
-            vouchers.append({
-                'key': 'weekly_game_prize',
+            if not weekly_winner_voucher_claimed:
+                available_vouchers.append({
+                    'key': 'weekly_game_prize',
+                    'name': 'Weekly Game Prize',
+                    'icon': 'trophy-fill',
+                    'available': True,
+                    'claimed': False,
+                    'claimed_at': False,
+                    'modal_target': '#weeklyGamesVoucherModal',
+                })
+
+        dynamic_vouchers = self._build_dynamic_vouchers(employee)
+        available_vouchers.extend([voucher for voucher in dynamic_vouchers if voucher['available']])
+        claimed_vouchers.extend([voucher for voucher in dynamic_vouchers if voucher['claimed']])
+
+        weekly_claim_history = request.env['intern.weekly.winner.history'].sudo().search([
+            ('employee_id', '=', employee.id),
+            ('voucher_claimed', '=', True),
+        ], order='week_start desc')
+
+        for history in weekly_claim_history:
+            claimed_vouchers.append({
+                'key': f'weekly_game_prize_{history.id}',
                 'name': 'Weekly Game Prize',
                 'icon': 'trophy-fill',
-                'available': not weekly_winner_voucher_claimed,
-                'claimed': weekly_winner_voucher_claimed,
-                'claimed_at': self._get_datetime_field(employee, ['weekly_winner_voucher_claimed_at']),
-                'modal_target': '#weeklyGamesVoucherModal' if not weekly_winner_voucher_claimed else False,
+                'available': False,
+                'claimed': True,
+                'claimed_at': history.voucher_claimed_at,
+                'week_label': self._format_week_label(history.week_start),
+                'modal_target': False,
             })
 
-        vouchers.extend(self._build_dynamic_vouchers(employee))
-
-        available_vouchers = [voucher for voucher in vouchers if voucher['available']]
-        claimed_vouchers = [voucher for voucher in vouchers if voucher['claimed']]
         available_vouchers_count = len(available_vouchers)
 
         return request.render('famtech_intern_dashboard.intern_rewards', {
@@ -359,7 +384,6 @@ class InternRewards(http.Controller):
             'badges': badges,
 
             # Vouchers
-            'vouchers': vouchers,
             'available_vouchers': available_vouchers,
             'claimed_vouchers': claimed_vouchers,
             'available_vouchers_count': available_vouchers_count,

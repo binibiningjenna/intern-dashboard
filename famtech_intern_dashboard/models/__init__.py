@@ -7,3 +7,4 @@ from . import calendar_event
 from . import intern_evaluation
 from . import hr_kpi_dashboard
 from . import intern_voucher
+from . import weekly_winner_history

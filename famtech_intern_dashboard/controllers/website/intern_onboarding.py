@@ -1,5 +1,6 @@
 from odoo import http
 from odoo.http import request
+from ...models.meeting_attendance import ONBOARDING_MEETING_TAG
 
 
 class InternOnboarding(http.Controller):
@@ -32,6 +33,7 @@ class InternOnboarding(http.Controller):
         if not employee.orientation_completed:
             attendance = request.env['famtech.meeting.attendance'].sudo().search([
                 ('employee_id', '=', employee.id),
+                ('counts_for_orientation', '=', True),
             ], limit=1)
             if attendance:
                 updates['orientation_completed'] = True
@@ -90,6 +92,7 @@ class InternOnboarding(http.Controller):
             'employee': employee,
             'progress': progress,
             'page_name': 'intern_onboarding',
+            'onboarding_meeting_tag': ONBOARDING_MEETING_TAG,
         }
         return request.render(
             'famtech_intern_dashboard.intern_onboarding_page', values
@@ -112,16 +115,10 @@ class InternOnboarding(http.Controller):
                 message='You do not have permission to access the onboarding page.',
             )
 
-        # The website onboarding page currently shows action buttons/status,
-        # not editable checkbox inputs for every step. Avoid resetting saved
-        # values to False when the POST payload omits those fields.
+        # Only the handbook step is manually acknowledged from the website UI.
+        # The remaining steps are system-detected and should not be set via POST.
         updates = {}
-        onboarding_fields = (
-            'handbook_reviewed',
-            'orientation_completed',
-            'odoo_access_granted',
-            'first_task_assigned',
-        )
+        onboarding_fields = ('handbook_reviewed',)
         for field_name in onboarding_fields:
             if field_name in kwargs:
                 updates[field_name] = bool(kwargs.get(field_name))
