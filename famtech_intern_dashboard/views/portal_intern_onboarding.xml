@@ -311,9 +311,6 @@
                     <p class="text-muted mb-0" style="font-size: 0.9rem;">
                         View and manage your scheduled meetings, attendance, and upcoming session.
                     </p>
-                    <p class="text-muted mb-0 mt-2" style="font-size: 0.85rem;">
-                        Only meetings tagged <span class="fw-semibold"><t t-out="onboarding_meeting_tag"/></span> count toward onboarding Step 2.
-                    </p>
                 </div>
                 <a href="/onboarding"
                 class="btn btn-primary d-flex align-items-center gap-2 mt-2 md-mt-0">
