@@ -254,3 +254,38 @@ document.addEventListener("DOMContentLoaded", function () {
         easing: 'ease-out-quad'
     });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const counters = document.querySelectorAll('.count-up');
+    const duration = 1500; 
+
+    counters.forEach(counter => {
+        const rawValue = counter.getAttribute('data-value');
+        
+        const target = parseFloat(rawValue) || 0; 
+        
+        const startTime = performance.now();
+
+        const updateCount = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            const ease = progress * (2 - progress);
+            const currentValue = ease * target;
+
+            if (target % 1 !== 0) {
+                counter.innerText = currentValue.toFixed(2);
+            } else {
+                counter.innerText = Math.floor(currentValue);
+            }
+
+            if (progress < 1) {
+                requestAnimationFrame(updateCount);
+            } else {
+                counter.innerText = target % 1 !== 0 ? target.toFixed(2) : target;
+            }
+        };
+
+        requestAnimationFrame(updateCount);
+    });
+});

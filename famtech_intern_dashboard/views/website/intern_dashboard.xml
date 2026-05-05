@@ -59,8 +59,10 @@
                                                     <t t-esc="'Passed' if metric['result'] == 'success' else 'Failed'"/>
                                                 </span>
                                             </div>
-                                            <h3 class="fw-bolder mb-0 lh-1" style="color: var(--color-navy-500); font-size: 1.75rem;">
-                                                <t t-esc="metric['value']"/>
+                                            <h3 class="fw-bolder mb-0 lh-1 count-up" 
+                                                t-att-data-value="metric['value']"
+                                                style="color: var(--color-navy-500); font-size: 1.75rem;">
+                                                0.00
                                             </h3>
                                         </div>
                                     </div>
