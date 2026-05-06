@@ -1,7 +1,6 @@
 {
     'name': 'FAMTECH Intern Dashboard',
     'version': '1.0',
-    'description': """ """,
     'depends': [
         'hr',
         'hr_attendance',
