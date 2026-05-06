@@ -104,6 +104,7 @@
 .dashboard-hours-progress__value {
     color: var(--color-navy-500);
     font-size: 1.75rem;
+    font-variant-numeric: tabular-nums;
     font-weight: 700;
     line-height: 1.05;
     overflow-wrap: anywhere;
@@ -114,6 +115,7 @@
 .dashboard-hours-progress__percent {
     color: var(--color-gold-700);
     font-size: 1.65rem;
+    font-variant-numeric: tabular-nums;
     font-weight: 700;
     line-height: 1;
 }
@@ -132,7 +134,38 @@
     background: linear-gradient(90deg, var(--color-gold-500) 0%, var(--color-gold-700) 100%);
     border-radius: inherit;
     height: 100%;
-    transition: width 220ms ease;
+    position: relative;
+    transition: box-shadow 220ms ease;
+    width: 0;
+    will-change: width;
+}
+
+.dashboard-progress__number,
+.dashboard-progress__value-static {
+    white-space: nowrap;
+}
+
+.dashboard-progress-fill--animating {
+    box-shadow: 0 0 12px rgba(201, 154, 46, 0.28);
+}
+
+.dashboard-progress-fill--animating::after {
+    animation: dashboardProgressShimmer 0.95s linear infinite;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.32) 50%, transparent 100%);
+    content: "";
+    inset: 0;
+    position: absolute;
+    transform: translateX(-120%);
+}
+
+@keyframes dashboardProgressShimmer {
+    from {
+        transform: translateX(-120%);
+    }
+
+    to {
+        transform: translateX(120%);
+    }
 }
 
 .dashboard-score-progress__meta,

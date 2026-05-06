@@ -15,6 +15,9 @@
         gray: css.getPropertyValue("--color-gray-500").trim() || "#6b7280",
         grid: css.getPropertyValue("--color-gray-300").trim() || "#d1d5db",
     };
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const COUNT_UP_DURATION = 1500;
+    const PROGRESS_FILL_DURATION = 1400;
 
     if (window.Chart) {
         Chart.defaults.font.family = getComputedStyle(page).fontFamily;
@@ -24,6 +27,138 @@
 
     const formatHours = (value) => Number(value || 0).toFixed(0);
     const formatDays = (value) => Number(value || 0).toFixed(2);
+    const clampProgress = (value) => Math.max(0, Math.min(Number(value || 0), 100));
+    const easeOutQuad = (value) => value * (2 - value);
+
+    function animateValue({ target = 0, duration = COUNT_UP_DURATION, onUpdate, onComplete }) {
+        const finalTarget = Number(target || 0);
+
+        if (prefersReducedMotion) {
+            if (typeof onUpdate === "function") {
+                onUpdate(finalTarget, 1);
+            }
+            if (typeof onComplete === "function") {
+                onComplete(finalTarget);
+            }
+            return;
+        }
+
+        const startTime = performance.now();
+
+        const tick = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const currentValue = easeOutQuad(progress) * finalTarget;
+
+            if (typeof onUpdate === "function") {
+                onUpdate(currentValue, progress);
+            }
+
+            if (progress < 1) {
+                requestAnimationFrame(tick);
+                return;
+            }
+
+            if (typeof onComplete === "function") {
+                onComplete(finalTarget);
+            }
+        };
+
+        requestAnimationFrame(tick);
+    }
+
+    function formatAnimatedNumber(value, format, isFinal = false) {
+        const numericValue = Number(value || 0);
+
+        switch (format) {
+            case "fixed2":
+                return numericValue.toFixed(2);
+            case "percent":
+                return `${Math.round(numericValue)}`;
+            case "integer":
+            default:
+                return `${isFinal ? Math.round(numericValue) : Math.floor(numericValue)}`;
+        }
+    }
+
+    function animateMetricCounters() {
+        const counters = document.querySelectorAll(".count-up");
+
+        counters.forEach((counter) => {
+            if (counter.dataset.animated === "true") {
+                return;
+            }
+
+            counter.dataset.animated = "true";
+
+            const rawValue = counter.getAttribute("data-value");
+            const target = parseFloat(rawValue) || 0;
+            const format = target % 1 !== 0 ? "fixed2" : "integer";
+
+            animateValue({
+                target,
+                duration: COUNT_UP_DURATION,
+                onUpdate: (currentValue) => {
+                    counter.innerText = formatAnimatedNumber(currentValue, format);
+                },
+                onComplete: () => {
+                    counter.innerText = formatAnimatedNumber(target, format, true);
+                },
+            });
+        });
+    }
+
+    function animateDashboardProgress(container) {
+        if (!container || container.dataset.animated === "true") {
+            return;
+        }
+
+        container.dataset.animated = "true";
+
+        container.querySelectorAll("[data-dashboard-count-target]").forEach((counter) => {
+            const target = Number(counter.dataset.dashboardCountTarget || 0);
+            const format = counter.dataset.dashboardCountFormat || "integer";
+            const duration = Number(counter.dataset.dashboardCountDuration || COUNT_UP_DURATION);
+
+            animateValue({
+                target,
+                duration,
+                onUpdate: (currentValue) => {
+                    counter.innerText = formatAnimatedNumber(currentValue, format);
+                },
+                onComplete: () => {
+                    counter.innerText = formatAnimatedNumber(target, format, true);
+                },
+            });
+        });
+
+        const track = container.querySelector("[data-progress-track]");
+        const fill = container.querySelector("[data-progress-fill]");
+        if (!track || !fill) {
+            return;
+        }
+
+        const targetWidth = clampProgress(fill.dataset.progressTarget);
+        const duration = Number(fill.dataset.progressDuration || PROGRESS_FILL_DURATION);
+
+        if (!prefersReducedMotion) {
+            fill.classList.add("dashboard-progress-fill--animating");
+        }
+
+        animateValue({
+            target: targetWidth,
+            duration,
+            onUpdate: (currentValue) => {
+                fill.style.width = `${currentValue}%`;
+                track.setAttribute("aria-valuenow", currentValue.toFixed(2));
+            },
+            onComplete: () => {
+                fill.style.width = `${targetWidth}%`;
+                track.setAttribute("aria-valuenow", targetWidth.toFixed(2));
+                fill.classList.remove("dashboard-progress-fill--animating");
+            },
+        });
+    }
 
     function emptyState(element, messageText = "No data available yet.") {
         const parent = element && element.parentElement ? element.parentElement : element;
@@ -48,17 +183,22 @@
         const row = rows[0];
         const averageScore = Number(row.average_score || 0);
         const maxScore = 5;
-        const progress = Math.min((averageScore / maxScore) * 100, 100);
+        const progress = clampProgress((averageScore / maxScore) * 100);
 
         container.innerHTML = `
             <div class="dashboard-score-progress__header">
                 <div>
-                    <div class="dashboard-score-progress__value">${averageScore.toFixed(2)} / ${maxScore.toFixed(2)}</div>
+                    <div class="dashboard-score-progress__value">
+                        <span class="dashboard-progress__number" data-dashboard-count-target="${averageScore}" data-dashboard-count-format="fixed2" data-dashboard-count-duration="${COUNT_UP_DURATION}">0.00</span>
+                        <span class="dashboard-progress__value-static"> / ${maxScore.toFixed(2)}</span>
+                    </div>
                 </div>
-                <div class="dashboard-score-progress__percent">${progress.toFixed(0)}%</div>
+                <div class="dashboard-score-progress__percent">
+                    <span class="dashboard-progress__number" data-dashboard-count-target="${progress}" data-dashboard-count-format="percent" data-dashboard-count-duration="${COUNT_UP_DURATION}">0</span>%
+                </div>
             </div>
-            <div class="dashboard-score-progress__track" role="progressbar" aria-valuenow="${progress.toFixed(2)}" aria-valuemin="0" aria-valuemax="100" aria-label="Average score progress">
-                <div class="dashboard-score-progress__fill" style="width: ${progress}%;"></div>
+            <div class="dashboard-score-progress__track" data-progress-track role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Average score progress">
+                <div class="dashboard-score-progress__fill" data-progress-fill data-progress-target="${progress}" data-progress-duration="${PROGRESS_FILL_DURATION}" style="width: 0%;"></div>
             </div>
             <div class="dashboard-score-progress__meta">
                 <span>Current Score: ${averageScore.toFixed(2)} pts</span>
@@ -82,17 +222,22 @@
         const contractHours = Number(row.contract_hours || 0);
         const renderedDays = Number(row.rendered_days || 0);
         const contractDays = Number(row.contract_days || 0);
-        const progress = contractHours ? Math.min((renderedHours / contractHours) * 100, 100) : 0;
+        const progress = contractHours ? clampProgress((renderedHours / contractHours) * 100) : 0;
 
         container.innerHTML = `
             <div class="dashboard-hours-progress__header">
                 <div>
-                    <div class="dashboard-hours-progress__value">${formatHours(renderedHours)} / ${formatHours(contractHours)} hrs</div>
+                    <div class="dashboard-hours-progress__value">
+                        <span class="dashboard-progress__number" data-dashboard-count-target="${renderedHours}" data-dashboard-count-format="integer" data-dashboard-count-duration="${COUNT_UP_DURATION}">0</span>
+                        <span class="dashboard-progress__value-static"> / ${formatHours(contractHours)} hrs</span>
+                    </div>
                 </div>
-                <div class="dashboard-hours-progress__percent">${progress.toFixed(0)}%</div>
+                <div class="dashboard-hours-progress__percent">
+                    <span class="dashboard-progress__number" data-dashboard-count-target="${progress}" data-dashboard-count-format="percent" data-dashboard-count-duration="${COUNT_UP_DURATION}">0</span>%
+                </div>
             </div>
-            <div class="dashboard-hours-progress__track" role="progressbar" aria-valuenow="${progress.toFixed(2)}" aria-valuemin="0" aria-valuemax="100" aria-label="Rendered hours progress">
-                <div class="dashboard-hours-progress__fill" style="width: ${progress}%;"></div>
+            <div class="dashboard-hours-progress__track" data-progress-track role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Rendered hours progress">
+                <div class="dashboard-hours-progress__fill" data-progress-fill data-progress-target="${progress}" data-progress-duration="${PROGRESS_FILL_DURATION}" style="width: 0%;"></div>
             </div>
             <div class="dashboard-hours-progress__meta">
                 <span>Rendered: ${formatHours(renderedHours)} hrs (${formatDays(renderedDays)} days)</span>
@@ -244,48 +389,24 @@
     if (window.Chart) {
         renderTimelinessResponsivenessChart();
     }
+
+    function initializeAnimations() {
+        if (window.AOS) {
+            AOS.init({
+                duration: 400,
+                once: true,
+                easing: "ease-out-quad",
+            });
+        }
+
+        animateMetricCounters();
+        animateDashboardProgress(document.getElementById("averageScoreProgress"));
+        animateDashboardProgress(document.getElementById("hoursProgressChart"));
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initializeAnimations, { once: true });
+    } else {
+        initializeAnimations();
+    }
 })();
-
-// Animation
-document.addEventListener("DOMContentLoaded", function () {
-    AOS.init({
-        duration: 400,
-        once: true,
-        easing: 'ease-out-quad'
-    });
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    const counters = document.querySelectorAll('.count-up');
-    const duration = 1500; 
-
-    counters.forEach(counter => {
-        const rawValue = counter.getAttribute('data-value');
-        
-        const target = parseFloat(rawValue) || 0; 
-        
-        const startTime = performance.now();
-
-        const updateCount = (currentTime) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            const ease = progress * (2 - progress);
-            const currentValue = ease * target;
-
-            if (target % 1 !== 0) {
-                counter.innerText = currentValue.toFixed(2);
-            } else {
-                counter.innerText = Math.floor(currentValue);
-            }
-
-            if (progress < 1) {
-                requestAnimationFrame(updateCount);
-            } else {
-                counter.innerText = target % 1 !== 0 ? target.toFixed(2) : target;
-            }
-        };
-
-        requestAnimationFrame(updateCount);
-    });
-});
