@@ -132,24 +132,31 @@
                                 </div>
                             </div>
                             <div class="card-body flex-grow-1 d-flex flex-column p-3 gap-2">
-                                <t t-if="top_interns">
-                                    <t t-foreach="top_interns" t-as="top_emp">
-                                        <div class="rank-item d-flex align-items-center gap-3 px-3 py-2 rounded-4 border flex-grow-1"
-                                            style="background: linear-gradient(180deg,#fff 0%,#f7fbff 100%);">
-                                            <span class="rank-number fw-bold"><t t-esc="top_emp['rank']"/></span>
-                                            <div class="overflow-hidden rounded-circle d-flex align-items-center justify-content-center"
-                                                style="width:40px; height:40px; background:#dce8f5; flex-shrink:0;">
-                                                <img t-att-src="'/web/image/hr.employee/%s/avatar_1920' % top_emp['id']" class="w-100 h-100" style="object-fit: cover;"/>
-                                            </div>
-                                            <span class="fw-semibold flex-grow-1 text-truncate" style="font-size:0.9rem; color:#222;">
-                                                <t t-esc="top_emp['name']"/>
-                                            </span>
-                                            <t t-if="top_emp['rank'] == 1">
-                                                <i class="bi bi-trophy-fill" style="color:#bf9e3c; font-size:0.85rem;"></i>
-                                            </t>
+                              <t t-if="top_interns">
+                                <t t-foreach="top_interns" t-as="top_emp">
+                                    <div class="rank-item d-flex align-items-center gap-3 px-3 py-2 rounded-4 border flex-grow-1"
+                                        data-aos="fade-up"
+                                        t-attf-data-aos-delay="{{ (top_emp_index + 1) * 150 }}"
+                                        data-aos-duration="800"
+                                        style="background: linear-gradient(180deg,#fff 0%,#f7fbff 100%);">
+                                        
+                                        <span class="rank-number fw-bold"><t t-esc="top_emp['rank']"/></span>
+                                        
+                                        <div class="overflow-hidden rounded-circle d-flex align-items-center justify-content-center"
+                                            style="width:40px; height:40px; background:#dce8f5; flex-shrink:0;">
+                                            <img t-att-src="'/web/image/hr.employee/%s/avatar_1920' % top_emp['id']" class="w-100 h-100" style="object-fit: cover;"/>
                                         </div>
-                                    </t>
+                                        
+                                        <span class="fw-semibold flex-grow-1 text-truncate" style="font-size:0.9rem; color:#222;">
+                                            <t t-esc="top_emp['name']"/>
+                                        </span>
+                                        
+                                        <t t-if="top_emp['rank'] == 1">
+                                            <i class="bi bi-trophy-fill" style="color:#bf9e3c; font-size:0.85rem;"></i>
+                                        </t>
+                                    </div>
                                 </t>
+                            </t>
                                 <t t-else="">
                                     <div class="h-100 d-flex align-items-center justify-content-center flex-grow-1">
                                         <p class="text-muted small mb-0">No intern rankings available.</p>
