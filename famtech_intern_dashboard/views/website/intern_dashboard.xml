@@ -127,6 +127,18 @@
                                     </div>
                                 </div>
                                 <div class="card-body dashboard-progress-card__body">
+                                    <div id="timelinessResponsivenessTrendLegend"
+                                        class="dashboard-trend-indicator"
+                                        aria-label="Trend line legend">
+                                        <span class="dashboard-trend-indicator__item">
+                                            <span class="dashboard-trend-indicator__line" aria-hidden="true"></span>
+                                            <span>High Performance</span>
+                                        </span>
+                                        <span class="dashboard-trend-indicator__item">
+                                            <span class="dashboard-trend-indicator__line dashboard-trend-indicator__line--dashed" aria-hidden="true"></span>
+                                            <span>Low Performance</span>
+                                        </span>
+                                    </div>
                                     <div class="dashboard-chart-frame dashboard-chart-frame-lg">
                                         <div id="timelinessResponsivenessEmptyState" 
                                             class="dashboard-empty-state d-flex flex-column align-items-center justify-content-center text-center py-5 bg-light rounded-4 border border-dashed mt-2"

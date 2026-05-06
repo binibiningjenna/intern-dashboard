@@ -249,10 +249,14 @@
     function renderTimelinessResponsivenessChart() {
         const canvas = document.getElementById("timelinessResponsivenessChart");
         const emptyStateElement = document.getElementById("timelinessResponsivenessEmptyState");
+        const trendLegendElement = document.getElementById("timelinessResponsivenessTrendLegend");
         const rows = payload.timeliness_responsiveness_trend || [];
         if (!canvas || !rows.length) {
             if (canvas) {
                 canvas.style.display = "none";
+            }
+            if (trendLegendElement) {
+                trendLegendElement.style.display = "none";
             }
             if (emptyStateElement) {
                 emptyStateElement.setAttribute("style", "display: flex !important;");
@@ -266,6 +270,9 @@
 
         if (emptyStateElement) {
             emptyStateElement.setAttribute("style", "display: none !important;");
+        }
+        if (trendLegendElement) {
+            trendLegendElement.style.display = "flex";
         }
         canvas.style.display = "block";
 
